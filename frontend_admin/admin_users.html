@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Worknest Admin — Users & Workers</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  body { font-family: 'Manrope', sans-serif; background: #faf7f2; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .nav-link { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:9999px; font-size:14px; font-weight:600; color:#56423e; transition:all 0.2s; text-decoration:none; }
+  .nav-link:hover { background: rgba(255,255,255,0.6); color:#9f402d; }
+  .nav-link.active { background: white; color:#9f402d; font-weight:700; box-shadow:0 2px 8px rgba(159,64,45,0.1); }
+</style>
+</head>
+<body class="min-h-screen flex text-[#1c1c18]">
+
+<!-- Sidebar -->
+<aside class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
+  <div class="px-6 mb-8 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+      <span class="material-symbols-outlined text-white text-xl fill-icon">potted_plant</span>
+    </div>
+    <div>
+      <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+      <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 px-3">
+    <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
+    <a href="admin_users.html" class="nav-link active"><span class="material-symbols-outlined text-xl">group</span> Users & Workers</a>
+    <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
+    <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
+    <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
+  </nav>
+  <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+    <a href="http://localhost:8000/api/logout/" class="nav-link"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+  </div>
+</aside>
+
+<main class="flex-1 flex flex-col min-w-0">
+  <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
+    <h2 class="text-2xl font-black text-[#1c1c18]">Users & Workers</h2>
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+        <input id="search-input" type="text" placeholder="Search by name or email..." class="pl-10 pr-4 py-2 rounded-full bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 w-64"/>
+      </div>
+    </div>
+  </header>
+
+  <div class="p-8 max-w-7xl w-full mx-auto">
+    <!-- Filter Tabs -->
+    <div class="flex gap-2 mb-6">
+      <button onclick="filterTable('all')" id="btn-all" class="filter-btn px-5 py-2 rounded-full text-sm font-bold bg-[#9f402d] text-white">All</button>
+      <button onclick="filterTable('3')" id="btn-users" class="filter-btn px-5 py-2 rounded-full text-sm font-bold bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30">Users</button>
+      <button onclick="filterTable('2')" id="btn-workers" class="filter-btn px-5 py-2 rounded-full text-sm font-bold bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30">Workers</button>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 text-xs font-bold uppercase tracking-widest text-gray-400">
+            <tr>
+              <th class="px-6 py-4">Name</th>
+              <th class="px-6 py-4">Email</th>
+              <th class="px-6 py-4">Role</th>
+              <th class="px-6 py-4">Skill</th>
+              <th class="px-6 py-4">Status</th>
+              <th class="px-6 py-4">Joined</th>
+            </tr>
+          </thead>
+          <tbody id="users-table" class="divide-y divide-gray-50 text-sm">
+            <tr><td colspan="6" class="px-6 py-8 text-gray-400 text-center">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+let allUsers = [];
+
+async function loadUsers() {
+  const tbody = document.getElementById('users-table');
+  tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#9f402d]"></div><p class="mt-2 text-[#89726d]">Loading...</p></td></tr>';
+  
+  try {
+    const sessionKey = localStorage.getItem('session_key');
+    const headers = {};
+    if (sessionKey) headers['X-Session-Key'] = sessionKey;
+    
+    const res = await fetch('http://localhost:8000/api/admin/users/', { 
+      credentials: 'include',
+      headers: headers
+    });
+    const data = await res.json();
+    
+    if (data.status === 'error' && data.message.includes('Admin access required')) {
+      alert('Session expired. Please login again.');
+      localStorage.removeItem('session_key');
+      window.location.href = '../frontend_user/login.html';
+      return;
+    }
+    
+    if (data.status === 'success') {
+      allUsers = data.data;
+      renderTable(allUsers);
+    }
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-gray-400 text-center">Error loading data. Make sure server is running.</td></tr>';
+  }
+}
+
+function renderTable(users) {
+  const tbody = document.getElementById('users-table');
+  if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-gray-400 text-center">No users found</td></tr>'; return; }
+  tbody.innerHTML = users.map(u => `
+    <tr class="hover:bg-gray-50 transition-colors">
+      <td class="px-6 py-4 font-semibold text-gray-800">${u.fullname}</td>
+      <td class="px-6 py-4 text-gray-500">${u.email}</td>
+      <td class="px-6 py-4">
+        <span class="px-3 py-1 rounded-full text-xs font-bold ${u.role_id==2?'bg-[#ffdad3] text-[#9f402d]':u.role_id==1?'bg-red-100 text-red-700':'bg-blue-100 text-blue-700'}">
+          ${u.role_id==1?'Admin':u.role_id==2?'Worker':'User'}
+        </span>
+      </td>
+      <td class="px-6 py-4 text-gray-500">${u.skill || '—'}</td>
+      <td class="px-6 py-4">
+        <span class="px-3 py-1 rounded-full text-xs font-bold ${u.worker_status==='verified'?'bg-green-100 text-green-700':u.worker_status==='pro'?'bg-purple-100 text-purple-700':'bg-gray-100 text-gray-600'}">
+          ${u.worker_status || 'Active'}
+        </span>
+      </td>
+      <td class="px-6 py-4 text-gray-500">${new Date(u.created_at).toLocaleDateString()}</td>
+    </tr>
+  `).join('');
+}
+
+function filterTable(roleId) {
+  // Update button styles
+  ['all', 'users', 'workers'].forEach(type => {
+    const btn = document.getElementById(`btn-${type}`);
+    const isActive = (type === 'all' && roleId === 'all') || 
+                     (type === 'users' && roleId === '3') || 
+                     (type === 'workers' && roleId === '2');
+    
+    if (isActive) {
+      btn.className = 'filter-btn px-5 py-2 rounded-full text-sm font-bold bg-[#9f402d] text-white';
+    } else {
+      btn.className = 'filter-btn px-5 py-2 rounded-full text-sm font-bold bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30';
+    }
+  });
+  
+  renderTable(roleId === 'all' ? allUsers : allUsers.filter(u => u.role_id == roleId));
+}
+
+document.getElementById('search-input').addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase();
+  renderTable(allUsers.filter(u => u.fullname.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+});
+
+loadUsers();
+</script>
+</body>
+</html>

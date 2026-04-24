@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error": "#ba1a1a",
+              "secondary-fixed-dim": "#cec7a2",
+              "on-surface": "#1c1c19",
+              "surface-tint": "#9f402d",
+              "on-secondary-fixed-variant": "#4b472b",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#56423e",
+              "secondary-fixed": "#eae3bc",
+              "on-primary-container": "#5a0d02",
+              "surface-container-low": "#f6f3ee",
+              "outline-variant": "#ddc0ba",
+              "inverse-on-surface": "#f3f0eb",
+              "tertiary-fixed-dim": "#5cdbc2",
+              "surface-bright": "#fcf9f4",
+              "on-tertiary-fixed": "#00201a",
+              "on-secondary-container": "#686344",
+              "inverse-surface": "#31302d",
+              "secondary-container": "#e8e0ba",
+              "on-background": "#1c1c19",
+              "tertiary-container": "#00a58e",
+              "on-tertiary-fixed-variant": "#005144",
+              "primary-fixed-dim": "#ffb4a5",
+              "primary": "#9f402d",
+              "surface-container": "#f0ede8",
+              "on-tertiary": "#ffffff",
+              "background": "#fcf9f4",
+              "on-primary-fixed-variant": "#802918",
+              "surface-dim": "#dcdad5",
+              "tertiary-fixed": "#7bf8dd",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed": "#1f1c04",
+              "on-primary": "#ffffff",
+              "outline": "#89726d",
+              "on-tertiary-container": "#00322a",
+              "secondary": "#635f40",
+              "surface-container-high": "#ebe8e3",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#e5e2dd",
+              "primary-container": "#e2725b",
+              "on-primary-fixed": "#3e0500",
+              "inverse-primary": "#ffb4a5",
+              "surface": "#fcf9f4",
+              "primary-fixed": "#ffdad3",
+              "surface-container-highest": "#e5e2dd",
+              "tertiary": "#006b5b",
+              "on-error": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>body {
+    font-family: "Manrope", sans-serif;
+    background-color: #fcf9f4;
+    background-image: radial-gradient(circle at 20% 80%, rgba(214,231,161,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,218,211,0.4) 0%, transparent 50%);
+    }
+.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.pebble-shadow {
+    box-shadow: 0 20px 40px rgba(159, 64, 45, 0.06)
+    }
+.keypad-button:active {
+    transform: scale(0.92);
+    background-color: #f0ede8
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-background min-h-screen flex flex-col items-center justify-center p-6 selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Suppression: Transactional Screen (Login) -->
+<main class="w-full max-w-md flex flex-col gap-12">
+<!-- Brand Identity & Header -->
+<header class="flex flex-col items-center text-center gap-4">
+<div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center pebble-shadow mb-4">
+<span class="material-symbols-outlined text-white text-4xl" data-icon="potted_plant">potted_plant</span>
+</div>
+<h1 class="text-4xl font-extrabold tracking-tighter text-on-surface">Worknest</h1>
+<p class="text-secondary max-w-[280px] leading-relaxed">Create your account to find workers or offer your skills.</p>
+</header>
+<!-- Phone Input Section -->
+
+<section class="flex flex-col gap-6" id="signup-section">
+    <form id="signup-form" class="flex flex-col gap-6">
+        <div id="error-msg" class="text-error text-sm font-bold hidden text-center"></div>
+        <input type="hidden" name="role_id" value="3">
+        <div class="flex items-center gap-3 p-2 bg-surface-container rounded-full pebble-shadow">
+            <span class="material-symbols-outlined text-secondary ml-4" data-icon="person">person</span>
+            <div class="flex-1 py-1 px-2">
+                <input type="text" name="fullname" id="fullname" required placeholder="Full Name" class="w-full bg-transparent border-none focus:ring-0 text-xl tracking-widest text-on-surface-variant font-medium outline-none">
+            </div>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-surface-container rounded-full pebble-shadow">
+            <span class="material-symbols-outlined text-secondary ml-4" data-icon="email">email</span>
+            <div class="flex-1 py-1 px-2">
+                <input type="email" name="email" id="email" required placeholder="Email Address" class="w-full bg-transparent border-none focus:ring-0 text-xl tracking-widest text-on-surface-variant font-medium outline-none">
+            </div>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-surface-container rounded-full pebble-shadow">
+            <span class="material-symbols-outlined text-secondary ml-4" data-icon="lock">lock</span>
+            <div class="flex-1 py-1 px-2">
+                <input type="password" name="password" id="password" required placeholder="Password" class="w-full bg-transparent border-none focus:ring-0 text-xl tracking-widest text-on-surface-variant font-medium outline-none">
+            </div>
+        </div>
+        <button type="submit" class="w-full py-5 bg-gradient-to-br from-primary to-primary-container text-white rounded-full font-bold text-lg shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-300">
+            Create Profile
+        </button>
+    </form>
+    <div class="text-center text-sm font-medium text-on-surface-variant">
+        Already have an account? <a href="login.html" class="text-primary underline font-bold">Sign In here</a>
+    </div>
+</section>
+<script>
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const errorMsg = document.getElementById('error-msg');
+        errorMsg.classList.add('hidden');
+        try {
+            const payload = { fullname: formData.get('fullname'), email: formData.get('email'), password: formData.get('password'), role_id: 3 };
+            const res = await fetch('http://localhost:8000/api/signup/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.status === 'success') { window.location.href = "login.html"; }
+            else { errorMsg.textContent = data.message; errorMsg.classList.remove('hidden'); }
+        } catch(err) { errorMsg.textContent = "Cannot connect to server. Make sure it is running."; errorMsg.classList.remove('hidden'); }
+    });
+</script>
+
+<!-- Numeric Keypad -->
+
+<!-- Footer Trust Elements -->
+<footer class="mt-8 flex flex-col items-center gap-6">
+<div class="flex items-center gap-2 px-4 py-2 bg-tertiary/10 text-tertiary rounded-full">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-[11px] font-bold uppercase tracking-widest">Worknest Secure Signup</span>
+</div>
+<p class="text-[11px] text-secondary text-center leading-relaxed max-w-[240px]">
+                By continuing, you agree to our <a class="underline text-primary" href="#">Terms of Use</a> and <a class="underline text-primary" href="#">Privacy Policy</a>.
+            </p>
+</footer>
+</main>
+<!-- Visual Embellishments: Floating Pebble Shapes -->
+<div class="fixed -top-20 -left-20 w-64 h-64 bg-secondary-container/20 rounded-full blur-3xl -z-10"></div>
+<div class="fixed -bottom-32 -right-32 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl -z-10"></div>
+</body></html>

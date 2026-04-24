@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Worknest Admin — Verify Workers</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  body { font-family: 'Manrope', sans-serif; background: #faf7f2; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .nav-link { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:9999px; font-size:14px; font-weight:600; color:#56423e; transition:all 0.2s; text-decoration:none; }
+  .nav-link:hover { background: rgba(255,255,255,0.6); color:#9f402d; }
+  .nav-link.active { background: white; color:#9f402d; font-weight:700; box-shadow:0 2px 8px rgba(159,64,45,0.1); }
+</style>
+</head>
+<body class="min-h-screen flex text-[#1c1c18]">
+
+<aside class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
+  <div class="px-6 mb-8 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+      <span class="material-symbols-outlined text-white text-xl fill-icon">potted_plant</span>
+    </div>
+    <div>
+      <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+      <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 px-3">
+    <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
+    <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Users & Workers</a>
+    <a href="admin_verify.html" class="nav-link active"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
+    <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
+    <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
+  </nav>
+  <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+    <a href="http://localhost:8000/api/logout/" class="nav-link"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+  </div>
+</aside>
+
+<main class="flex-1 flex flex-col min-w-0">
+  <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
+    <h2 class="text-2xl font-black text-[#1c1c18]">Worker Verification Queue</h2>
+  </header>
+
+  <div class="p-8 max-w-5xl w-full mx-auto">
+    <div class="bg-orange-50 border border-orange-200 rounded-2xl p-5 mb-8 flex items-start gap-4">
+      <span class="material-symbols-outlined text-orange-500 text-2xl mt-0.5" style="font-variation-settings:'FILL' 1;">info</span>
+      <div>
+        <p class="font-bold text-orange-800">Verification Rules</p>
+        <p class="text-sm text-[#9f402d] mt-1">Workers start as <strong>Newbie</strong>. Upgrade to <strong>Verified</strong> after 3 completed jobs with rating &gt; 4.0. Upgrade to <strong>Pro</strong> after 10 jobs with rating &gt; 4.5.</p>
+      </div>
+    </div>
+
+    <div id="workers-list" class="space-y-4">
+      <div class="text-center py-12 text-gray-400">Loading workers...</div>
+    </div>
+  </div>
+</main>
+
+<script>
+async function loadWorkers() {
+  try {
+    const sessionKey = localStorage.getItem('session_key');
+    const headers = {};
+    if (sessionKey) headers['X-Session-Key'] = sessionKey;
+    
+    const res = await fetch('http://localhost:8000/api/admin/users/', { 
+      credentials: 'include',
+      headers: headers
+    });
+    const data = await res.json();
+    
+    if (data.status === 'error' && data.message.includes('Admin access required')) {
+      alert('Session expired. Please login again.');
+      localStorage.removeItem('session_key');
+      window.location.href = '../frontend_user/login.html';
+      return;
+    }
+    
+    if (data.status === 'success') {
+      const workers = data.data.filter(u => u.role_id == 2);
+      const container = document.getElementById('workers-list');
+      if (!workers.length) { container.innerHTML = '<div class="text-center py-12 text-gray-400">No workers registered yet</div>'; return; }
+      container.innerHTML = workers.map(w => `
+        <div class="bg-white rounded-2xl p-6 shadow-sm flex items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-[#ffdad3] flex items-center justify-center">
+              <span class="material-symbols-outlined text-orange-500 text-2xl" style="font-variation-settings:'FILL' 1;">engineering</span>
+            </div>
+            <div>
+              <p class="font-bold text-gray-800">${w.fullname}</p>
+              <p class="text-sm text-gray-500">${w.skill || 'General'} · ${w.email}</p>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${w.worker_status==='verified'?'bg-green-100 text-green-700':w.worker_status==='pro'?'bg-purple-100 text-purple-700':'bg-gray-100 text-gray-600'}">
+                  ${w.worker_status || 'newbie'}
+                </span>
+                <span class="text-xs text-gray-400">⭐ ${w.rating || '0.00'} · ${w.total_jobs || 0} jobs</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="updateStatus(${w.id}, 'verified')" class="px-4 py-2 bg-green-500 text-white rounded-full text-xs font-bold hover:bg-green-600 transition-colors">
+              Mark Verified
+            </button>
+            <button onclick="updateStatus(${w.id}, 'pro')" class="px-4 py-2 bg-purple-500 text-white rounded-full text-xs font-bold hover:bg-purple-600 transition-colors">
+              Mark Pro
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch(e) {
+    document.getElementById('workers-list').innerHTML = '<div class="text-center py-12 text-gray-400">Start XAMPP to load live data</div>';
+  }
+}
+
+async function updateStatus(userId, status) {
+  try {
+    const sessionKey = localStorage.getItem('session_key');
+    const headers = { 'Content-Type': 'application/json' };
+    if (sessionKey) headers['X-Session-Key'] = sessionKey;
+    
+    const res = await fetch('http://localhost:8000/api/admin/verify/', {
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+      body: JSON.stringify({ user_id: userId, status })
+    });
+    const data = await res.json();
+    if (data.status === 'success') { alert('Worker status updated!'); loadWorkers(); }
+    else alert(data.message);
+  } catch(e) { alert('Error updating status'); }
+}
+
+loadWorkers();
+</script>
+</body>
+</html>

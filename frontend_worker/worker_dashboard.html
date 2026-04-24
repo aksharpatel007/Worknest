@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Worknest — Worker Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#ffdad2",
+              "surface-container-high": "#e2e8f0",
+              "on-surface-variant": "#475569",
+              "on-secondary-fixed-variant": "#374b43",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "inverse-surface": "#31312c",
+              "surface-dim": "#dcdad3",
+              "surface-container-highest": "#e5e2db",
+              "primary": "#ea580c",
+              "surface-bright": "#fefefe",
+              "on-background": "#0f172a",
+              "secondary-container": "#94a3b8",
+              "primary-container": "#c2410c",
+              "error": "#ba1a1a",
+              "secondary-fixed": "#d1e8dd",
+              "secondary": "#475569",
+              "surface": "#ffffff",
+              "surface-variant": "#e5e2db",
+              "tertiary-fixed-dim": "#73d7d2",
+              "on-primary-fixed-variant": "#812914",
+              "primary-fixed-dim": "#ffb4a3",
+              "on-primary-container": "#120100",
+              "outline-variant": "#ddc0ba",
+              "on-secondary-fixed": "#0b1f18",
+              "tertiary-fixed": "#90f3ee",
+              "on-primary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "inverse-on-surface": "#f3f0e9",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#52675e",
+              "surface-container": "#f8fafc",
+              "tertiary-container": "#008581",
+              "on-surface": "#0f172a",
+              "on-tertiary-fixed-variant": "#00504d",
+              "outline": "#8a726c",
+              "on-tertiary-fixed": "#00201f",
+              "surface-tint": "#a03f29",
+              "secondary-fixed-dim": "#b5ccc1",
+              "surface-container-low": "#f6f3ec",
+              "background": "#fcf4ed",
+              "inverse-primary": "#ffb4a3",
+              "on-primary-fixed": "#3d0700",
+              "tertiary": "#006a66",
+              "on-tertiary-container": "#000606"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .fill-icon {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .paper-grain {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.03;
+        pointer-events: none;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
+<div class="fixed inset-0 paper-grain z-0"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fcf9f2] dark:bg-stone-950/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container overflow-hidden ring-2 ring-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a friendly artisan worker in a sunlit workshop wearing a linen shirt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxi9qmFAgK56uzK_HbtBEIJzdhiBlVuOId6VX-_vtFxt1EkmfdrpJuVLbn8VFoSmOuOispyrxJAIOwPELjwxS4W3fG7sCTO5pKT5D4IbiRVQOJsdhrz0mK9HoZeFo9XKBy34LHfmgpwiAmIDHzuKeMLtQhDHeh7CpS8xzThjR9QKkppfbC_ugVpU0yAlK3mDMbsML6vwxBMfk8SBVKTA3Z8-JVcuLOkdBMDt_W2FiCbL2d6I1SH2kDFzycrduglRq-SeXASHamFPz0"/>
+</div>
+<h1 class="font-headline font-bold text-xl tracking-tight text-orange-800 dark:text-orange-200">Worknest</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-200/50 transition-colors" onclick="window.location.href='worker_dashboard.html'">
+<span class="material-symbols-outlined text-orange-800">notifications</span>
+</button>
+</div>
+</header>
+<main class="relative z-10 pt-24 px-6 max-w-5xl mx-auto space-y-10">
+<!-- Online/Offline Toggle Section -->
+<section class="flex flex-col md:flex-row items-center justify-between gap-6 bg-surface-container-low p-8 rounded-xl">
+<div class="space-y-1">
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Hello, Mateo</h2>
+<p class="text-on-surface-variant font-medium">Ready for your next craft?</p>
+</div>
+<div class="flex items-center bg-surface-container-highest p-2 rounded-full shadow-inner w-full md:w-auto">
+<button class="flex-1 md:w-32 py-3 rounded-full font-label font-semibold text-sm transition-all duration-300 bg-primary-container text-on-primary shadow-lg flex items-center justify-center gap-2" onclick="window.location.href='dashboard.html'">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">sensors</span>
+                    Online
+                </button>
+<button class="flex-1 md:w-32 py-3 rounded-full font-label font-semibold text-sm transition-all duration-300 text-on-surface-variant flex items-center justify-center gap-2" onclick="window.location.href='dashboard.html'">
+                    Offline
+                </button>
+</div>
+</section>
+<!-- Stats Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Earnings Today Card -->
+<div class="bg-primary-container text-on-primary p-8 rounded-xl md:rounded-tr-[4rem] flex flex-col justify-between min-h-[180px] shadow-sm relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+<div class="relative z-10">
+<p class="font-label text-xs uppercase tracking-[0.2em] opacity-80 mb-2">Earnings Today</p>
+<h3 class="font-headline text-4xl font-bold">$184.50</h3>
+</div>
+<div class="flex items-center gap-2 font-label text-sm bg-white/10 self-start px-3 py-1 rounded-full backdrop-blur-md">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                    +12% from yesterday
+                </div>
+</div>
+<!-- Jobs Completed Card -->
+<div class="bg-secondary-container text-on-secondary-container p-8 rounded-xl md:rounded-bl-[4rem] flex flex-col justify-between min-h-[180px] shadow-sm border border-outline-variant/10">
+<div>
+<p class="font-label text-xs uppercase tracking-[0.2em] mb-2 text-on-secondary-fixed-variant">Jobs Completed</p>
+<h3 class="font-headline text-4xl font-bold">14</h3>
+</div>
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a smiling customer in a bright kitchen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDw7iU5PSv5dpqjrCgXRK0IOEB_v95SAq-4-6H_2UI1D7pO0XfrxEqrIklpO6RadTbHqvaURkyj38yKIQM8fetrHNibsntQxlzqB_0aktzA9G8vYzz0a5iiDdMTu0kcE53TH37Ub9dybHMJirbb8Pm2ogdxUjIn6iRoyIjJil0iMs0ps7rfPK2otNBNPu8wlEksSjBZLzG2grPetc99WRYWQbkkIYYSwL959phldnY6Lvd2U6dzKf_RcELpanlE7cjc62Nz7h_JojX"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Man working in a modern home office with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD81iX42b-jbj0V53i8AmhCu6YYyslhjibvQRnB3ha8Kew0m1pfUaydxYQb8EBsKsVSwsnUKBCQNFCaCqyqpFCnRZq5IScCyQZ85L-ibSO5wcH6bk85auF12Vq-CT2WJA2C7vIcPkCTtc4PKBxlrOEt28wNKXns8vo9hrgPm44LjHVUnOuu24BQvTAwzmeYPPEBZdi-L8UwNhep5dLpPrCwCd_r0SFXJw_ybyJO3X90mx76CaH-YmxBQHiZ-Q6SBF0rf_Aggg8l5pzK"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Young woman in a cozy living room at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUucVy2VpaDoOzeRysIQhPV8nVr9Wp8X0sqf2k6iOKvbILnGSa2p-wlO-rD4O7Gz_hJDadxd07fLk4rq-J9myH6sH0_lhqAZjCr-zANhhtD4KLtNQL61XTSnZBWXY9dC5ktooEE_LobzTy94D4eUd6P1N0fsPENYtrypGpVtAm30-1wH04MJ92c-yYNedvXIkiHyCmtt8ivoeJmNGJky2j08jPaFRnIK4puzQFuO4CA0ADMGtB5VbzOJCM_qyHrRTzCGBbslUbJUh0"/>
+</div>
+<div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[10px] text-white font-bold border-2 border-secondary-container">+11</div>
+</div>
+</div>
+<!-- Artisan Rating -->
+<div class="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-between min-h-[180px] border border-outline-variant/20 lg:col-span-1">
+<div>
+<p class="font-label text-xs uppercase tracking-[0.2em] mb-2 text-on-surface-variant">Worker Rating</p>
+<div class="flex items-center gap-1">
+<h3 class="font-headline text-4xl font-bold">4.9</h3>
+<span class="material-symbols-outlined text-primary fill-icon text-3xl">star</span>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed font-medium italic">"Exceptional woodworking skills and punctuality."</p>
+</div>
+</section>
+<!-- Main List Section: Recent Job Requests -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-headline text-2xl font-bold text-on-surface">Recent Job Requests</h2>
+<button class="text-primary font-label text-sm font-semibold flex items-center gap-1 hover:underline" onclick="window.location.href='booking_history.html'">
+                    View History <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Job Card 1 -->
+<div class="group bg-surface-container p-1 rounded-[2.5rem] transition-all hover:bg-surface-container-high">
+<div class="bg-surface-container-lowest p-6 rounded-[2rem] flex flex-col md:flex-row gap-6 items-start md:items-center">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0 bg-stone-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of skilled hands repairing a vintage wooden table with craft tools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeiav5Q0HHrRz_RA64TxA3EG41ojH6SG2NntzRm-Mv94Sm-qowibRKpIutePYMBAGjCvxkrYJC_vW83kHvn7FYxrJMPtrLo0u2uqUnzhqayJ3aZQESktJf_FbNjTUejkCp47APcMPpgeTu1zP_knpsZPoJjsTqXtGzSakOxKB2tZF0QLqef-JOapErgLaSEOh7mJl57kRJNhQ2fjt1kDq5GCxCevymPhol7sPvrP-IdLtnvXVI887AuoBa4nbsRy03mlVjZ0ZUusjK"/>
+</div>
+<div class="flex-grow space-y-2">
+<div class="flex items-center gap-2">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Premium Service</span>
+<span class="text-on-surface-variant text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span> 2h remaining
+                                </span>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface">Handcrafted Table Restoration</h4>
+<div class="flex flex-wrap gap-4 text-sm text-on-surface-variant font-medium">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+                                    Downtown, 2.4 miles
+                                </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">payments</span>
+                                    $85.00 Est.
+                                </div>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:px-8 py-3 rounded-full border border-outline text-on-surface font-label font-bold text-sm hover:bg-surface-variant transition-colors active:scale-95 duration-200" onclick="window.location.href='worker_dashboard.html'">
+                                Decline
+                            </button>
+<button class="flex-1 md:px-8 py-3 rounded-full bg-primary text-white font-label font-bold text-sm shadow-md hover:shadow-xl transition-all active:scale-95 duration-200" onclick="window.location.href='worker_dashboard.html'">
+                                Accept
+                            </button>
+</div>
+</div>
+</div>
+<!-- Job Card 2 -->
+<div class="group bg-surface-container p-1 rounded-[2.5rem] transition-all hover:bg-surface-container-high">
+<div class="bg-surface-container-lowest p-6 rounded-[2rem] flex flex-col md:flex-row gap-6 items-start md:items-center">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0 bg-stone-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Artistic plumbing repair with copper pipes and a warm vintage filter" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyei11rw6fSWEN2SmX0DHHeUh6uVsIIGaweVzq6gq3vGC7JbjngwiZSgeBKoS5rbgLQ9GzsNPM5kZD1y4Ttc6wPa_bhG6Ecmn2x0jKgqn6nJ4DuNDHHpsv1u08CCPaZA7Ruc-PdGHJd_wiyYZZBTcUFR7EKpYaHbQk7UyX9WQQHkosGYIZDQHDp2VU98Kh9QdU-qvoSLz1exEFIT-PYxJgQRq3gubDtMa7kZq5BDyy8WCOB0Yq5tQCw4kkhPUXXZuJvcYQlN3KS2tH"/>
+</div>
+<div class="flex-grow space-y-2">
+<div class="flex items-center gap-2">
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Urgent Fix</span>
+<span class="text-on-surface-variant text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span> 15m ago
+                                </span>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface">Artisan Faucet Installation</h4>
+<div class="flex flex-wrap gap-4 text-sm text-on-surface-variant font-medium">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+                                    North Hills, 5.1 miles
+                                </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">payments</span>
+                                    $120.00 Est.
+                                </div>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:px-8 py-3 rounded-full border border-outline text-on-surface font-label font-bold text-sm hover:bg-surface-variant transition-colors active:scale-95 duration-200" onclick="window.location.href='worker_dashboard.html'">
+                                Decline
+                            </button>
+<button class="flex-1 md:px-8 py-3 rounded-full bg-primary text-white font-label font-bold text-sm shadow-md hover:shadow-xl transition-all active:scale-95 duration-200" onclick="window.location.href='worker_dashboard.html'">
+                                Accept
+                            </button>
+</div>
+</div>
+</div>
+<!-- Job Card 3 (Pebble Shape variant) -->
+<div class="group bg-surface-container-high p-6 rounded-tr-[4rem] rounded-bl-[4rem] rounded-tl-xl rounded-br-xl flex flex-col md:flex-row gap-6 items-start md:items-center border border-outline-variant/30">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-[2rem] overflow-hidden flex-shrink-0 bg-stone-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Electrical repair work with colorful wires in an organized artisan manner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf1UkQq0T-bJNQzNxmJC6yCward74_V-zbQoXtFHhLQqyDwekPAXHtWRjAvA2Yf7ThuIx86OIe1UEaW2WlsbTtIwP07Weyt50WCNcR1iVe--oQcimNQml2uD_YSLMDU4m9MEAlZr51VT8UF0WkYL6VbSW1nTZhZFOgzXEp2-v5_J4NRogUhYekrrWqa82GOPDAMbr34d65Vzp0lp2ZpOykQ1L70OHXIqM8tvECWSLfvV-Ld0Mm67slkESKMlacESzgESkvFSmJUMV_"/>
+</div>
+<div class="flex-grow space-y-2">
+<div class="flex items-center gap-2">
+<span class="bg-orange-100 text-orange-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Recurring Client</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface">Studio Lighting Setup</h4>
+<div class="flex flex-wrap gap-4 text-sm text-on-surface-variant font-medium">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+                                East Side, 0.8 miles
+                            </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">payments</span>
+                                $210.00 Est.
+                            </div>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:px-8 py-3 rounded-full border border-outline text-on-surface font-label font-bold text-sm hover:bg-surface-variant transition-colors active:scale-95 duration-200" onclick="window.location.href='worker_dashboard.html'">
+                            Decline
+                        </button>
+<button class="flex-1 md:px-8 py-3 rounded-full bg-primary text-white font-label font-bold text-sm shadow-md hover:shadow-xl transition-all active:scale-95 duration-200" onclick="window.location.href='worker_dashboard.html'">
+                            Accept
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/90 dark:bg-stone-900/90 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(28,28,24,0.06)] border-none">
+<a class="flex flex-col items-center justify-center bg-orange-100 dark:bg-orange-900/40 text-orange-900 dark:text-orange-100 rounded-full px-5 py-2 transition-transform duration-300 translate-y-[-2px]" href="index.html">
+<span class="material-symbols-outlined fill-icon">home_work</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 hover:text-orange-700 dark:hover:text-orange-300" href="booking_history.html">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 hover:text-orange-700 dark:hover:text-orange-300" href="worker_dashboard.html">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Earnings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 hover:text-orange-700 dark:hover:text-orange-300" href="profile.html">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Profile</span>
+</a>
+</nav>
+<script>
+// Availability toggle
+const toggleBtn = document.querySelector('[data-availability-toggle]');
+if (toggleBtn) {
+  toggleBtn.addEventListener('click', async () => {
+    const isAvailable = toggleBtn.dataset.available === '1' ? 0 : 1;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        await updateAvailability(isAvailable, pos.coords.latitude, pos.coords.longitude);
+      }, async () => {
+        await updateAvailability(isAvailable, null, null);
+      });
+    } else {
+      await updateAvailability(isAvailable, null, null);
+    }
+  });
+}
+
+async function updateAvailability(isAvailable, lat, lng) {
+  try {
+    const res = await fetch('http://localhost:8000/api/workers/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ is_available: isAvailable, latitude: lat, longitude: lng })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      if (toggleBtn) toggleBtn.dataset.available = isAvailable;
+      console.log('Availability updated');
+    }
+  } catch(e) { console.log('Start XAMPP to sync availability'); }
+}
+
+// Load incoming bookings
+async function loadBookings() {
+  try {
+    const res = await fetch('http://localhost:8000/api/bookings/', { credentials: 'include' });
+    const data = await res.json();
+    if (data.status === 'success') {
+      const pending = data.data.filter(b => b.status === 'pending');
+      const container = document.getElementById('incoming-requests');
+      if (container && pending.length) {
+        container.innerHTML = pending.map(b => `
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-orange-100">
+            <p class="font-bold text-gray-800">${b.client_name}</p>
+            <p class="text-sm text-gray-500 mt-1">${b.service_desc}</p>
+            <p class="text-xs text-gray-400 mt-1">${new Date(b.booking_date).toLocaleDateString()}</p>
+            <div class="flex gap-2 mt-3">
+              <button onclick="respondBooking(${b.id},'accepted')" class="flex-1 py-2 bg-green-500 text-white rounded-full text-xs font-bold hover:bg-green-600">Accept</button>
+              <button onclick="respondBooking(${b.id},'cancelled')" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-300">Decline</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+  } catch(e) {}
+}
+
+async function respondBooking(id, status) {
+  try {
+    const res = await fetch('http://localhost:8000/api/bookings/', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ booking_id: id, status })
+    });
+    const data = await res.json();
+    if (data.status === 'success') loadBookings();
+  } catch(e) {}
+}
+
+loadBookings();
+</script>
+</body></html>
