@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Worknest — Find Skilled Workers Near You</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#9f402d',
+        'primary-light': '#e2725b',
+        'primary-container': '#ffdad3',
+        surface: '#fcf9f2',
+        'surface-container': '#f1eee7',
+        'on-surface': '#1c1c18',
+        secondary: '#56642b',
+        'secondary-container': '#d6e7a1',
+      },
+      fontFamily: { sans: ['Manrope', 'sans-serif'] },
+      borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
+    }
+  }
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Manrope', sans-serif; background: #fcf9f2; color: #1c1c18; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; }
+  .pebble-1 { border-radius: 3rem 1.5rem 3rem 2rem; }
+  .pebble-2 { border-radius: 1.5rem 3rem 2rem 3rem; }
+  .pebble-3 { border-radius: 2rem 3rem 1rem 3rem; }
+  .hide-scroll::-webkit-scrollbar { display: none; }
+  .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: all 0.6s ease; }
+  .fade-up.show { opacity: 1; transform: translateY(0); }
+  .worker-card { transition: all 0.3s; }
+  .worker-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(159,64,45,0.12); }
+  .category-btn { transition: all 0.3s; }
+  .category-btn:hover { transform: translateY(-4px) rotate(2deg); }
+</style>
+</head>
+<body>
+<div class="fixed inset-0 grain z-[60] pointer-events-none"></div>
+
+<!-- Nav -->
+<nav class="sticky top-0 z-50 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-[#ddc0ba]/20 px-6 py-4">
+  <div class="max-w-5xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#9f402d] text-3xl fill-icon">potted_plant</span>
+      <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
+    </div>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-[#56423e]">
+      <a href="#how" class="hover:text-[#9f402d] transition-colors">How it works</a>
+      <a href="#workers" class="hover:text-[#9f402d] transition-colors">Workers</a>
+      <a href="#categories" class="hover:text-[#9f402d] transition-colors">Services</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="frontend_user/login.html" class="text-sm font-bold text-[#9f402d] px-4 py-2 rounded-full hover:bg-[#ffdad3] transition-colors">Sign In</a>
+      <a href="frontend_user/signup.html" class="text-sm font-bold text-white bg-[#9f402d] px-5 py-2.5 rounded-full hover:bg-[#e2725b] transition-colors shadow-md">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
+  <div class="inline-flex items-center gap-2 bg-[#d6e7a1] text-[#56642b] px-4 py-2 rounded-full text-sm font-bold mb-8 fade-up">
+    <span class="w-2 h-2 rounded-full bg-[#56642b] animate-pulse"></span>
+    10 skilled workers available near you right now
+  </div>
+  <h1 class="text-5xl md:text-6xl font-black leading-tight tracking-tight text-[#1c1c18] mb-6 fade-up">
+    Find a trusted worker<br/>
+    <span class="text-[#9f402d]">for any job at home</span>
+  </h1>
+  <p class="text-lg text-[#56423e] max-w-xl mx-auto mb-10 leading-relaxed fade-up">
+    Plumber, electrician, maid, cook, carpenter — find verified workers near you. Book in minutes, pay after the job is done.
+  </p>
+  <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 fade-up">
+    <a href="frontend_user/signup.html" class="flex items-center justify-center gap-2 bg-[#9f402d] text-white font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e2725b] transition-all shadow-lg shadow-[#9f402d]/20 active:scale-95">
+      Find a Worker
+      <span class="material-symbols-outlined">arrow_forward</span>
+    </a>
+    <a href="frontend_worker/worker_signup_step_1.html" class="flex items-center justify-center gap-2 bg-[#f1eee7] text-[#9f402d] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#ffdad3] transition-all border border-[#ddc0ba] active:scale-95">
+      <span class="material-symbols-outlined">work</span>
+      Join as Worker
+    </a>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="relative max-w-xl mx-auto fade-up">
+    <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-[#89726d]">search</span>
+    <input type="text" placeholder="Search for plumber, maid, cook..." class="w-full bg-white border border-[#ddc0ba] rounded-full py-4 pl-14 pr-32 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20" id="hero-search"/>
+    <button onclick="doSearch()" class="absolute right-2 top-2 bottom-2 bg-[#9f402d] text-white px-6 rounded-full font-bold text-sm hover:bg-[#e2725b] transition-colors">Search</button>
+  </div>
+</section>
+
+<!-- Categories -->
+<section id="categories" class="max-w-5xl mx-auto px-6 py-12">
+  <h2 class="text-2xl font-black text-[#1c1c18] mb-8 fade-up">What do you need help with?</h2>
+  <div class="flex gap-5 overflow-x-auto hide-scroll pb-4">
+    <button onclick="goToWorkers('Plumber')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-[2.5rem] bg-[#ffdcbd] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#7d562d] text-3xl fill-icon">plumbing</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Plumber</span>
+    </button>
+    <button onclick="goToWorkers('Electrician')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-full bg-[#ffdad3] flex items-center justify-center shadow-sm border-2 border-dashed border-[#ddc0ba]">
+        <span class="material-symbols-outlined text-[#9f402d] text-3xl fill-icon">electric_bolt</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Electrician</span>
+    </button>
+    <button onclick="goToWorkers('House Maid')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-[2rem] rounded-tr-[3.5rem] bg-[#d6e7a1] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">cleaning_services</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Maid</span>
+    </button>
+    <button onclick="goToWorkers('Home Cook')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-[3.5rem] rounded-bl-[1.5rem] bg-[#d6e7a1] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">restaurant</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Cook</span>
+    </button>
+    <button onclick="goToWorkers('Carpenter')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-[3rem] rounded-tl-[1rem] bg-[#ffdcbd] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#7d562d] text-3xl fill-icon">carpenter</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Carpenter</span>
+    </button>
+    <button onclick="goToWorkers('Baby Sitter')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-[2rem] bg-[#ffdad3] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#9f402d] text-3xl fill-icon">child_care</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Baby Sitter</span>
+    </button>
+    <button onclick="goToWorkers('Painter')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-full bg-[#d6e7a1] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">format_paint</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Painter</span>
+    </button>
+    <button onclick="goToWorkers('Gardener')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-[2.5rem] bg-[#d6e7a1] flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">yard</span>
+      </div>
+      <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Gardener</span>
+    </button>
+  </div>
+</section>
+
+
+<!-- Workers Section -->
+<section id="workers" class="max-w-5xl mx-auto px-6 py-12">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-black text-[#1c1c18] fade-up">Top workers near you</h2>
+    <a href="frontend_user/signup.html" class="text-sm font-bold text-[#9f402d] hover:underline">See all →</a>
+  </div>
+  <div id="workers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Loaded by JS -->
+    <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-2xl font-black text-[#9f402d]">R</div>
+            <div>
+              <h3 class="font-bold text-[#1c1c18] text-lg">Ravi Kumar</h3>
+              <p class="text-[#9f402d] font-semibold text-sm">Plumber</p>
+            </div>
+          </div>
+          <span class="bg-[#d6e7a1] text-[#56642b] text-xs font-bold px-3 py-1 rounded-full">Verified</span>
+        </div>
+        <p class="text-[#56423e] text-sm leading-relaxed mb-4">Expert plumber with 8 years of experience. I fix leaks, install pipes, and handle all water-related work quickly.</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3 text-sm text-[#56423e]">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.8 (142 jobs)</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span> ₹300/hr</span>
+          </div>
+          <a href="frontend_user/signup.html" class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#d6e7a1] flex items-center justify-center text-2xl font-black text-[#56642b]">S</div>
+            <div>
+              <h3 class="font-bold text-[#1c1c18] text-lg">Sunita Devi</h3>
+              <p class="text-[#9f402d] font-semibold text-sm">House Maid</p>
+            </div>
+          </div>
+          <span class="bg-[#ffdad3] text-[#9f402d] text-xs font-bold px-3 py-1 rounded-full">Pro</span>
+        </div>
+        <p class="text-[#56423e] text-sm leading-relaxed mb-4">Reliable and hardworking. I do full home cleaning, utensil washing, and daily household work with care.</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3 text-sm text-[#56423e]">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.9 (210 jobs)</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span> ₹250/hr</span>
+          </div>
+          <a href="frontend_user/signup.html" class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#ffdcbd] flex items-center justify-center text-2xl font-black text-[#7d562d]">M</div>
+            <div>
+              <h3 class="font-bold text-[#1c1c18] text-lg">Meena Sharma</h3>
+              <p class="text-[#9f402d] font-semibold text-sm">Home Cook</p>
+            </div>
+          </div>
+          <span class="bg-[#ffdad3] text-[#9f402d] text-xs font-bold px-3 py-1 rounded-full">Pro</span>
+        </div>
+        <p class="text-[#56423e] text-sm leading-relaxed mb-4">I cook delicious home-style Indian food. Speciality in dal, sabzi, roti, and special occasion meals.</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3 text-sm text-[#56423e]">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.9 (175 jobs)</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span> ₹350/hr</span>
+          </div>
+          <a href="frontend_user/signup.html" class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-2xl font-black text-[#9f402d]">A</div>
+            <div>
+              <h3 class="font-bold text-[#1c1c18] text-lg">Arjun Singh</h3>
+              <p class="text-[#9f402d] font-semibold text-sm">Electrician</p>
+            </div>
+          </div>
+          <span class="bg-[#d6e7a1] text-[#56642b] text-xs font-bold px-3 py-1 rounded-full">Verified</span>
+        </div>
+        <p class="text-[#56423e] text-sm leading-relaxed mb-4">Certified electrician. I handle wiring, fan installation, switchboard repair, and all electrical work safely.</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3 text-sm text-[#56423e]">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.7 (98 jobs)</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span> ₹400/hr</span>
+          </div>
+          <a href="frontend_user/signup.html" class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how" class="max-w-5xl mx-auto px-6 py-16">
+  <div class="bg-[#f1eee7] pebble-1 p-10 md:p-14">
+    <h2 class="text-3xl font-black text-[#1c1c18] mb-10 text-center fade-up">How Worknest works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center fade-up">
+        <div class="w-16 h-16 rounded-full bg-[#9f402d] text-white flex items-center justify-center text-2xl font-black mx-auto mb-4">1</div>
+        <h3 class="font-bold text-[#1c1c18] text-lg mb-2">Search a worker</h3>
+        <p class="text-[#56423e] text-sm leading-relaxed">Search by category or find workers on the live map near your location.</p>
+      </div>
+      <div class="text-center fade-up" style="transition-delay:0.1s">
+        <div class="w-16 h-16 rounded-full bg-[#e2725b] text-white flex items-center justify-center text-2xl font-black mx-auto mb-4">2</div>
+        <h3 class="font-bold text-[#1c1c18] text-lg mb-2">Send a request</h3>
+        <p class="text-[#56423e] text-sm leading-relaxed">View their work, check reviews, and send a booking request with your job details.</p>
+      </div>
+      <div class="text-center fade-up" style="transition-delay:0.2s">
+        <div class="w-16 h-16 rounded-full bg-[#56642b] text-white flex items-center justify-center text-2xl font-black mx-auto mb-4">3</div>
+        <h3 class="font-bold text-[#1c1c18] text-lg mb-2">Job done!</h3>
+        <p class="text-[#56423e] text-sm leading-relaxed">Worker accepts, you get their contact number. Job done, then rate your experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Section -->
+<section class="max-w-5xl mx-auto px-6 py-8 mb-12">
+  <div class="bg-[#9f402d] pebble-2 p-10 text-white relative overflow-hidden">
+    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-4xl fill-icon">verified_user</span>
+      </div>
+      <div>
+        <h3 class="text-2xl font-black mb-2">Every worker is verified</h3>
+        <p class="text-white/80 max-w-lg leading-relaxed">All workers on Worknest go through identity verification. You can see their work photos, ratings, and reviews before booking. Your safety is our priority.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- For Workers CTA -->
+<section class="max-w-5xl mx-auto px-6 py-8 mb-16">
+  <div class="bg-[#f1eee7] rounded-2xl p-10 text-center border border-[#ddc0ba]/30">
+    <span class="material-symbols-outlined text-[#9f402d] text-5xl fill-icon mb-4 block">handyman</span>
+    <h2 class="text-3xl font-black text-[#1c1c18] mb-3">Are you a skilled worker?</h2>
+    <p class="text-[#56423e] max-w-md mx-auto mb-8 leading-relaxed">Create your profile, post your work photos, and get hired by people near you. Worknest gives every worker a digital identity.</p>
+    <a href="frontend_worker/worker_signup_step_1.html" class="inline-flex items-center gap-2 bg-[#9f402d] text-white font-bold px-8 py-4 rounded-full hover:bg-[#e2725b] transition-all shadow-lg active:scale-95">
+      Join as Worker <span class="material-symbols-outlined">arrow_forward</span>
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-[#ddc0ba]/30 py-10 px-6">
+  <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
+      <span class="font-black text-[#9f402d] text-xl">Worknest</span>
+    </div>
+    <p class="text-[#89726d] text-sm">© 2025 Worknest. Every skill deserves a platform.</p>
+    <div class="flex gap-5 text-sm font-semibold text-[#56423e]">
+      <a href="frontend_user/login.html" class="hover:text-[#9f402d] transition-colors">Sign In</a>
+      <a href="frontend_user/signup.html" class="hover:text-[#9f402d] transition-colors">Sign Up</a>
+      <a href="frontend_worker/worker_signup_step_1.html" class="hover:text-[#9f402d] transition-colors">For Workers</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function goToWorkers(skill) {
+  window.location.href = `frontend_user/signup.html`;
+}
+function doSearch() {
+  const q = document.getElementById('hero-search').value.trim();
+  if (q) window.location.href = `frontend_user/signup.html`;
+}
+document.getElementById('hero-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

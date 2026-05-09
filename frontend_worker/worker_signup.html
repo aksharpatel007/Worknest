@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Worknest — Join the Expert Network</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Be+Vietnam+Pro:wght@400;600&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #fcf9f4;
+        }
+
+        .headline {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .pebble-shape {
+            border-radius: 3rem 1.5rem 3rem 2rem;
+        }
+
+        .step-hidden {
+            display: none;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body class="text-[#3D405B] min-h-screen pb-10">
+
+    <header
+        class="sticky top-0 z-50 bg-[#fcf9f4]/80 backdrop-blur-md px-6 py-5 flex items-center justify-between border-b border-[#ddc0ba]/30">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#E07A5F] flex items-center justify-center shadow-lg">
+                <span class="material-symbols-outlined text-white">shield_person</span>
+            </div>
+            <h1 class="headline font-black text-[#E07A5F] text-xl uppercase tracking-tighter">Worknest</h1>
+        </div>
+        <span class="text-xs font-bold text-[#89726d]" id="step-indicator">Step 1 of 2</span>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-6 py-12">
+        <form id="worker-form" class="space-y-8" enctype="multipart/form-data">
+            <div id="error-msg"
+                class="hidden p-4 bg-red-50 text-red-700 text-sm font-bold rounded-2xl border border-red-100"></div>
+
+            <div id="step-1" class="space-y-6">
+                <div class="space-y-2">
+                    <h2 class="headline text-4xl font-extrabold text-[#3D405B]">Start your <span
+                            class="text-[#E07A5F]">journey.</span></h2>
+                    <p class="text-[#89726d]">Create your professional identity to join our trusted network.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Full
+                            Name</label>
+                        <input type="text" name="fullname" required placeholder="Enter legal name"
+                            class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Phone
+                            Number</label>
+                        <input type="tel" name="phone" required placeholder="+91 00000 00000"
+                            class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Email
+                        Address</label>
+                    <input type="email" name="email" required placeholder="name@example.com"
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Create
+                        Password</label>
+                    <input type="password" name="password" required placeholder="••••••••"
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                </div>
+
+                <button type="button" onclick="nextStep()"
+                    class="w-full py-5 bg-[#E07A5F] text-white font-bold rounded-2xl shadow-xl shadow-[#E07A5F]/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-3">
+                    Continue to Verification <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+
+            <div id="step-2" class="step-hidden space-y-6">
+                <div class="space-y-2">
+                    <h2 class="headline text-3xl font-extrabold text-[#3D405B]">Verification Details</h2>
+                    <p class="text-[#89726d]">Verify your craft to appear on the community map.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Choose
+                        Profession</label>
+                    <select name="skill"
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                        <optgroup label="Home Maintenance">
+                            <option value="Plumber">Plumber</option>
+                            <option value="Electrician">Electrician</option>
+                            <option value="Carpenter">Carpenter</option>
+                            <option value="Painter">Painter</option>
+                            <option value="Mason (Mistri)">Mason (Mistri)</option>
+                            <option value="Appliance Repair">Appliance Repair</option>
+                        </optgroup>
+                        <optgroup label="Cleaning & Help">
+                            <option value="House Maid">House Maid</option>
+                            <option value="Laundry / Dhobi">Laundry / Dhobi</option>
+                            <option value="Cleaning Specialist">Cleaning Specialist</option>
+                            <option value="Cook / Chef">Cook / Chef</option>
+                        </optgroup>
+                        <optgroup label="Outdoor & Others">
+                            <option value="Gardener">Gardener</option>
+                            <option value="Car Washer">Car Washer</option>
+                            <option value="Security Guard">Security Guard</option>
+                            <option value="Driver">Driver</option>
+                            <option value="Mechanic">Mechanic</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Hourly Rate
+                        (₹)</label>
+                    <input type="number" name="hourly_rate" placeholder="300"
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Brief Bio</label>
+                    <textarea name="bio" placeholder="Tell us about your experience..."
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm resize-none"
+                        rows="3"></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Government ID
+                        Proof (License/ID)</label>
+                    <div class="relative group">
+                        <input type="file" name="id_proof_image" id="id_proof" accept="image/*" class="hidden">
+                        <label for="id_proof"
+                            class="flex flex-col items-center justify-center p-10 border-2 border-dashed border-[#ddc0ba] rounded-3xl bg-white/50 cursor-pointer hover:border-[#E07A5F] transition-colors">
+                            <span class="material-symbols-outlined text-4xl text-[#E07A5F] mb-2">upload_file</span>
+                            <span class="text-sm font-bold text-[#3D405B]" id="file-name">Click to upload ID
+                                photo</span>
+                            <span class="text-xs text-[#89726d] mt-1">PNG, JPG up to 5MB</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" onclick="prevStep()"
+                        class="flex-1 py-3 bg-stone-200 text-stone-600 font-bold rounded-2xl hover:bg-stone-300 transition-colors">Back</button>
+                    <button type="submit" id="submit-btn"
+                        class="flex- py-4 bg-[#81B29A] text-white font-bold rounded-2xl shadow-xl shadow-[#81B29A]/20 hover:scale-[1.02] transition-transform">Register</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        function nextStep() {
+            document.getElementById('step-1').classList.add('step-hidden');
+            document.getElementById('step-2').classList.remove('step-hidden');
+            document.getElementById('step-indicator').textContent = "Step 2 of 2";
+            window.scrollTo(0, 0);
+        }
+
+        function prevStep() {
+            document.getElementById('step-2').classList.add('step-hidden');
+            document.getElementById('step-1').classList.remove('step-hidden');
+            document.getElementById('step-indicator').textContent = "Step 1 of 2";
+        }
+
+        document.getElementById('id_proof').addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                const fileName = this.files.name; // <--- Corrected with
+                document.getElementById('file-name').textContent = fileName;
+                document.getElementById('file-name').classList.add('text-[#81B29A]');
+            } else {
+                document.getElementById('file-name').textContent = "Click to upload ID photo";
+            }
+        });
+
+        document.getElementById('worker-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            const errorEl = document.getElementById('error-msg');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Registering...";
+            errorEl.classList.add('hidden');
+
+            const formData = new FormData(e.target);
+
+            // Ensure these match your Django User model/API expectations
+            formData.append('role_id', '2');
+            formData.append('is_verified', 'false');
+
+            try {
+                const res = await fetch('http://localhost:8000/api/signup/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    // 1. Alert the user about the verification process
+                    alert("Application Submitted! You will be visible on the map once an admin verifies your ID.");
+
+                    // 2. Save the session or worker ID if needed for the dashboard
+                    localStorage.setItem('session_key', data.session_key);
+
+                    // 3. Redirect specifically to the worker dashboard
+                    window.location.href = 'worker_dashboard.html';
+                } else {
+                    errorEl.textContent = data.message || "Registration failed.";
+                    errorEl.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Register";
+                }
+            } catch (err) {
+                errorEl.textContent = "Cannot connect to server. Check if Django is running.";
+                errorEl.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Register";
+            }
+        });
+    </script>
+</body>
+
+</html>
