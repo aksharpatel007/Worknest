@@ -25,6 +25,7 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default=False)
     id_proof_image = models.ImageField(upload_to='id_proofs/', null=True, blank=True)
     trust_score = models.IntegerField(default=0)
+    is_fraud = models.BooleanField(default=False)
     verification_date = models.DateTimeField(null=True, blank=True)
 
 class Booking(models.Model):

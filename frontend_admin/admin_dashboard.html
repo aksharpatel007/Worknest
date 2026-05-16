@@ -1,319 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Worknest Admin — Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-  body { font-family: 'Manrope', sans-serif; background: #faf7f2; }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .nav-link { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:9999px; font-size:14px; font-weight:600; color:#56423e; transition:all 0.2s; text-decoration:none; }
-  .nav-link:hover { background: rgba(255,255,255,0.6); color:#9f402d; }
-  .nav-link.active { background: white; color:#9f402d; font-weight:700; box-shadow:0 2px 8px rgba(159,64,45,0.1); }
-  .stat-card { cursor:pointer; transition:all 0.2s; }
-  .stat-card:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(159,64,45,0.1); }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worknest Admin — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #faf7f2;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #56423e;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #9f402d;
+    }
+
+    .nav-link.active {
+      background: white;
+      color: #9f402d;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
+    }
+
+    .stat-card {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(159, 64, 45, 0.1);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex text-[#1c1c18]">
 
-<!-- Sidebar -->
-<aside class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
-  <div class="px-6 mb-8 flex items-center gap-3">
-    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
-      <span class="material-symbols-outlined text-white text-xl fill-icon">potted_plant</span>
-    </div>
-    <div>
-      <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
-      <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
-    </div>
-  </div>
-  <nav class="flex-1 flex flex-col gap-1 px-3">
-    <a href="admin_dashboard.html" class="nav-link active"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
-    <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Users & Workers</a>
-    <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
-    <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
-    <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
-  </nav>
-  <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
-    <a href="http://localhost:8000/api/logout/" class="nav-link"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
-  </div>
-</aside>
+<body class="h-screen flex overflow-hidden text-[#1c1c18]">
 
-<!-- Main -->
-<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
-  <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
-    <h2 class="text-2xl font-black text-[#1c1c18]">Dashboard</h2>
-    <div class="flex items-center gap-3">
-      <button class="p-2 rounded-full hover:bg-[#f1eee7] transition-colors">
-        <span class="material-symbols-outlined text-[#56423e]">notifications</span>
-      </button>
-      <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
-        <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
+  <aside
+    class="hidden md:flex flex-col w-64 h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0 overflow-y-auto">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl"
+          style="font-variation-settings: 'FILL' 1;">security</span>
+      </div>
+      <div>
+        <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+        <p class="text-xs text-[#89726d] font-medium">Safety Command</p>
       </div>
     </div>
-  </header>
+    <nav class="flex-1 flex flex-col gap-1 px-3">
+      <a href="admin_dashboard.html" class="nav-link active"><span
+          class="material-symbols-outlined text-xl">dashboard</span>
+        Dashboard</a>
+      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+        Users</a>
+      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+        Verify Workers</a>
+      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span>
+        Fraud Reports</a>
+      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+        Settings</a>
+    </nav>
+    <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+        class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+    </div>
+  </aside>
 
-  <div class="p-8 max-w-6xl w-full mx-auto">
+  <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
+    <header
+      class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
+      <h2 class="text-2xl font-black text-[#1c1c18]">Dashboard</h2>
+      <div class="flex items-center gap-3">
+        <button class="p-2 rounded-full hover:bg-[#f1eee7] transition-colors">
+          <span class="material-symbols-outlined text-[#56423e]">notifications</span>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
+        </div>
+      </div>
+    </header>
 
-    <!-- Stat Cards — all clickable -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
-      <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20" onclick="showSection('users')">
-        <span class="material-symbols-outlined text-blue-500 text-3xl mb-3 block fill-icon">group</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-users">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Total Users</p>
-        <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+    <div class="p-8 max-w-6xl w-full mx-auto">
+
+      <!-- Stat Cards — all clickable -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
+        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20"
+          onclick="showSection('users')">
+          <span class="material-symbols-outlined text-blue-500 text-3xl mb-3 block fill-icon">group</span>
+          <p class="text-3xl font-black text-[#1c1c18]" id="stat-users">—</p>
+          <p class="text-sm font-semibold text-[#89726d] mt-1">Total Users</p>
+          <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+        </div>
+        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20"
+          onclick="showSection('workers')">
+          <span class="material-symbols-outlined text-[#9f402d] text-3xl mb-3 block fill-icon">engineering</span>
+          <p class="text-3xl font-black text-[#1c1c18]" id="stat-workers">—</p>
+          <p class="text-sm font-semibold text-[#89726d] mt-1">Total Workers</p>
+          <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+        </div>
+        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20"
+          onclick="showSection('bookings')">
+          <span class="material-symbols-outlined text-green-500 text-3xl mb-3 block fill-icon">event_available</span>
+          <p class="text-3xl font-black text-[#1c1c18]" id="stat-bookings">—</p>
+          <p class="text-sm font-semibold text-[#89726d] mt-1">Total Bookings</p>
+          <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+        </div>
+        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20"
+          onclick="showSection('reports')">
+          <span class="material-symbols-outlined text-red-500 text-3xl mb-3 block fill-icon">report</span>
+          <p class="text-3xl font-black text-[#1c1c18]" id="stat-reports">—</p>
+          <p class="text-sm font-semibold text-[#89726d] mt-1">Open Reports</p>
+          <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+        </div>
       </div>
-      <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20" onclick="showSection('workers')">
-        <span class="material-symbols-outlined text-[#9f402d] text-3xl mb-3 block fill-icon">engineering</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-workers">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Total Workers</p>
-        <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+
+      <!-- Dynamic Section -->
+      <div id="detail-section"
+        class="hidden bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20 mb-8">
+        <div class="px-8 py-5 border-b border-[#f1eee7] flex items-center justify-between">
+          <h3 class="text-lg font-bold text-[#1c1c18]" id="section-title">Details</h3>
+          <button onclick="document.getElementById('detail-section').classList.add('hidden')"
+            class="text-sm text-[#89726d] hover:text-[#9f402d] font-bold">Close ✕</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d]">
+              <tr id="table-head"></tr>
+            </thead>
+            <tbody id="table-body" class="divide-y divide-[#f1eee7] text-sm"></tbody>
+          </table>
+        </div>
       </div>
-      <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20" onclick="showSection('bookings')">
-        <span class="material-symbols-outlined text-green-500 text-3xl mb-3 block fill-icon">event_available</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-bookings">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Total Bookings</p>
-        <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
-      </div>
-      <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20" onclick="showSection('reports')">
-        <span class="material-symbols-outlined text-red-500 text-3xl mb-3 block fill-icon">report</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-reports">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Open Reports</p>
-        <p class="text-xs text-[#9f402d] font-bold mt-2">Click to view →</p>
+
+      <!-- Recent Members -->
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
+        <div class="px-8 py-5 border-b border-[#f1eee7] flex items-center justify-between">
+          <h3 class="text-lg font-bold text-[#1c1c18]">Recent Members</h3>
+          <a href="admin_users.html" class="text-sm font-bold text-[#9f402d] hover:underline">View All →</a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d]">
+              <tr>
+                <th class="px-8 py-4">Name</th>
+                <th class="px-8 py-4">Role</th>
+                <th class="px-8 py-4">Joined</th>
+                <th class="px-8 py-4">Status</th>
+              </tr>
+            </thead>
+            <tbody id="users-table" class="divide-y divide-[#f1eee7] text-sm">
+              <tr>
+                <td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+  </main>
 
-    <!-- Dynamic Section -->
-    <div id="detail-section" class="hidden bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20 mb-8">
-      <div class="px-8 py-5 border-b border-[#f1eee7] flex items-center justify-between">
-        <h3 class="text-lg font-bold text-[#1c1c18]" id="section-title">Details</h3>
-        <button onclick="document.getElementById('detail-section').classList.add('hidden')" class="text-sm text-[#89726d] hover:text-[#9f402d] font-bold">Close ✕</button>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d]">
-            <tr id="table-head"></tr>
-          </thead>
-          <tbody id="table-body" class="divide-y divide-[#f1eee7] text-sm"></tbody>
-        </table>
-      </div>
-    </div>
+  <script>
+    const API = 'http://localhost:8000/api';
+    let allData = { users: [], workers: [], bookings: [] };
+    let dataLoaded = false;
 
-    <!-- Recent Members -->
-    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
-      <div class="px-8 py-5 border-b border-[#f1eee7] flex items-center justify-between">
-        <h3 class="text-lg font-bold text-[#1c1c18]">Recent Members</h3>
-        <a href="admin_users.html" class="text-sm font-bold text-[#9f402d] hover:underline">View All →</a>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d]">
-            <tr>
-              <th class="px-8 py-4">Name</th>
-              <th class="px-8 py-4">Role</th>
-              <th class="px-8 py-4">Joined</th>
-              <th class="px-8 py-4">Status</th>
-            </tr>
-          </thead>
-          <tbody id="users-table" class="divide-y divide-[#f1eee7] text-sm">
-            <tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</main>
+    async function loadStats() {
+      try {
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = { 'Content-Type': 'application/json' };
+        if (sessionKey) {
+          headers['X-Session-Key'] = sessionKey;
+        }
 
-<script>
-const API = 'http://localhost:8000/api';
-let allData = { users: [], workers: [], bookings: [] };
-let dataLoaded = false;
+        const res = await fetch(`${API}/admin/stats/`, {
+          credentials: 'include',
+          headers: headers
+        });
+        const data = await res.json();
 
-async function loadStats() {
-  try {
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = { 'Content-Type': 'application/json' };
-    if (sessionKey) {
-      headers['X-Session-Key'] = sessionKey;
-    }
-    
-    const res = await fetch(`${API}/admin/stats/`, { 
-      credentials: 'include',
-      headers: headers
-    });
-    const data = await res.json();
-    
-    // Check authentication
-    if (data.status === 'error' && data.message.includes('Admin access required')) {
-      alert('Session expired or not logged in. Redirecting to login...');
-      localStorage.removeItem('session_key');
-      window.location.href = '../frontend_user/login.html';
-      return;
-    }
-    
-    if (data.status === 'success') {
-      document.getElementById('stat-users').textContent = data.data.total_users;
-      document.getElementById('stat-workers').textContent = data.data.total_workers;
-      document.getElementById('stat-bookings').textContent = data.data.total_bookings;
-      document.getElementById('stat-reports').textContent = data.data.open_reports;
-    }
-  } catch(e) {
-    console.error('Error loading stats:', e);
-  }
-}
+        // Check authentication
+        if (data.status === 'error' && data.message.includes('Admin access required')) {
+          alert('Session expired or not logged in. Redirecting to login...');
+          localStorage.removeItem('session_key');
+          window.location.href = '../frontend_user/login.html';
+          return;
+        }
 
-async function loadUsers() {
-  const tbody = document.getElementById('users-table');
-  tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
-  
-  try {
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = { 'Content-Type': 'application/json' };
-    if (sessionKey) {
-      headers['X-Session-Key'] = sessionKey;
-    }
-    
-    const res = await fetch(`${API}/admin/users/`, { 
-      credentials: 'include',
-      headers: headers
-    });
-    const data = await res.json();
-    console.log('API Response:', data); // Debug log
-    console.log('Response status:', res.status); // Debug log
-    
-    // Check if authentication failed
-    if (data.status === 'error') {
-      if (data.message.includes('Admin access required')) {
-        alert('You are not logged in as admin. Redirecting to login page...');
-        localStorage.removeItem('session_key');
-        window.location.href = '../frontend_user/login.html';
-        return;
+        if (data.status === 'success') {
+          document.getElementById('stat-users').textContent = data.data.total_users;
+          document.getElementById('stat-workers').textContent = data.data.total_workers;
+          document.getElementById('stat-bookings').textContent = data.data.total_bookings;
+          document.getElementById('stat-reports').textContent = data.data.open_reports;
+        }
+      } catch (e) {
+        console.error('Error loading stats:', e);
       }
-      alert('API Error: ' + data.message);
-      tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Error: ' + data.message + '</td></tr>';
-      return;
     }
-    
-    if (data.status === 'success') {
-      console.log('Total users from API:', data.data.length); // Debug log
-      
-      // Store all data for filtering
-      allData.users = data.data.filter(u => u.role_id == 3);
-      allData.workers = data.data.filter(u => u.role_id == 2);
-      allData.admins = data.data.filter(u => u.role_id == 1);
-      
-      console.log('Filtered - Users:', allData.users.length, 'Workers:', allData.workers.length, 'Admins:', allData.admins.length); // Debug log
-      
-      dataLoaded = true; // Mark data as loaded
-      
-      // Display ALL users in Recent Members table (admins, workers, and users)
-      const allUsers = data.data.slice(0, 10); // Show first 10 of all types
-      
-      if (allUsers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">No users yet</td></tr>';
-      } else {
-        tbody.innerHTML = allUsers.map(u => `
+
+    async function loadUsers() {
+      const tbody = document.getElementById('users-table');
+      tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
+
+      try {
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = { 'Content-Type': 'application/json' };
+        if (sessionKey) {
+          headers['X-Session-Key'] = sessionKey;
+        }
+
+        const res = await fetch(`${API}/admin/users/`, {
+          credentials: 'include',
+          headers: headers
+        });
+        const data = await res.json();
+
+        // Check if authentication failed
+        if (data.status === 'error') {
+          if (data.message.includes('Admin access required')) {
+            alert('You are not logged in as admin. Redirecting to login page...');
+            localStorage.removeItem('session_key');
+            window.location.href = '../frontend_user/login.html';
+            return;
+          }
+          alert('API Error: ' + data.message);
+          tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Error: ' + data.message + '</td></tr>';
+          return;
+        }
+
+        if (data.status === 'success') {
+
+          // Store all data for filtering
+          allData.users = data.data.filter(u => u.role_id == 3);
+          allData.workers = data.data.filter(u => u.role_id == 2);
+          allData.admins = data.data.filter(u => u.role_id == 1);
+
+          dataLoaded = true; // Mark data as loaded
+
+          // Display ALL users in Recent Members table (admins, workers, and users)
+          const allUsers = data.data.slice(0, 10); // Show first 10 of all types
+
+          if (allUsers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">No users yet</td></tr>';
+          } else {
+            tbody.innerHTML = allUsers.map(u => `
           <tr class="hover:bg-[#f6f3ec] transition-colors">
             <td class="px-8 py-4 font-semibold text-[#1c1c18]">${u.fullname}</td>
-            <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${u.role_id==2?'bg-[#ffdad3] text-[#9f402d]':u.role_id==1?'bg-red-100 text-red-700':'bg-blue-100 text-blue-700'}">${u.role_id==1?'Admin':u.role_id==2?'Worker':'User'}</span></td>
+            <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${u.role_id == 2 ? 'bg-[#ffdad3] text-[#9f402d]' : u.role_id == 1 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}">${u.role_id == 1 ? 'Admin' : u.role_id == 2 ? 'Worker' : 'User'}</span></td>
             <td class="px-8 py-4 text-[#89726d]">${new Date(u.created_at).toLocaleDateString('en-IN')}</td>
             <td class="px-8 py-4"><span class="w-2 h-2 rounded-full bg-green-400 inline-block mr-2"></span>Active</td>
           </tr>`).join('');
+          }
+        } else {
+          console.error('API returned error:', data);
+        }
+      } catch (e) {
+        console.error('Error loading users:', e);
+        alert('Cannot connect to server. Make sure Django server is running on http://localhost:8000');
+        tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Error loading data</td></tr>';
       }
-    } else {
-      console.error('API returned error:', data);
     }
-  } catch(e) { 
-    console.error('Error loading users:', e);
-    alert('Cannot connect to server. Make sure Django server is running on http://localhost:8000');
-    tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Error loading data</td></tr>'; 
-  }
-}
 
-async function showSection(type) {
-  // If data not loaded yet, wait for it
-  if (!dataLoaded) {
-    const sec = document.getElementById('detail-section');
-    sec.classList.remove('hidden');
-    const body = document.getElementById('table-body');
-    body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
-    await loadUsers();
-  }
-  const sec = document.getElementById('detail-section');
-  sec.classList.remove('hidden');
-  const head = document.getElementById('table-head');
-  const body = document.getElementById('table-body');
-  const title = document.getElementById('section-title');
-
-  console.log('showSection called with type:', type); // Debug log
-  console.log('Current allData:', allData); // Debug log
-  
-  if (type === 'users') {
-    title.textContent = `All Users (${allData.users.length})`;
-    head.innerHTML = '<th class="px-6 py-4">Name</th><th class="px-6 py-4">Email</th><th class="px-6 py-4">Phone</th><th class="px-6 py-4">Joined</th>';
-    
-    if (allData.users.length === 0) {
-      body.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-[#89726d]">No users found</td></tr>';
-    } else {
-      body.innerHTML = allData.users.map(u => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${u.fullname}</td><td class="px-6 py-4 text-[#89726d]">${u.email}</td><td class="px-6 py-4 text-[#89726d]">${u.phone||'—'}</td><td class="px-6 py-4 text-[#89726d]">${new Date(u.created_at).toLocaleDateString('en-IN')}</td></tr>`).join('');
-    }
-  } else if (type === 'workers') {
-    title.textContent = `All Workers (${allData.workers.length})`;
-    head.innerHTML = '<th class="px-6 py-4">Name</th><th class="px-6 py-4">Skill</th><th class="px-6 py-4">Rating</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Jobs</th>';
-    
-    if (allData.workers.length === 0) {
-      body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No workers found</td></tr>';
-    } else {
-      body.innerHTML = allData.workers.map(u => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${u.fullname}</td><td class="px-6 py-4 text-[#9f402d] font-semibold">${u.skill||'—'}</td><td class="px-6 py-4">⭐ ${u.rating||'0.00'}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${u.worker_status==='pro'?'bg-[#ffdad3] text-[#9f402d]':u.worker_status==='verified'?'bg-[#d6e7a1] text-[#56642b]':'bg-gray-100 text-gray-600'}">${u.worker_status||'newbie'}</span></td><td class="px-6 py-4 text-[#89726d]">${u.total_jobs||0}</td></tr>`).join('');
-    }
-  } else if (type === 'bookings') {
-    title.textContent = 'All Bookings';
-    head.innerHTML = '<th class="px-6 py-4">User</th><th class="px-6 py-4">Worker</th><th class="px-6 py-4">Description</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Date</th>';
-    body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Loading...</td></tr>';
-    
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = {};
-    if (sessionKey) headers['X-Session-Key'] = sessionKey;
-    
-    fetch(`${API}/admin/bookings/`, { credentials: 'include', headers }).then(r => r.json()).then(d => {
-      if (d.status === 'success' && d.data.length) {
-        const statusColors = { pending:'bg-yellow-100 text-yellow-700', accepted:'bg-green-100 text-green-700', completed:'bg-blue-100 text-blue-700', cancelled:'bg-red-100 text-red-700' };
-        body.innerHTML = d.data.map(b => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${b.client_name}</td><td class="px-6 py-4 text-[#9f402d] font-semibold">${b.worker_name}</td><td class="px-6 py-4 text-[#89726d] max-w-xs truncate">${b.service_desc}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[b.status]||'bg-gray-100 text-gray-600'}">${b.status}</span></td><td class="px-6 py-4 text-[#89726d]">${new Date(b.booking_date).toLocaleDateString('en-IN')}</td></tr>`).join('');
-      } else {
-        body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No bookings yet</td></tr>';
+    async function showSection(type) {
+      // If data not loaded yet, wait for it
+      if (!dataLoaded) {
+        const sec = document.getElementById('detail-section');
+        sec.classList.remove('hidden');
+        const body = document.getElementById('table-body');
+        body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
+        await loadUsers();
       }
-    }).catch(() => {
-      body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Error loading bookings</td></tr>';
-    });
-  } else if (type === 'reports') {
-    title.textContent = 'All Fraud Reports';
-    head.innerHTML = '<th class="px-6 py-4">Reporter</th><th class="px-6 py-4">Reported User</th><th class="px-6 py-4">Reason</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Date</th>';
-    body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Loading...</td></tr>';
-    
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = {};
-    if (sessionKey) headers['X-Session-Key'] = sessionKey;
-    
-    fetch(`${API}/admin/reports/`, { credentials: 'include', headers }).then(r => r.json()).then(d => {
-      if (d.status === 'success' && d.data.length) {
-        const statusColors = { open:'bg-red-100 text-red-700', investigating:'bg-yellow-100 text-yellow-700', resolved:'bg-green-100 text-green-700' };
-        body.innerHTML = d.data.map(r => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${r.reporter_name}</td><td class="px-6 py-4 text-[#9f402d] font-semibold">${r.reported_name}</td><td class="px-6 py-4 text-[#89726d] max-w-xs">${r.reason}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[r.status]||'bg-gray-100 text-gray-600'}">${r.status}</span></td><td class="px-6 py-4 text-[#89726d]">${new Date(r.created_at).toLocaleDateString('en-IN')}</td></tr>`).join('');
-      } else {
-        body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No reports yet</td></tr>';
-      }
-    }).catch(() => {
-      body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Error loading reports</td></tr>';
-    });
-  }
-  sec.scrollIntoView({ behavior: 'smooth' });
-}
+      const sec = document.getElementById('detail-section');
+      sec.classList.remove('hidden');
+      const head = document.getElementById('table-head');
+      const body = document.getElementById('table-body');
+      const title = document.getElementById('section-title');
 
-loadStats();
-loadUsers();
-</script>
+      console.log('showSection called with type:', type); // Debug log
+      console.log('Current allData:', allData); // Debug log
+
+      if (type === 'users') {
+        title.textContent = `All Users (${allData.users.length})`;
+        head.innerHTML = '<th class="px-6 py-4">Name</th><th class="px-6 py-4">Email</th><th class="px-6 py-4">Phone</th><th class="px-6 py-4">Joined</th>';
+
+        if (allData.users.length === 0) {
+          body.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-[#89726d]">No users found</td></tr>';
+        } else {
+          body.innerHTML = allData.users.map(u => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${u.fullname}</td><td class="px-6 py-4 text-[#89726d]">${u.email}</td><td class="px-6 py-4 text-[#89726d]">${u.phone || '—'}</td><td class="px-6 py-4 text-[#89726d]">${new Date(u.created_at).toLocaleDateString('en-IN')}</td></tr>`).join('');
+        }
+      } else if (type === 'workers') {
+        title.textContent = `All Workers (${allData.workers.length})`;
+        head.innerHTML = '<th class="px-6 py-4">Name</th><th class="px-6 py-4">Skill</th><th class="px-6 py-4">Rating</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Jobs</th>';
+
+        if (allData.workers.length === 0) {
+          body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No workers found</td></tr>';
+        } else {
+          body.innerHTML = allData.workers.map(u => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${u.fullname}</td><td class="px-6 py-4 text-[#9f402d] font-semibold">${u.skill || '—'}</td><td class="px-6 py-4">⭐ ${u.rating || '0.00'}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${u.worker_status === 'pro' ? 'bg-[#ffdad3] text-[#9f402d]' : u.worker_status === 'verified' ? 'bg-[#d6e7a1] text-[#56642b]' : 'bg-gray-100 text-gray-600'}">${u.worker_status || 'newbie'}</span></td><td class="px-6 py-4 text-[#89726d]">${u.total_jobs || 0}</td></tr>`).join('');
+        }
+      } else if (type === 'bookings') {
+        title.textContent = 'All Bookings';
+        head.innerHTML = '<th class="px-6 py-4">User</th><th class="px-6 py-4">Worker</th><th class="px-6 py-4">Description</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Date</th>';
+        body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Loading...</td></tr>';
+
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = {};
+        if (sessionKey) headers['X-Session-Key'] = sessionKey;
+
+        fetch(`${API}/admin/bookings/`, { credentials: 'include', headers }).then(r => r.json()).then(d => {
+          if (d.status === 'success' && d.data.length) {
+            const statusColors = { pending: 'bg-yellow-100 text-yellow-700', accepted: 'bg-green-100 text-green-700', completed: 'bg-blue-100 text-blue-700', cancelled: 'bg-red-100 text-red-700' };
+            body.innerHTML = d.data.map(b => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${b.client_name}</td><td class="px-6 py-4 text-[#9f402d] font-semibold">${b.worker_name}</td><td class="px-6 py-4 text-[#89726d] max-w-xs truncate">${b.service_desc}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[b.status] || 'bg-gray-100 text-gray-600'}">${b.status}</span></td><td class="px-6 py-4 text-[#89726d]">${new Date(b.booking_date).toLocaleDateString('en-IN')}</td></tr>`).join('');
+          } else {
+            body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No bookings yet</td></tr>';
+          }
+        }).catch(() => {
+          body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Error loading bookings</td></tr>';
+        });
+      } else if (type === 'reports') {
+        title.textContent = 'All Fraud Reports';
+        head.innerHTML = '<th class="px-6 py-4">Reporter</th><th class="px-6 py-4">Reported User</th><th class="px-6 py-4">Reason</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Date</th>';
+        body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Loading...</td></tr>';
+
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = {};
+        if (sessionKey) headers['X-Session-Key'] = sessionKey;
+
+        fetch(`${API}/admin/reports/`, { credentials: 'include', headers }).then(r => r.json()).then(d => {
+          if (d.status === 'success' && d.data.length) {
+            const statusColors = { open: 'bg-red-100 text-red-700', investigating: 'bg-yellow-100 text-yellow-700', resolved: 'bg-green-100 text-green-700' };
+            body.innerHTML = d.data.map(r => `<tr class="hover:bg-[#f6f3ec]"><td class="px-6 py-4 font-semibold">${r.reporter_name}</td><td class="px-6 py-4 text-[#9f402d] font-semibold">${r.reported_name}</td><td class="px-6 py-4 text-[#89726d] max-w-xs">${r.reason}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[r.status] || 'bg-gray-100 text-gray-600'}">${r.status}</span></td><td class="px-6 py-4 text-[#89726d]">${new Date(r.created_at).toLocaleDateString('en-IN')}</td></tr>`).join('');
+          } else {
+            body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No reports yet</td></tr>';
+          }
+        }).catch(() => {
+          body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">Error loading reports</td></tr>';
+        });
+      }
+      sec.scrollIntoView({ behavior: 'smooth' });
+    }
+    //
+    function adminLogout() {
+      // 1. Clear credentials
+      localStorage.removeItem('session_key');
+
+      // 2. Clear all local storage for safety
+      localStorage.clear();
+
+      // 3. Redirect to login
+      // Note: Check if the path '../frontend_user/login.html' is correct for your folder structure
+      window.location.href = '../frontend_user/login.html';
+    }
+
+    loadStats();
+    loadUsers();
+  </script>
 </body>
+
 </html>

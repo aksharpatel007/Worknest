@@ -1,141 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Worknest Admin — Verify Workers</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-  body { font-family: 'Manrope', sans-serif; background: #faf7f2; }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .nav-link { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:9999px; font-size:14px; font-weight:600; color:#56423e; transition:all 0.2s; text-decoration:none; }
-  .nav-link:hover { background: rgba(255,255,255,0.6); color:#9f402d; }
-  .nav-link.active { background: white; color:#9f402d; font-weight:700; box-shadow:0 2px 8px rgba(159,64,45,0.1); }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worknest Admin — Verification Queue</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    html,
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #faf7f2;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #56423e;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #9f402d;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #ddc0ba;
+      border-radius: 10px;
+    }
+
+    .nav-link.active {
+      background: white;
+      color: #9f402d;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex text-[#1c1c18]">
 
-<aside class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
-  <div class="px-6 mb-8 flex items-center gap-3">
-    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
-      <span class="material-symbols-outlined text-white text-xl fill-icon">potted_plant</span>
-    </div>
-    <div>
-      <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
-      <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
-    </div>
-  </div>
-  <nav class="flex-1 flex flex-col gap-1 px-3">
-    <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
-    <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Users & Workers</a>
-    <a href="admin_verify.html" class="nav-link active"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
-    <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
-    <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
-  </nav>
-  <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
-    <a href="http://localhost:8000/api/logout/" class="nav-link"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
-  </div>
-</aside>
+<body class="flex flex-row h-screen w-screen bg-[#faf7f2] overflow-hidden text-[#1c1c18]">
 
-<main class="flex-1 flex flex-col min-w-0">
-  <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
-    <h2 class="text-2xl font-black text-[#1c1c18]">Worker Verification Queue</h2>
-  </header>
-
-  <div class="p-8 max-w-5xl w-full mx-auto">
-    <div class="bg-orange-50 border border-orange-200 rounded-2xl p-5 mb-8 flex items-start gap-4">
-      <span class="material-symbols-outlined text-orange-500 text-2xl mt-0.5" style="font-variation-settings:'FILL' 1;">info</span>
+  <aside
+    class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl"
+          style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+      </div>
       <div>
-        <p class="font-bold text-orange-800">Verification Rules</p>
-        <p class="text-sm text-[#9f402d] mt-1">Workers start as <strong>Newbie</strong>. Upgrade to <strong>Verified</strong> after 3 completed jobs with rating &gt; 4.0. Upgrade to <strong>Pro</strong> after 10 jobs with rating &gt; 4.5.</p>
+        <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+        <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
       </div>
     </div>
+    <nav class="flex-1 flex flex-col gap-1 px-3">
+      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
+        Dashboard</a>
+      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span>
+        Verify Users</a>
+      <a href="admin_verify.html" class="nav-link active"><span class="material-symbols-outlined text-xl">verified_user</span>
+        Verify Workers</a>
+      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud
+        Reports</a>
+      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+        Settings</a>
+    </nav>
+    <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+      <a href="#" onclick="adminLogout()" class="nav-link text-red-600"><span
+          class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+    </div>
+  </aside>
 
-    <div id="workers-list" class="space-y-4">
-      <div class="text-center py-12 text-gray-400">Loading workers...</div>
+  <main class="flex-1 h-full overflow-y-auto custom-scrollbar flex flex-col min-w-0">
+    <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md px-8 py-4 border-b border-[#ddc0ba]/20">
+      <h2 class="text-2xl font-black">Verification Queue</h2>
+    </header>
+
+    <div class="p-8 w-full max-w-7xl mx-auto space-y-6">
+
+      <div class="relative group">
+        <span
+          class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#89726d] group-focus-within:text-[#9f402d] transition-colors">search</span>
+        <input type="text" id="worker-search" onkeyup="handleSearch()"
+          placeholder="Search by name, email, or skill (e.g. Plumber)..."
+          class="w-full pl-12 pr-6 py-4 bg-white rounded-2xl border border-[#ddc0ba]/30 shadow-sm focus:ring-2 focus:ring-[#9f402d]/20 outline-none transition-all text-sm font-medium">
+      </div>
+
+      <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-[#ddc0ba]/20 shadow-sm">
+        <button id="filter-all" onclick="filterQueue('all')"
+          class="px-5 py-2 rounded-full text-xs font-bold bg-[#9f402d] text-white">All Workers</button>
+        <button id="filter-verified" onclick="filterQueue('verified')"
+          class="px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e]">Verified</button>
+        <button id="filter-unverified" onclick="filterQueue('unverified')"
+          class="px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e]">Pending</button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
+        <table class="w-full text-left">
+          <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d]">
+            <tr>
+              <th class="px-8 py-5">Applicant</th>
+              <th class="px-8 py-5">Applied On</th>
+              <th class="px-8 py-5">ID Proof</th>
+              <th class="px-8 py-5">Action</th>
+              <th class="px-8 py-5">Fraud Control</th>
+            </tr>
+          </thead>
+          <tbody id="verification-table" class="divide-y divide-[#f1eee7] text-sm"></tbody>
+        </table>
+      </div>
+  </main>
+
+  <div id="user-modal"
+    class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90dvh] overflow-hidden shadow-2xl flex flex-col">
+      <div class="p-6 border-b border-[#f1eee7] flex justify-between items-center">
+        <h3 class="text-xl font-bold">Worker Verification Detail</h3>
+        <button onclick="closeModal('user-modal')" class="text-2xl text-[#89726d]">✕</button>
+      </div>
+      <div id="modal-content" class="p-8 overflow-y-auto"></div>
     </div>
   </div>
-</main>
 
-<script>
-async function loadWorkers() {
-  try {
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = {};
-    if (sessionKey) headers['X-Session-Key'] = sessionKey;
-    
-    const res = await fetch('http://localhost:8000/api/admin/users/', { 
-      credentials: 'include',
-      headers: headers
-    });
-    const data = await res.json();
-    
-    if (data.status === 'error' && data.message.includes('Admin access required')) {
-      alert('Session expired. Please login again.');
-      localStorage.removeItem('session_key');
-      window.location.href = '../frontend_user/login.html';
-      return;
+  <div id="toast-container" class="fixed bottom-6 right-6 z- pointer-events-none space-y-3"></div>
+
+  <script>
+    const API = 'http://localhost:8000/api';
+    let rawWorkerData = []; // Master list
+
+
+    function filterQueue(status) {
+      let filtered = [];
+
+      if (status === 'verified') {
+        // This handles true, "true", "True", "t", and 1
+        filtered = rawWorkerData.filter(w => {
+          const val = String(w.is_verified).toLowerCase();
+          return val === 'true' || val === 't' || w.is_verified === 1 || w.is_verified === true;
+        });
+      } else if (status === 'unverified') {
+        // This handles false, "false", "False", "f", and 0
+        filtered = rawWorkerData.filter(w => {
+          const val = String(w.is_verified).toLowerCase();
+          return val === 'false' || val === 'f' || w.is_verified === 0 || w.is_verified === false;
+        });
+      } else {
+        filtered = rawWorkerData;
+      }
+
+      // Update Button Styles
+      ['all', 'verified', 'unverified'].forEach(key => {
+        const btn = document.getElementById(`filter-${key}`);
+        if (btn) {
+          if (key === status) {
+            btn.className = "px-6 py-2.5 rounded-full text-xs font-black bg-[#9f402d] text-white shadow-lg transition-all";
+          } else {
+            btn.className = "px-6 py-2.5 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30 transition-all";
+          }
+        }
+      });
+
+      renderTable(filtered);
     }
-    
-    if (data.status === 'success') {
-      const workers = data.data.filter(u => u.role_id == 2);
-      const container = document.getElementById('workers-list');
-      if (!workers.length) { container.innerHTML = '<div class="text-center py-12 text-gray-400">No workers registered yet</div>'; return; }
-      container.innerHTML = workers.map(w => `
-        <div class="bg-white rounded-2xl p-6 shadow-sm flex items-center justify-between gap-4">
-          <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-full bg-[#ffdad3] flex items-center justify-center">
-              <span class="material-symbols-outlined text-orange-500 text-2xl" style="font-variation-settings:'FILL' 1;">engineering</span>
-            </div>
-            <div>
-              <p class="font-bold text-gray-800">${w.fullname}</p>
-              <p class="text-sm text-gray-500">${w.skill || 'General'} · ${w.email}</p>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${w.worker_status==='verified'?'bg-green-100 text-green-700':w.worker_status==='pro'?'bg-purple-100 text-purple-700':'bg-gray-100 text-gray-600'}">
-                  ${w.worker_status || 'newbie'}
-                </span>
-                <span class="text-xs text-gray-400">⭐ ${w.rating || '0.00'} · ${w.total_jobs || 0} jobs</span>
-              </div>
-            </div>
+
+    function renderTable(workers) {
+      const tbody = document.getElementById('verification-table');
+
+      if (workers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-10 text-center text-[#89726d]">No workers found in this category.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = workers.map(w => {
+        const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+        return `
+      <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer" onclick="openWorkerDetail(${JSON.stringify(w).replace(/"/g, '&quot;')})">
+        <td class="px-8 py-5 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full overflow-hidden border border-[#ddc0ba]/40">
+            <img src="${w.profile_pic ? 'http://localhost:8000' + w.profile_pic : fallback}" class="w-full h-full object-cover">
           </div>
-          <div class="flex gap-2">
-            <button onclick="updateStatus(${w.id}, 'verified')" class="px-4 py-2 bg-green-500 text-white rounded-full text-xs font-bold hover:bg-green-600 transition-colors">
-              Mark Verified
-            </button>
-            <button onclick="updateStatus(${w.id}, 'pro')" class="px-4 py-2 bg-purple-500 text-white rounded-full text-xs font-bold hover:bg-purple-600 transition-colors">
-              Mark Pro
-            </button>
+          <div>
+            <p class="font-bold text-[#1c1c18]">${w.fullname}</p>
+            <p class="text-[10px] uppercase font-black ${w.is_verified ? 'text-green-600' : 'text-orange-600'}">${w.is_verified ? 'Verified' : 'Pending'}</p>
+          </div>
+        </td>
+        <td class="px-8 py-5 text-[#89726d] font-medium">${new Date(w.date_joined).toLocaleDateString('en-IN')}</td>
+        <td class="px-8 py-5 text-[#9f402d] font-bold italic underline">Inspect ID</td>
+        <td class="px-8 py-5">
+  <div class="flex items-center gap-3">
+    ${!w.is_verified ? `
+      <button onclick="event.stopPropagation(); approveWorker(${w.id})" 
+              class="px-4 py-2 bg-green-600 text-white rounded-full text-xs font-bold hover:bg-green-700 transition-all">
+        Approve
+      </button>` : 'approved'}
+      </td>
+        <td class="px-8 py-5">
+      <button onclick="event.stopPropagation(); markAsFraud(${w.id})" 
+            class="px-4 py-2 border border-red-200 bg-red-50 text-red-600 rounded-full text-xs font-black hover:bg-red-600 hover:text-white transition-all">
+      Mark Fraud
+    </button>
+  </div>
+</td>
+        
+      </tr>`;
+      }).join('');
+    }
+
+    //
+    async function loadQueue() {
+      try {
+        const res = await fetch(`${API}/admin/users/`, {
+          headers: { 'X-Session-Key': localStorage.getItem('session_key') },
+          credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          // FIX: Show if is_fraud is false, null, or undefined (so old workers reappear)
+          rawWorkerData = data.data.filter(u =>
+            u.role_id == 2 && (u.is_fraud === false || u.is_fraud === null || u.is_fraud === undefined)
+          );
+
+          filterQueue('all');
+        }
+      } catch (e) { console.error("Fetch error:", e); }
+    }
+
+    async function markAsFraud(id) {
+      // We keep the browser confirm because it's destructive, but make the success box beautiful!
+      if (!confirm("Are you sure? This worker will be blocked and moved to Fraud Reports.")) return;
+
+      try {
+        const res = await fetch(`${API}/admin/fraud/${id}/`, {
+          method: 'POST',
+          headers: {
+            'X-Session-Key': localStorage.getItem('session_key'),
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("Server Error:", errorText);
+          showToast("Server Error", "Could not complete the action. Check logs.", "error");
+          return;
+        }
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          // FIX: Replace ugly alert with premium toast notification
+          showToast("Worker Suspended", "Account successfully flagged and moved to Fraud Reports center.", "error");
+
+          await loadQueue();
+          closeModal('user-modal');
+        }
+      } catch (e) {
+        console.error("Fraud toggle failed:", e);
+        showToast("Network Error", "Failed to reach the database server.", "error");
+      }
+    }
+
+
+    async function openWorkerDetail(w) {
+      const modal = document.getElementById('user-modal');
+      const content = document.getElementById('modal-content');
+      modal.classList.remove('hidden');
+
+      // Logic for profile picture fallback
+      const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+      const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : avatarFallback;
+
+      // Dynamic Badge Color
+      const statusBadge = w.is_verified
+        ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Verified Expert</span>'
+        : '<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Pending Review</span>';
+
+      content.innerHTML = `
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="lg:col-span-5 space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#ddc0ba]/30 shadow-sm bg-white">
+            <img src="${profileImg}" class="w-full h-full object-cover" onerror="this.src='${avatarFallback}'">
+          </div>
+          <div>
+            <h4 class="text-2xl font-black text-[#1c1c18] leading-tight">${w.fullname}</h4>
+            <div class="mt-1">${statusBadge}</div>
           </div>
         </div>
-      `).join('');
+
+        <div class="space-y-4 bg-[#fcf9f2] p-6 rounded-3xl border border-[#ddc0ba]/20">
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Primary Skill</span>
+            <span class="text-sm font-bold text-[#1c1c18]">${w.skill || 'Artisan'}</span>
+          </div>
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Reputation</span>
+            <span class="text-sm font-bold text-[#1c1c18] flex items-center gap-1">
+               <span class="material-symbols-outlined text-sm fill-icon text-orange-500" style="font-variation-settings: 'FILL' 1;">star</span>
+               ${w.rating || '0.0'} (${w.total_jobs || 0} jobs)
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Hourly Rate</span>
+            <span class="text-sm font-bold text-[#9f402d]">₹${w.hourly_rate}/hr</span>
+          </div>
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Contact No.</span>
+            <span class="text-sm font-bold text-[#1c1c18]">${w.phone && w.phone !== "Not provided" ? w.phone : 'Not Linked'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Email Address</span>
+            <span class="text-sm font-bold text-[#1c1c18]">${w.email}</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Professional Bio</label>
+          <p class="mt-2 text-sm text-[#56423e] leading-relaxed italic bg-white p-4 rounded-2xl border border-[#f1eee7]">
+            "${w.bio || 'This worker has not provided a bio yet.'}"
+          </p>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="markAsFraud(${w.id})" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold border border-red-100 hover:bg-red-600 hover:text-white transition-all">Flag Fraud</button>
+          ${!w.is_verified ? `
+            <button onclick="approveWorker(${w.id})" class="flex-1 py-4 bg-[#9f402d] text-white rounded-2xl font-bold shadow-lg shadow-[#9f402d]/20 hover:scale-[1.02] transition-transform">Approve</button>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 flex flex-col">
+        <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] mb-3 ml-1">Government ID Inspection</label>
+        <div class="flex-1 bg-stone-100 rounded-[2rem] overflow-hidden border-2 border-[#ddc0ba]/40 relative group">
+          <img src="http://localhost:8000${w.id_proof_image}" 
+               class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+               onerror="this.src='https://placehold.co/600x400?text=ID+Document+Not+Available'">
+        </div>
+      </div>
+    </div>
+  `;
     }
-  } catch(e) {
-    document.getElementById('workers-list').innerHTML = '<div class="text-center py-12 text-gray-400">Start XAMPP to load live data</div>';
-  }
-}
 
-async function updateStatus(userId, status) {
-  try {
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = { 'Content-Type': 'application/json' };
-    if (sessionKey) headers['X-Session-Key'] = sessionKey;
-    
-    const res = await fetch('http://localhost:8000/api/admin/verify/', {
-      method: 'POST',
-      headers: headers,
-      credentials: 'include',
-      body: JSON.stringify({ user_id: userId, status })
-    });
-    const data = await res.json();
-    if (data.status === 'success') { alert('Worker status updated!'); loadWorkers(); }
-    else alert(data.message);
-  } catch(e) { alert('Error updating status'); }
-}
+    async function approveWorker(id) {
+      const res = await fetch(`${API}/admin/verify/${id}/`, {
+        method: 'POST',
+        headers: { 'X-Session-Key': localStorage.getItem('session_key') }
+      });
+      if ((await res.json()).status === 'success') loadQueue();
+    }
 
-loadWorkers();
-</script>
+    //
+    function handleSearch() {
+      const query = document.getElementById('worker-search').value.toLowerCase();
+
+      const filtered = rawWorkerData.filter(w => {
+        const nameMatch = w.fullname.toLowerCase().includes(query);
+        const emailMatch = w.email.toLowerCase().includes(query);
+        const skillMatch = (w.skill || "").toLowerCase().includes(query);
+        return nameMatch || emailMatch || skillMatch;
+      });
+
+      renderTable(filtered); // Re-draw the table with search results
+    }
+
+    function adminLogout() {
+      localStorage.removeItem('session_key');
+      window.location.href = '../frontend_user/login.html';
+    }
+
+    function showToast(title, message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      // Configure colors based on type (success or fraud warning)
+      const isSuccess = type === 'success';
+      const bgColor = isSuccess ? 'bg-green-50' : 'bg-red-50';
+      const borderColor = isSuccess ? 'border-green-100' : 'border-red-100';
+      const textColor = isSuccess ? 'text-green-800' : 'text-red-800';
+      const subTextColor = isSuccess ? 'text-green-600' : 'text-red-600';
+      const icon = isSuccess ? 'check_circle' : 'gavel';
+      const iconColor = isSuccess ? 'text-green-600' : 'text-red-600';
+
+      // Create the toast element structure
+      const toast = document.createElement('div');
+      toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto flex items-start gap-4 p-5 rounded-2xl border-2 ${bgColor} ${borderColor} shadow-lg max-w-sm w-80`;
+
+      toast.innerHTML = `
+    <span class="material-symbols-outlined ${iconColor} mt-0.5" style="font-variation-settings: 'FILL' 1;">${icon}</span>
+    <div class="flex-1">
+      <h4 class="font-black text-sm ${textColor} leading-tight">${title}</h4>
+      <p class="text-xs font-medium ${subTextColor} mt-1 leading-normal">${message}</p>
+    </div>
+    <button onclick="this.parentElement.remove()" class="${subTextColor} hover:opacity-70 text-xs font-bold font-mono transition-opacity">✕</button>
+  `;
+
+      container.appendChild(toast);
+
+      // Trigger entering animation
+      setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      }, 10);
+
+      // Automatically fade out and clear after 4 seconds
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    loadQueue();
+  </script>
 </body>
+
 </html>

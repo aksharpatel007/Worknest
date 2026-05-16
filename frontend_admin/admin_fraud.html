@@ -1,238 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Worknest Admin — Fraud Reports</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-  body { font-family: 'Manrope', sans-serif; background: #faf7f2; }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .nav-link { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:9999px; font-size:14px; font-weight:600; color:#56423e; transition:all 0.2s; text-decoration:none; }
-  .nav-link:hover { background: rgba(255,255,255,0.6); color:#9f402d; }
-  .nav-link.active { background: white; color:#9f402d; font-weight:700; box-shadow:0 2px 8px rgba(159,64,45,0.1); }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worknest Admin — Safety Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #faf7f2;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #56423e;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #9f402d;
+    }
+
+    .nav-link.active {
+      background: white;
+      color: #9f402d;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
+    }
+
+    .fraud-card {
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .fraud-card:hover {
+      transform: translateY(-8px);
+    }
+
+    /* Soft Red Warning Glow */
+    .risk-high {
+      border-color: #fecaca;
+      background: #fffcfc;
+      box-shadow: 0 10px 30px -10px rgba(220, 38, 38, 0.1);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex text-[#1c1c18]">
 
-<!-- Sidebar -->
-<aside class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
-  <div class="px-6 mb-8 flex items-center gap-3">
-    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
-      <span class="material-symbols-outlined text-white text-xl fill-icon">potted_plant</span>
-    </div>
-    <div>
-      <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
-      <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
-    </div>
-  </div>
-  <nav class="flex-1 flex flex-col gap-1 px-3">
-    <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
-    <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Users & Workers</a>
-    <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
-    <a href="admin_fraud.html" class="nav-link active"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
-    <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
-  </nav>
-  <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
-    <a href="http://localhost:8000/api/logout/" class="nav-link"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
-  </div>
-</aside>
+<body class="h-screen flex overflow-hidden text-[#1c1c18]">
 
-<!-- Main -->
-<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
-  <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
-    <h2 class="text-2xl font-black text-[#1c1c18]">Fraud Reports</h2>
-    <div class="flex items-center gap-3">
-      <button class="p-2 rounded-full hover:bg-[#f1eee7] transition-colors">
-        <span class="material-symbols-outlined text-[#56423e]">notifications</span>
-      </button>
-      <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
-        <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
+  <aside
+    class="hidden md:flex flex-col w-64 h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0 overflow-y-auto">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl"
+          style="font-variation-settings: 'FILL' 1;">security</span>
+      </div>
+      <div>
+        <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+        <p class="text-xs text-[#89726d] font-medium">Safety Command</p>
       </div>
     </div>
-  </header>
-
-  <div class="p-8 max-w-6xl w-full mx-auto">
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20">
-        <span class="material-symbols-outlined text-red-500 text-3xl mb-3 block fill-icon">report</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-open">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Open Reports</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20">
-        <span class="material-symbols-outlined text-yellow-500 text-3xl mb-3 block fill-icon">pending</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-investigating">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Investigating</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20">
-        <span class="material-symbols-outlined text-green-500 text-3xl mb-3 block fill-icon">check_circle</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-resolved">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Resolved</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#ddc0ba]/20">
-        <span class="material-symbols-outlined text-[#9f402d] text-3xl mb-3 block fill-icon">summarize</span>
-        <p class="text-3xl font-black text-[#1c1c18]" id="stat-total">—</p>
-        <p class="text-sm font-semibold text-[#89726d] mt-1">Total Reports</p>
-      </div>
+    <nav class="flex-1 flex flex-col gap-1 px-3">
+      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
+        Dashboard</a>
+      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+        Users</a>
+      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+        Verify Workers</a>
+      <a href="admin_fraud.html" class="nav-link active"><span class="material-symbols-outlined text-xl">gavel</span>
+        Fraud Reports</a>
+      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+        Settings</a>
+    </nav>
+    <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+        class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
     </div>
+  </aside>
 
-    <!-- Reports Table -->
-    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
-      <div class="px-8 py-5 border-b border-[#f1eee7] flex items-center justify-between">
-        <h3 class="text-lg font-bold text-[#1c1c18]">All Fraud Reports</h3>
-        <div class="flex gap-2">
-          <button onclick="filterReports('all')" id="btn-all" class="px-4 py-2 text-sm font-bold rounded-full bg-[#9f402d] text-white">All</button>
-          <button onclick="filterReports('open')" id="btn-open" class="px-4 py-2 text-sm font-bold rounded-full bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30">Open</button>
-          <button onclick="filterReports('investigating')" id="btn-investigating" class="px-4 py-2 text-sm font-bold rounded-full bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30">Investigating</button>
-          <button onclick="filterReports('resolved')" id="btn-resolved" class="px-4 py-2 text-sm font-bold rounded-full bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30">Resolved</button>
+  <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
+    <header
+      class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-6 border-b border-[#ddc0ba]/20">
+      <div>
+        <h2 class="text-2xl font-black text-[#1c1c18]">Fraud & Trust Analysis</h2>
+        <p class="text-xs font-bold text-[#89726d] uppercase tracking-tighter mt-1">Real-time Safety Monitoring —
+          Ahmedabad</p>
+      </div>
+      <div class="flex items-center gap-4 bg-white px-5 py-3 rounded-2xl border border-[#ddc0ba]/20 shadow-sm">
+        <span class="material-symbols-outlined text-orange-600 animate-pulse">shield_with_heart</span>
+        <div class="text-right">
+          <p class="text-[10px] font-black text-[#89726d] uppercase">System Health</p>
+          <p class="text-xs font-bold text-green-600">Active Monitoring</p>
         </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d]">
-            <tr>
-              <th class="px-8 py-4">Reporter</th>
-              <th class="px-8 py-4">Reported User</th>
-              <th class="px-8 py-4">Reason</th>
-              <th class="px-8 py-4">Status</th>
-              <th class="px-8 py-4">Date</th>
-              <th class="px-8 py-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="reports-table" class="divide-y divide-[#f1eee7] text-sm">
-            <tr><td colspan="6" class="px-8 py-6 text-[#89726d] text-center">Loading...</td></tr>
-          </tbody>
-        </table>
+    </header>
+
+    <div class="p-8 max-w-7xl w-full mx-auto space-y-10">
+      <div class="flex flex-col md:flex-row gap-4 items-center">
+        <div class="relative flex-1 group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#89726d]">search</span>
+          <input type="text" id="fraud-search" onkeyup="handleSearch()" placeholder="Search high-risk workers..."
+            class="w-full pl-12 pr-6 py-4 bg-white rounded-2xl border border-[#ddc0ba]/30 focus:ring-2 focus:ring-red-200 outline-none transition-all text-sm font-medium">
+        </div>
       </div>
+
+      <section>
+        <div id="fraud-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="user-modal"
+    class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-4xl max-h-[90dvh] overflow-hidden shadow-2xl flex flex-col">
+      <div class="p-6 border-b border-[#f1eee7] flex justify-between items-center bg-[#faf7f2]">
+        <h3 class="text-xl font-black text-[#9f402d]">Fraud Investigation Detail</h3>
+        <button onclick="closeModal('user-modal')"
+          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-[#89726d] transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div id="modal-content" class="p-8 overflow-y-auto"></div>
     </div>
   </div>
-</main>
 
-<script>
-const API = 'http://localhost:8000/api';
-let allReports = [];
-let currentFilter = 'all';
+  <div id="toast-container" class="fixed bottom-6 right-6 z- pointer-events-none space-y-3"></div>
 
-async function loadReports() {
-  try {
-    const sessionKey = localStorage.getItem('session_key');
-    const headers = {};
-    if (sessionKey) headers['X-Session-Key'] = sessionKey;
-    
-    const res = await fetch(`${API}/admin/reports/`, { 
-      credentials: 'include',
-      headers: headers
-    });
-    const data = await res.json();
-    
-    if (data.status === 'error' && data.message.includes('Admin access required')) {
-      alert('Session expired. Please login again.');
-      localStorage.removeItem('session_key');
-      window.location.href = '../frontend_user/login.html';
-      return;
+  <script>
+    const API = 'http://localhost:8000/api';
+    //
+    let rawFraudData = [];
+    async function loadFraudQueue() {
+      const res = await fetch(`${API}/admin/users/`, {
+        headers: { 'X-Session-Key': localStorage.getItem('session_key') }
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        // Only workers where is_fraud is true
+        rawFraudData = data.data.filter(u => u.role_id == 2 && u.is_fraud === true);
+        renderGrid(rawFraudData);
+      }
     }
-    
-    if (data.status === 'success') {
-      allReports = data.data;
-      updateStats();
-      displayReports();
+
+    async function restoreWorker(id) {
+      try {
+        const res = await fetch(`${API}/admin/verify/${id}/`, { method: 'POST' });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          // Show the green notification toast
+          showToast(
+            "Worker Restored",
+            "Account cleared of flags and successfully returned to the validation queue.",
+            "success"
+          );
+
+          // Reload UI elements instantly
+          loadFraudQueue();
+          closeModal('user-modal');
+        } else {
+          showToast("Action Failed", "Could not restore the user profile.", "error");
+        }
+      } catch (e) {
+        console.error("Restoration interface failure:", e);
+        showToast("Network Error", "Could not connect to database pipeline.", "error");
+      }
     }
-  } catch(e) {
-    document.getElementById('reports-table').innerHTML = '<tr><td colspan="6" class="px-8 py-6 text-[#89726d] text-center">Error loading reports</td></tr>';
-  }
-}
 
-function updateStats() {
-  const open = allReports.filter(r => r.status === 'open').length;
-  const investigating = allReports.filter(r => r.status === 'investigating').length;
-  const resolved = allReports.filter(r => r.status === 'resolved').length;
-  
-  document.getElementById('stat-open').textContent = open;
-  document.getElementById('stat-investigating').textContent = investigating;
-  document.getElementById('stat-resolved').textContent = resolved;
-  document.getElementById('stat-total').textContent = allReports.length;
-}
+    // Searching Logic for Fraud Workers
+    function handleFraudSearch() {
+      const query = document.getElementById('fraud-search').value.toLowerCase();
 
-function displayReports() {
-  const filtered = currentFilter === 'all' ? allReports : allReports.filter(r => r.status === currentFilter);
-  const tbody = document.getElementById('reports-table');
-  
-  if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-6 text-[#89726d] text-center">No reports found</td></tr>';
-    return;
-  }
+      const filtered = rawFraudData.filter(w => {
+        return w.fullname.toLowerCase().includes(query) ||
+          w.email.toLowerCase().includes(query);
+      });
 
-  const statusColors = {
-    open: 'bg-red-100 text-red-700',
-    investigating: 'bg-yellow-100 text-yellow-700',
-    resolved: 'bg-green-100 text-green-700'
-  };
-
-  tbody.innerHTML = filtered.map(r => `
-    <tr class="hover:bg-[#f6f3ec] transition-colors">
-      <td class="px-8 py-4 font-semibold text-[#1c1c18]">${r.reporter_name}</td>
-      <td class="px-8 py-4 font-semibold text-[#9f402d]">${r.reported_name}</td>
-      <td class="px-8 py-4 text-[#89726d] max-w-xs truncate">${r.reason}</td>
-      <td class="px-8 py-4">
-        <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColors[r.status]}">${r.status}</span>
-      </td>
-      <td class="px-8 py-4 text-[#89726d]">${new Date(r.created_at).toLocaleDateString('en-IN')}</td>
-      <td class="px-8 py-4">
-        <select onchange="updateStatus(${r.id}, this.value)" class="px-3 py-1 rounded-lg border border-[#ddc0ba] text-sm font-semibold text-[#56423e] bg-white">
-          <option value="open" ${r.status==='open'?'selected':''}>Open</option>
-          <option value="investigating" ${r.status==='investigating'?'selected':''}>Investigating</option>
-          <option value="resolved" ${r.status==='resolved'?'selected':''}>Resolved</option>
-        </select>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function filterReports(status) {
-  currentFilter = status;
-  
-  // Update button styles
-  ['all', 'open', 'investigating', 'resolved'].forEach(s => {
-    const btn = document.getElementById(`btn-${s}`);
-    if (s === status) {
-      btn.className = 'px-4 py-2 text-sm font-bold rounded-full bg-[#9f402d] text-white';
-    } else {
-      btn.className = 'px-4 py-2 text-sm font-bold rounded-full bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30';
+      renderGrid(filtered);
     }
-  });
-  
-  displayReports();
-}
 
-async function updateStatus(reportId, newStatus) {
-  try {
-    const res = await fetch(`${API}/admin/reports/update/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ report_id: reportId, status: newStatus })
-    });
-    const data = await res.json();
-    if (data.status === 'success') {
-      // Update local data
-      const report = allReports.find(r => r.id === reportId);
-      if (report) report.status = newStatus;
-      updateStats();
-      displayReports();
-    } else {
-      alert('Failed to update status');
+    //
+    function openWorkerDetail(w) {
+      const modal = document.getElementById('user-modal');
+      const content = document.getElementById('modal-content');
+
+      if (!modal || !content) return;
+
+      // Logic for images and fallbacks
+      const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+      const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : avatarFallback;
+      const idImg = w.id_proof_image ? `http://localhost:8000${w.id_proof_image}` : 'https://placehold.co/600x400?text=No+ID+Image';
+
+      content.innerHTML = `
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 text-[#1c1c18]">
+      <div class="lg:col-span-5 space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#ddc0ba]/30 shadow-sm bg-white">
+            <img src="${profileImg}" class="w-full h-full object-cover" onerror="this.src='${avatarFallback}'">
+          </div>
+          <div>
+            <h4 class="text-2xl font-black leading-tight">${w.fullname}</h4>
+            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mt-1 inline-block">Fraud Suspended</span>
+          </div>
+        </div>
+
+        <div class="space-y-4 bg-[#fcf9f2] p-6 rounded-3xl border border-[#ddc0ba]/20">
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Primary Skill</span>
+            <span class="text-sm font-bold">${w.skill || 'Artisan'}</span>
+          </div>
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Reputation</span>
+            <span class="text-sm font-bold flex items-center gap-1">
+               <span class="material-symbols-outlined text-sm text-orange-500" style="font-variation-settings: 'FILL' 1;">star</span>
+               ${w.rating || '0.0'} (${w.total_jobs || 0} jobs)
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Contact No.</span>
+            <span class="text-sm font-bold">${w.phone && w.phone !== "Not provided" ? w.phone : 'Not Linked'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs font-bold text-[#89726d] uppercase">Email Address</span>
+            <span class="text-sm font-bold text-[#1c1c18]">${w.email}</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d]">Worker Bio</label>
+          <p class="mt-2 text-sm text-[#56423e] leading-relaxed italic bg-white p-4 rounded-2xl border border-[#f1eee7]">
+            "${w.bio || 'No bio provided.'}"
+          </p>
+        </div>
+
+        <button onclick="restoreWorker(${w.id})" class="w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-lg hover:scale-[1.02] transition-transform">
+          Restore This Worker
+        </button>
+      </div>
+
+      <div class="lg:col-span-7 flex flex-col">
+        <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] mb-3 ml-1">Government ID On File</label>
+        <div class="flex-1 bg-stone-100 rounded-[2rem] overflow-hidden border-2 border-[#ddc0ba]/40 relative">
+          <img src="${idImg}" class="w-full h-full object-contain p-4">
+        </div>
+      </div>
+    </div>`;
+
+      modal.classList.remove('hidden');
     }
-  } catch(e) {
-    alert('Error updating status');
-  }
-}
 
-loadReports();
-</script>
+    //
+    //
+    function closeModal(id) {
+      // If the function is called with an ID, use it; otherwise default to 'user-modal'
+      const targetId = id || 'user-modal';
+      const modal = document.getElementById(targetId);
+
+      if (modal) {
+        modal.classList.add('hidden');
+      } else {
+        // Fallback: If 'user-modal' exists, hide it anyway to prevent the error
+        const fallbackModal = document.getElementById('user-modal');
+        if (fallbackModal) fallbackModal.classList.add('hidden');
+      }
+    }
+
+    function renderGrid(workers) {
+      const grid = document.getElementById('fraud-grid');
+      grid.innerHTML = workers.map(w => {
+        // Stringify and escape quotes to prevent breaking the HTML string
+        const workerData = JSON.stringify(w).replace(/"/g, '&quot;');
+
+        return `
+      <div class="fraud-card p-8 rounded-[2.5rem] border-2 border-red-50 shadow-sm bg-white relative">
+        <button onclick="openWorkerDetail(${workerData})" 
+                class="absolute top-6 right-6 w-8 h-8 rounded-full bg-[#f1eee7] text-[#89726d] hover:bg-[#9f402d] hover:text-white transition-all flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-sm">info</span>
+        </button>
+
+        <h4 class="text-xl font-black text-[#1c1c18]">${w.fullname}</h4>
+        <p class="text-xs text-red-600 font-black mb-4 uppercase">Fraud Flagged</p>
+        
+        <div class="flex gap-2">
+          <button onclick="restoreWorker(${w.id})" class="flex-1 py-3 bg-green-50 text-green-700 text-[10px] font-black rounded-xl border border-green-100 hover:bg-green-600 hover:text-white transition-all">Restore</button>
+          <button onclick="suspendWorker(${w.id})" class="flex-1 py-3 bg-red-600 text-white text-[10px] font-black rounded-xl hover:bg-red-700 transition-all">Suspend</button>
+        </div>
+      </div>
+    `;
+      }).join('');
+    }
+
+
+    function handleSearch() {
+      const q = document.getElementById('fraud-search').value.toLowerCase();
+      const filtered = rawFraudData.filter(w => w.fullname.toLowerCase().includes(q) || w.email.toLowerCase().includes(q));
+      renderGrid(filtered);
+    }
+
+    function openReview(w) {
+      const modal = document.getElementById('risk-modal');
+      modal.classList.remove('hidden');
+      document.getElementById('modal-content').innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div class="space-y-6">
+            <h4 class="text-3xl font-black">${w.fullname}</h4>
+            <div class="bg-red-50 p-6 rounded-[2rem] border border-red-100">
+               <p class="text-xs font-black text-red-700 uppercase tracking-widest mb-2">Internal Safety Note</p>
+               <p class="text-sm text-red-800 leading-relaxed italic">"Trust score has dropped to ${w.trust_score}% due to multiple unverified ID attempts or poor user reviews. Manual inspection required."</p>
+            </div>
+            <div class="flex flex-col gap-3">
+               <p class="text-sm"><strong>Email:</strong> ${w.email}</p>
+               <p class="text-sm"><strong>Phone:</strong> ${w.phone || 'N/A'}</p>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <p class="text-[10px] font-black uppercase text-[#89726d] mb-3 ml-2">Government ID Reference</p>
+            <div class="flex-1 min-h-[300px] bg-stone-100 rounded-[2.5rem] overflow-hidden border-2 border-dashed border-[#ddc0ba] relative">
+               <img src="http://localhost:8000${w.id_proof_image}" class="w-full h-full object-contain p-4">
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    //
+    function showToast(title, message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const isSuccess = type === 'success';
+      const bgColor = isSuccess ? 'bg-green-50' : 'bg-red-50';
+      const borderColor = isSuccess ? 'border-green-100' : 'border-red-100';
+      const textColor = isSuccess ? 'text-green-800' : 'text-red-800';
+      const subTextColor = isSuccess ? 'text-green-600' : 'text-red-600';
+      const icon = isSuccess ? 'check_circle' : 'gavel';
+      const iconColor = isSuccess ? 'text-green-600' : 'text-red-600';
+
+      const toast = document.createElement('div');
+      toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto flex items-start gap-4 p-5 rounded-2xl border-2 ${bgColor} ${borderColor} shadow-lg max-w-sm w-80`;
+
+      toast.innerHTML = `
+    <span class="material-symbols-outlined ${iconColor} mt-0.5" style="font-variation-settings: 'FILL' 1;">${icon}</span>
+    <div class="flex-1">
+      <h4 class="font-black text-sm ${textColor} leading-tight">${title}</h4>
+      <p class="text-xs font-medium ${subTextColor} mt-1 leading-normal">${message}</p>
+    </div>
+    <button onclick="this.parentElement.remove()" class="${subTextColor} hover:opacity-70 text-xs font-bold font-mono transition-opacity">✕</button>
+  `;
+
+      container.appendChild(toast);
+
+      // Animate Entry
+      setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      }, 10);
+
+      // Auto Dismiss after 4 seconds
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    async function suspendWorker(id) {
+      if (!confirm("Suspend this worker instantly? They will be hidden from all user maps.")) return;
+      const res = await fetch(`${API}/admin/verify/${id}/`, { method: 'POST', headers: { 'X-Session-Key': localStorage.getItem('session_key') } });
+      if ((await res.json()).status === 'success') loadFraudQueue();
+    }
+    loadFraudQueue();
+  </script>
 </body>
+
 </html>

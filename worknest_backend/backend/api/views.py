@@ -169,19 +169,17 @@ def get_unverified_workers(request):
     serializer = UserSerializer(workers, many=True)
     return Response({'status': 'success', 'data': serializer.data})
 
-@csrf_exempt
 @api_view(['POST'])
 def verify_worker(request, worker_id):
-    """Admin action to approve a worker and make them live on the map."""
     try:
         worker = User.objects.get(id=worker_id)
         worker.is_verified = True
-        worker.trust_score = 10 
+        worker.is_fraud = False # If we approve them, they aren't fraud
         worker.save()
-        return Response({'status': 'success', 'message': f'{worker.fullname} is now verified!'})
+        return Response({'status': 'success'})
     except User.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Worker not found'}, status=404)
-    
+        return Response({'status': 'error'}, status=404)
+         
 
 @api_view(['GET'])
 def get_admin_stats(request):
@@ -210,18 +208,14 @@ def get_admin_stats(request):
         }
     })
 
+
+#
 @api_view(['GET'])
 def get_all_users(request):
-    """Returns a list of all users for the Admin 'Recent Members' table."""
-    users = User.objects.all().order_by('-date_joined')
-    # many=True is CRITICAL to return a list
-    serializer = UserSerializer(users, many=True) 
-    
-    # Ensure 'data' contains the serialized list
-    return Response({
-        'status': 'success', 
-        'data': serializer.data  
-    })
+    # This endpoint is used by admin_fraud.html to load the list
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True) # Must use the updated Serializer
+    return Response({'status': 'success', 'data': serializer.data})
 
 
 
@@ -257,6 +251,7 @@ def get_all_bookings(request):
         return Response({'status': 'success', 'data': serializer.data})
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=400)
+    
 
 @api_view(['GET'])
 def get_fraud_reports(request):
@@ -264,3 +259,16 @@ def get_fraud_reports(request):
     low_trust_workers = User.objects.filter(role_id=2, trust_score__lt=50)
     serializer = UserSerializer(low_trust_workers, many=True)
     return Response({'status': 'success', 'data': serializer.data})
+
+
+#
+@api_view(['POST'])
+def flag_fraud(request, worker_id):
+    try:
+        worker = User.objects.get(id=worker_id)
+        worker.is_fraud = True      # This makes them appear in admin_fraud.html
+        worker.is_verified = False  # This stops them from working
+        worker.save()
+        return Response({'status': 'success', 'message': 'Worker flagged as fraud'})
+    except User.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Worker not found'}, status=404)

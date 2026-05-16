@@ -26,4 +26,5 @@ urlpatterns = [
     path('admin/stats/', views.get_admin_stats, name='admin-stats'),
     path('admin/users/', views.get_all_users, name='admin-all-users'),
     path('admin/bookings/', views.get_all_bookings, name='admin-all-bookings'),
+    path('admin/fraud/<int:worker_id>/', views.flag_fraud, name='flag_fraud'),
 ]
