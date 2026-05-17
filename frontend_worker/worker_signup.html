@@ -186,9 +186,10 @@
         }
 
         document.getElementById('id_proof').addEventListener('change', function () {
-            if (this.files && this.files.length > 0) {
-                const fileName = this.files.name; // <--- Corrected with
-                document.getElementById('file-name').textContent = fileName;
+    if (this.files && this.files.length > 0) {
+        // 🎯 FIXED: Target the first file index array property
+        const fileName = this.files.name;
+        document.getElementById('file-name').textContent = fileName;
                 document.getElementById('file-name').classList.add('text-[#81B29A]');
             } else {
                 document.getElementById('file-name').textContent = "Click to upload ID photo";

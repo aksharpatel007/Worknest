@@ -1,284 +1,347 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "surface-variant": "#e5e2db",
-              "primary-fixed-dim": "#ffb4a5",
-              "on-primary-fixed-variant": "#802918",
-              "on-secondary-fixed-variant": "#3e4c16",
-              "secondary-fixed": "#d9eaa3",
-              "primary-container": "#e2725b",
-              "surface-container-high": "#ebe8e1",
-              "surface-dim": "#dcdad3",
-              "on-secondary": "#ffffff",
-              "on-tertiary": "#ffffff",
-              "tertiary-fixed": "#ffdcbd",
-              "on-error": "#ffffff",
-              "on-tertiary-container": "#432501",
-              "surface": "#fcf9f2",
-              "surface-bright": "#fcf9f2",
-              "on-secondary-fixed": "#161f00",
-              "on-primary-fixed": "#3e0500",
-              "tertiary-container": "#b88a5c",
-              "inverse-primary": "#ffb4a5",
-              "tertiary": "#7d562d",
-              "outline": "#89726d",
-              "outline-variant": "#ddc0ba",
-              "tertiary-fixed-dim": "#f0bd8b",
-              "error": "#ba1a1a",
-              "on-primary-container": "#5a0d02",
-              "error-container": "#ffdad6",
-              "on-primary": "#ffffff",
-              "on-secondary-container": "#5a682f",
-              "background": "#fcf9f2",
-              "surface-tint": "#9f402d",
-              "on-error-container": "#93000a",
-              "on-background": "#1c1c18",
-              "secondary-fixed-dim": "#bdce89",
-              "surface-container-highest": "#e5e2db",
-              "surface-container-low": "#f6f3ec",
-              "inverse-surface": "#31312c",
-              "on-surface": "#1c1c18",
-              "surface-container": "#f1eee7",
-              "on-tertiary-fixed-variant": "#623f18",
-              "primary": "#9f402d",
-              "secondary": "#56642b",
-              "on-tertiary-fixed": "#2c1600",
-              "secondary-container": "#d6e7a1",
-              "primary-fixed": "#ffdad3",
-              "surface-container-lowest": "#ffffff",
-              "on-surface-variant": "#56423e",
-              "inverse-on-surface": "#f3f0e9"
-            },
-            fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Manrope"],
-              "label": ["Manrope"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-variant": "#e5e2db",
+            "primary-fixed-dim": "#ffb4a5",
+            "on-primary-fixed-variant": "#802918",
+            "on-secondary-fixed-variant": "#3e4c16",
+            "secondary-fixed": "#d9eaa3",
+            "primary-container": "#e2725b",
+            "surface-container-high": "#ebe8e1",
+            "surface-dim": "#dcdad3",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed": "#ffdcbd",
+            "on-error": "#ffffff",
+            "on-tertiary-container": "#432501",
+            "surface": "#fcf9f2",
+            "surface-bright": "#fcf9f2",
+            "on-secondary-fixed": "#161f00",
+            "on-primary-fixed": "#3e0500",
+            "tertiary-container": "#b88a5c",
+            "inverse-primary": "#ffb4a5",
+            "tertiary": "#7d562d",
+            "outline": "#89726d",
+            "outline-variant": "#ddc0ba",
+            "tertiary-fixed-dim": "#f0bd8b",
+            "error": "#ba1a1a",
+            "on-primary-container": "#5a0d02",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "on-secondary-container": "#5a682f",
+            "background": "#fcf9f2",
+            "surface-tint": "#9f402d",
+            "on-error-container": "#93000a",
+            "on-background": "#1c1c18",
+            "secondary-fixed-dim": "#bdce89",
+            "surface-container-highest": "#e5e2db",
+            "surface-container-low": "#f6f3ec",
+            "inverse-surface": "#31312c",
+            "on-surface": "#1c1c18",
+            "surface-container": "#f1eee7",
+            "on-tertiary-fixed-variant": "#623f18",
+            "primary": "#9f402d",
+            "secondary": "#56642b",
+            "on-tertiary-fixed": "#2c1600",
+            "secondary-container": "#d6e7a1",
+            "primary-fixed": "#ffdad3",
+            "surface-container-lowest": "#ffffff",
+            "on-surface-variant": "#56423e",
+            "inverse-on-surface": "#f3f0e9"
           },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Manrope"],
+            "label": ["Manrope"]
+          },
+          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
         },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .bg-grain {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            pointer-events: none;
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-<style>
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .bg-grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+  <style>
     body {
       min-height: max(884px, 100dvh);
     }
   </style>
-  </head>
-<body class="bg-background text-on-background font-body min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
-<div class="fixed inset-0 bg-grain z-[60]"></div>
-<!-- TopAppBar -->
-<header class="flex items-center justify-between px-6 py-4 w-full sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl dark:bg-[#1c1c18]/80 shadow-[0_4px_20px_rgba(28,28,24,0.04)] font-manrope antialiased leading-[1.6]">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl" data-icon="potted_plant">potted_plant</span>
-<h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
-</div>
-<div class="flex items-center gap-4">
-<button class="material-symbols-outlined p-2 rounded-full hover:bg-[#f6f3ec] transition-colors" data-icon="notifications" onclick="window.location.href='dashboard.html'">notifications</button>
-<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20">
-<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a smiling woman with warm lighting and a natural soft focus background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa08CxdFMAEUxpOn0M7ibhzMpGse_9fhiOIFK76OxBwanB6uNzKkK5QgTsShRhelizeVhrP7e8kVTUDcrCHAXDa-DPZKG0rCCJPsbMhx95xI3DkQtcChfLC21moFDquUemZFEs1vR9SAQaFbZSLNTUcZ0o5c8TGBfzcUdpVMSncNl--W25-rtgtoBCjtRVv35jJvTcwrmNQ5FyznvrpSu8KcGjsp9cBk7-OmdksKh2iJeJ8gTElYCKl5RcpmSb0OmFCs9HAVK0pv_E"/>
-</div>
-</div>
-</header>
-<main class="max-w-4xl mx-auto px-6 pt-8 pb-32">
-<!-- Hero Search Section -->
-<section class="mb-16">
-<h2 class="text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight mb-8">
-                Welcome back,<br/><span class="text-primary italic">how can we help today?</span>
-</h2>
-<div class="relative group">
-<div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
-</div>
-<input class="w-full bg-surface-container-lowest border-none h-20 pl-16 pr-8 rounded-full shadow-[0_10px_40px_rgba(28,28,24,0.04)] text-lg placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="What help do you need?" type="text"/>
-<button class="absolute right-3 top-3 bottom-3 px-8 bg-primary text-on-primary rounded-full font-bold hover:bg-primary-container transition-all active:scale-95" onclick="searchWorkers()">
-                    Find
-                </button>
-</div>
-</section>
-<!-- Categories Horizontal Scroll -->
-<section class="mb-16">
-<div class="flex items-center justify-between mb-6 px-2">
-<h3 class="text-xl font-bold text-on-surface">Categories</h3>
-<a class="text-primary font-semibold text-sm hover:underline" href="services.html">View All</a>
-</div>
-<div class="flex gap-6 overflow-x-auto hide-scrollbar py-4 -mx-2 px-2">
-<!-- Cook -->
-<button class="flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Home Cook')">
-<div class="w-24 h-24 rounded-[2rem] rounded-tr-[3.5rem] bg-primary-fixed flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-3 shadow-sm group-hover:shadow-xl">
-<span class="material-symbols-outlined text-on-primary-fixed text-4xl" data-icon="cleaning_services" style="font-variation-settings: 'FILL' 1;">cleaning_services</span>
-</div>
-<span class="font-bold text-sm tracking-wide text-secondary uppercase">Maid</span>
-</button>
-<!-- Plumber -->
-<button class="flex-shrink-0 flex flex-col items-center gap-3 group" onclick="window.location.href='dashboard.html'">
-<div class="w-24 h-24 rounded-[3.5rem] rounded-bl-[1.5rem] bg-tertiary-fixed flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-2 shadow-sm group-hover:shadow-xl">
-<span class="material-symbols-outlined text-on-tertiary-fixed text-4xl" data-icon="plumbing" style="font-variation-settings: 'FILL' 1;">plumbing</span>
-</div>
-<span class="font-bold text-sm tracking-wide text-secondary uppercase">Plumber</span>
-</button>
-<!-- Electrician -->
-<button class="flex-shrink-0 flex flex-col items-center gap-3 group" onclick="window.location.href='dashboard.html'">
-<div class="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-6 shadow-sm group-hover:shadow-xl border-2 border-dashed border-outline-variant">
-<span class="material-symbols-outlined text-on-surface text-4xl" data-icon="electric_bolt" style="font-variation-settings: 'FILL' 1;">electric_bolt</span>
-</div>
-<span class="font-bold text-sm tracking-wide text-secondary uppercase">Electrician</span>
-</button>
-<!-- Gardener (Bonus for scroll feel) -->
-<button class="flex-shrink-0 flex flex-col items-center gap-3 group" onclick="window.location.href='dashboard.html'">
-<div class="w-24 h-24 rounded-[3rem] rounded-tl-[1rem] bg-secondary-fixed-dim flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-6 shadow-sm group-hover:shadow-xl">
-<span class="material-symbols-outlined text-on-secondary-fixed-variant text-4xl" data-icon="yard" style="font-variation-settings: 'FILL' 1;">yard</span>
-</div>
-<span class="font-bold text-sm tracking-wide text-secondary uppercase">Gardener</span>
-</button>
-</div>
-</section>
-<!-- Recommended Section -->
-<section class="mb-12">
-<h3 class="text-xl font-bold text-on-surface mb-8 px-2">Recommended for you</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-<!-- Card 1 -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group">
-<div class="relative h-56 overflow-hidden">
-<img alt="Chef service" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="professional chef in a clean modern kitchen plating a gourmet meal with fresh organic ingredients and soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOa-0gVi5F5P8scxMDAA4PIjuZ2ZPZq8oRd5OYPKDPe-81-fEzttnsWxQuVH0XBgn_9elNv2CLGFEV63B9vsADypiW7wUrneyBcHhdOgLbuo4pFD5F4Z78tFCs83ntGx8zZFm7MecfVt0brnsIFnsKRDynEa-Q9ZRzIr2jtQEHp2lLWWXjPKv-uIB6Xvr9aJrlF0hx4KW0KpNXkALQrcRe0gGQoHTeXqNUsiLrIYGKa9yC6CtAcnF9pH5zcROxQYMr1PLhKZhdf7K8"/>
-<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-<span class="material-symbols-outlined text-primary text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="text-sm font-bold text-on-surface">4.9</span>
-</div>
-</div>
-<div class="p-8">
-<div class="flex justify-between items-start mb-4">
-<div>
-<span class="inline-block px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest mb-2">Gourmet Dining</span>
-<h4 class="text-xl font-extrabold text-on-surface">Chef Elena Rodriguez</h4>
-</div>
-<span class="text-lg font-bold text-primary">$45/hr</span>
-</div>
-<p class="text-on-surface-variant leading-relaxed text-sm mb-6">Expert in organic Mediterranean cuisine. Bringing 10+ years of restaurant experience to your home kitchen.</p>
-<button class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" onclick="window.location.href='booking_request.html'">Book Elena</button>
-</div>
-</div>
-<!-- Card 2 -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group">
-<div class="relative h-56 overflow-hidden">
-<img alt="Professional cleaner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="friendly woman cleaning a bright airy living room with eco-friendly supplies and soft sun rays coming through the window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB60nFkj8MRjpZOK6RGxebt9lOpt8btSMbnJuDcaqBLEBS3ybzrcoees6syUN1LF0oLjl2m0nGn42LzJUbQvN5DBdWVngtSgxpOenzE-wGA_8LxZDMUngdF3yeYtgD0mEmJr7TstW0M90yo3U9MnNSF9WzfNXd6rrpZ1xE3FhNbNmOym_HqBBA5QLmu-mqewwpUIq4ifBdALXovuts0353eSCsqM8BsSeIYcJ0R7taYD3HlxWRwY3FlBR5IWQaeendNn-JZ0f5_C8On"/>
-<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-<span class="material-symbols-outlined text-primary text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="text-sm font-bold text-on-surface">4.8</span>
-</div>
-</div>
-<div class="p-8">
-<div class="flex justify-between items-start mb-4">
-<div>
-<span class="inline-block px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold uppercase tracking-widest mb-2">Deep Clean</span>
-<h4 class="text-xl font-extrabold text-on-surface">Marcus T.</h4>
-</div>
-<span class="text-lg font-bold text-primary">$30/hr</span>
-</div>
-<p class="text-on-surface-variant leading-relaxed text-sm mb-6">Specializing in eco-friendly deep cleaning solutions. Reliable, thorough, and pet-friendly service.</p>
-<button class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" onclick="window.location.href='booking_request.html'">Book Marcus</button>
-</div>
-</div>
-</div>
-</section>
-<!-- Trust Badge Card -->
-<section class="mb-12">
-<div class="bg-primary-container p-8 rounded-[3rem] text-on-primary-container relative overflow-hidden">
-<div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
-<div class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-5xl" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-</div>
-<div>
-<h3 class="text-2xl font-black mb-2 leading-tight">Your Peace of Mind is Our Priority</h3>
-<p class="opacity-90 max-w-lg">Every professional at Worknest undergoes a rigorous multi-step background check and skill assessment. Trust is built on every interaction.</p>
-</div>
-</div>
-<!-- Abstract Organic Shapes in Background -->
-<div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-<div class="absolute -left-10 -top-10 w-32 h-32 bg-on-primary-container/10 rounded-full blur-2xl"></div>
-</div>
-</section>
-</main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#fcf9f2]/90 backdrop-blur-2xl dark:bg-[#1c1c18]/90 shadow-[0_-10px_40px_rgba(28,28,24,0.06)] font-manrope text-[11px] font-semibold tracking-wide uppercase">
-<!-- Home Active -->
-<a class="flex flex-col items-center justify-center bg-[#d6e7a1] text-[#56642b] rounded-full px-6 py-2 transition-all duration-500 ease-out active:scale-90" href="dashboard.html">
-<span class="material-symbols-outlined text-xl mb-0.5" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-<span>Home</span>
-</a>
-<!-- Services Inactive -->
-<a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 hover:text-[#9f402d] transition-all duration-300 active:scale-90" href="services.html">
-<span class="material-symbols-outlined text-xl mb-0.5" data-icon="grid_view">grid_view</span>
-<span>Services</span>
-</a>
-<!-- Bookings Inactive -->
-<a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 hover:text-[#9f402d] transition-all duration-300 active:scale-90" href="booking_history.html">
-<span class="material-symbols-outlined text-xl mb-0.5" data-icon="event_note">event_note</span>
-<span>Bookings</span>
-</a>
-<!-- Profile Inactive -->
-<a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 hover:text-[#9f402d] transition-all duration-300 active:scale-90" href="profile.html">
-<span class="material-symbols-outlined text-xl mb-0.5" data-icon="person">person</span>
-<span>Profile</span>
-</a>
-</nav>
-<!-- FAB (Suppressed on Home per rules, but included if contextual intent matches high-priority action) -->
-<!-- Not rendered here to prioritize the dashboard flow per Semantic Shell Mandate -->
-<script>
-const API = 'http://localhost:8000/api';
+</head>
 
-// Load profile name
-async function loadProfile() {
-  try {
-    const res = await fetch(`${API}/profile/`, { credentials: 'include' });
-    const data = await res.json();
-    if (data.status === 'success') {
-      const name = data.data.fullname.split(' ')[0];
-      const el = document.querySelector('h2 span.text-primary');
-      if (el) el.closest('h2').innerHTML = `Welcome back, <br/><span class="text-primary italic">how can we help today, ${name}?</span>`;
+<body
+  class="bg-background text-on-background font-body min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
+  <div class="fixed inset-0 bg-grain z-[60]"></div>
+  <!-- TopAppBar -->
+  <header
+    class="flex items-center justify-between px-6 py-4 w-full sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl dark:bg-[#1c1c18]/80 shadow-[0_4px_20px_rgba(28,28,24,0.04)] font-manrope antialiased leading-[1.6]">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl"
+        data-icon="potted_plant">potted_plant</span>
+      <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="material-symbols-outlined p-2 rounded-full hover:bg-[#f6f3ec] transition-colors"
+        data-icon="notifications" onclick="window.location.href='dashboard.html'">notifications</button>
+      <div
+        class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20">
+        <img alt="User Profile" class="w-full h-full object-cover"
+          data-alt="portrait of a smiling woman with warm lighting and a natural soft focus background"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa08CxdFMAEUxpOn0M7ibhzMpGse_9fhiOIFK76OxBwanB6uNzKkK5QgTsShRhelizeVhrP7e8kVTUDcrCHAXDa-DPZKG0rCCJPsbMhx95xI3DkQtcChfLC21moFDquUemZFEs1vR9SAQaFbZSLNTUcZ0o5c8TGBfzcUdpVMSncNl--W25-rtgtoBCjtRVv35jJvTcwrmNQ5FyznvrpSu8KcGjsp9cBk7-OmdksKh2iJeJ8gTElYCKl5RcpmSb0OmFCs9HAVK0pv_E" />
+      </div>
+    </div>
+  </header>
+  <main class="max-w-4xl mx-auto px-6 pt-8 pb-32">
+    <!-- Hero Search Section -->
+    <section class="mb-16">
+      <h2 class="text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight mb-8">
+        Welcome back,<br /><span class="text-primary italic">how can we help today?</span>
+      </h2>
+      <div class="relative group">
+        <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+          <span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+        </div>
+        <input
+          class="w-full bg-surface-container-lowest border-none h-20 pl-16 pr-8 rounded-full shadow-[0_10px_40px_rgba(28,28,24,0.04)] text-lg placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 transition-all"
+          placeholder="What help do you need?" type="text" />
+        <button
+          class="absolute right-3 top-3 bottom-3 px-8 bg-primary text-on-primary rounded-full font-bold hover:bg-primary-container transition-all active:scale-95"
+          onclick="searchWorkers()">
+          Find
+        </button>
+      </div>
+    </section>
+    <!-- Categories Horizontal Scroll -->
+    <section class="mb-16">
+      <div class="flex items-center justify-between mb-6 px-2">
+        <h3 class="text-xl font-bold text-on-surface">Categories</h3>
+        <a class="text-primary font-semibold text-sm hover:underline" href="services.html">View All</a>
+      </div>
+      <div class="flex gap-6 overflow-x-auto hide-scrollbar py-4 -mx-2 px-2">
+        <!-- Cook -->
+        <button class="flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Home Cook')">
+          <div
+            class="w-24 h-24 rounded-[2rem] rounded-tr-[3.5rem] bg-primary-fixed flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-3 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-on-primary-fixed text-4xl" data-icon="cleaning_services"
+              style="font-variation-settings: 'FILL' 1;">cleaning_services</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Maid</span>
+        </button>
+        <!-- Plumber -->
+        <button class="flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="window.location.href='dashboard.html'">
+          <div
+            class="w-24 h-24 rounded-[3.5rem] rounded-bl-[1.5rem] bg-tertiary-fixed flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-2 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-on-tertiary-fixed text-4xl" data-icon="plumbing"
+              style="font-variation-settings: 'FILL' 1;">plumbing</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Plumber</span>
+        </button>
+        <!-- Electrician -->
+        <button class="flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="window.location.href='dashboard.html'">
+          <div
+            class="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-6 shadow-sm group-hover:shadow-xl border-2 border-dashed border-outline-variant">
+            <span class="material-symbols-outlined text-on-surface text-4xl" data-icon="electric_bolt"
+              style="font-variation-settings: 'FILL' 1;">electric_bolt</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Electrician</span>
+        </button>
+        <!-- Gardener (Bonus for scroll feel) -->
+        <button class="flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="window.location.href='dashboard.html'">
+          <div
+            class="w-24 h-24 rounded-[3rem] rounded-tl-[1rem] bg-secondary-fixed-dim flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-6 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-on-secondary-fixed-variant text-4xl" data-icon="yard"
+              style="font-variation-settings: 'FILL' 1;">yard</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Gardener</span>
+        </button>
+      </div>
+    </section>
+    <!-- Recommended Section -->
+    <section class="mb-12">
+      <h3 class="text-xl font-bold text-on-surface mb-8 px-2">Recommended for you</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Card 1 -->
+        <div
+          class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="Chef service"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              data-alt="professional chef in a clean modern kitchen plating a gourmet meal with fresh organic ingredients and soft natural lighting"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOa-0gVi5F5P8scxMDAA4PIjuZ2ZPZq8oRd5OYPKDPe-81-fEzttnsWxQuVH0XBgn_9elNv2CLGFEV63B9vsADypiW7wUrneyBcHhdOgLbuo4pFD5F4Z78tFCs83ntGx8zZFm7MecfVt0brnsIFnsKRDynEa-Q9ZRzIr2jtQEHp2lLWWXjPKv-uIB6Xvr9aJrlF0hx4KW0KpNXkALQrcRe0gGQoHTeXqNUsiLrIYGKa9yC6CtAcnF9pH5zcROxQYMr1PLhKZhdf7K8" />
+            <div
+              class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-primary text-lg" data-icon="star"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="text-sm font-bold text-on-surface">4.9</span>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span
+                  class="inline-block px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest mb-2">Gourmet
+                  Dining</span>
+                <h4 class="text-xl font-extrabold text-on-surface">Chef Elena Rodriguez</h4>
+              </div>
+              <span class="text-lg font-bold text-primary">$45/hr</span>
+            </div>
+            <p class="text-on-surface-variant leading-relaxed text-sm mb-6">Expert in organic Mediterranean cuisine.
+              Bringing 10+ years of restaurant experience to your home kitchen.</p>
+            <button
+              class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
+              onclick="window.location.href='booking_request.html'">Book Elena</button>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div
+          class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="Professional cleaner"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              data-alt="friendly woman cleaning a bright airy living room with eco-friendly supplies and soft sun rays coming through the window"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB60nFkj8MRjpZOK6RGxebt9lOpt8btSMbnJuDcaqBLEBS3ybzrcoees6syUN1LF0oLjl2m0nGn42LzJUbQvN5DBdWVngtSgxpOenzE-wGA_8LxZDMUngdF3yeYtgD0mEmJr7TstW0M90yo3U9MnNSF9WzfNXd6rrpZ1xE3FhNbNmOym_HqBBA5QLmu-mqewwpUIq4ifBdALXovuts0353eSCsqM8BsSeIYcJ0R7taYD3HlxWRwY3FlBR5IWQaeendNn-JZ0f5_C8On" />
+            <div
+              class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-primary text-lg" data-icon="star"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="text-sm font-bold text-on-surface">4.8</span>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span
+                  class="inline-block px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold uppercase tracking-widest mb-2">Deep
+                  Clean</span>
+                <h4 class="text-xl font-extrabold text-on-surface">Marcus T.</h4>
+              </div>
+              <span class="text-lg font-bold text-primary">$30/hr</span>
+            </div>
+            <p class="text-on-surface-variant leading-relaxed text-sm mb-6">Specializing in eco-friendly deep cleaning
+              solutions. Reliable, thorough, and pet-friendly service.</p>
+            <button
+              class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
+              onclick="window.location.href='booking_request.html'">Book Marcus</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Trust Badge Card -->
+    <section class="mb-12">
+      <div class="bg-primary-container p-8 rounded-[3rem] text-on-primary-container relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+          <div class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-5xl" data-icon="verified_user"
+              style="font-variation-settings: 'FILL' 1;">verified_user</span>
+          </div>
+          <div>
+            <h3 class="text-2xl font-black mb-2 leading-tight">Your Peace of Mind is Our Priority</h3>
+            <p class="opacity-90 max-w-lg">Every professional at Worknest undergoes a rigorous multi-step background
+              check and skill assessment. Trust is built on every interaction.</p>
+          </div>
+        </div>
+        <!-- Abstract Organic Shapes in Background -->
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute -left-10 -top-10 w-32 h-32 bg-on-primary-container/10 rounded-full blur-2xl"></div>
+      </div>
+    </section>
+  </main>
+  <!-- BottomNavBar -->
+  <nav
+    class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#fcf9f2]/90 backdrop-blur-2xl dark:bg-[#1c1c18]/90 shadow-[0_-10px_40px_rgba(28,28,24,0.06)] font-manrope text-[11px] font-semibold tracking-wide uppercase">
+    <!-- Home Active -->
+    <a class="flex flex-col items-center justify-center bg-[#d6e7a1] text-[#56642b] rounded-full px-6 py-2 transition-all duration-500 ease-out active:scale-90"
+      href="dashboard.html">
+      <span class="material-symbols-outlined text-xl mb-0.5" data-icon="home"
+        style="font-variation-settings: 'FILL' 1;">home</span>
+      <span>Home</span>
+    </a>
+    <!-- Services Inactive -->
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 hover:text-[#9f402d] transition-all duration-300 active:scale-90"
+      href="services.html">
+      <span class="material-symbols-outlined text-xl mb-0.5" data-icon="grid_view">grid_view</span>
+      <span>Services</span>
+    </a>
+    <!-- Bookings Inactive -->
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 hover:text-[#9f402d] transition-all duration-300 active:scale-90"
+      href="booking_history.html">
+      <span class="material-symbols-outlined text-xl mb-0.5" data-icon="event_note">event_note</span>
+      <span>Bookings</span>
+    </a>
+    <!-- Profile Inactive -->
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 hover:text-[#9f402d] transition-all duration-300 active:scale-90"
+      href="profile.html">
+      <span class="material-symbols-outlined text-xl mb-0.5" data-icon="person">person</span>
+      <span>Profile</span>
+    </a>
+  </nav>
+  <!-- FAB (Suppressed on Home per rules, but included if contextual intent matches high-priority action) -->
+  <!-- Not rendered here to prioritize the dashboard flow per Semantic Shell Mandate -->
+  <script>
+    const API = 'http://localhost:8000/api';
+
+    // Load profile name
+    async function loadProfile() {
+      try {
+        const res = await fetch(`${API}/profile/`, { credentials: 'include' });
+        const data = await res.json();
+        if (data.status === 'success') {
+          const name = data.data.fullname.split(' ')[0];
+          const el = document.querySelector('h2 span.text-primary');
+          if (el) el.closest('h2').innerHTML = `Welcome back, <br/><span class="text-primary italic">how can we help today, ${name}?</span>`;
+        }
+      } catch (e) { }
     }
-  } catch(e) {}
-}
 
-// Load recommended workers
-async function loadWorkers(skill = '') {
-  try {
-    const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.status === 'success' && data.data.length > 0) {
-      const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
-      if (!container) return;
-      container.innerHTML = data.data.slice(0, 4).map(w => `
+    // Load recommended workers
+    async function loadWorkers(skill = '') {
+      try {
+        const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === 'success' && data.data.length > 0) {
+          const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
+          if (!container) return;
+          container.innerHTML = data.data.slice(0, 4).map(w => `
         <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group">
           <div class="p-8">
             <div class="flex justify-between items-start mb-4">
@@ -291,31 +354,33 @@ async function loadWorkers(skill = '') {
             <div class="flex items-center gap-2 mb-3">
               <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">star</span>
               <span class="text-sm font-bold">${w.rating} (${w.total_jobs} jobs)</span>
-              <span class="ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${w.status==='pro'?'bg-[#ffdad3] text-[#9f402d]':w.status==='verified'?'bg-[#d6e7a1] text-[#56642b]':'bg-gray-100 text-gray-600'}">${w.status}</span>
+              <span class="ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${w.status === 'pro' ? 'bg-[#ffdad3] text-[#9f402d]' : w.status === 'verified' ? 'bg-[#d6e7a1] text-[#56642b]' : 'bg-gray-100 text-gray-600'}">${w.status}</span>
             </div>
             <p class="text-on-surface-variant leading-relaxed text-sm mb-6">${w.bio || 'Skilled and experienced worker ready to help you.'}</p>
             <button class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" onclick="window.location.href='booking_request.html?worker_id=${w.id}'">Book ${w.fullname.split(' ')[0]}</button>
           </div>
         </div>
       `).join('');
+        }
+      } catch (e) { }
     }
-  } catch(e) {}
-}
 
-function filterBySkill(skill) {
-  loadWorkers(skill);
-  document.querySelector('h3.text-xl.font-bold').textContent = skill + ' near you';
-}
-function goToService(skill) {
-  window.location.href = 'services.html';
-}
+    function filterBySkill(skill) {
+      loadWorkers(skill);
+      document.querySelector('h3.text-xl.font-bold').textContent = skill + ' near you';
+    }
+    function goToService(skill) {
+      window.location.href = 'services.html';
+    }
 
-function searchWorkers() {
-  const q = document.querySelector('input[placeholder]').value.trim();
-  if (q) loadWorkers(q);
-}
+    function searchWorkers() {
+      const q = document.querySelector('input[placeholder]').value.trim();
+      if (q) loadWorkers(q);
+    }
 
-loadProfile();
-loadWorkers();
-</script>
-</body></html>
+    loadProfile();
+    loadWorkers();
+  </script>
+</body>
+
+</html>

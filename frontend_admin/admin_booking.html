@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worknest Admin — System Transactions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #faf7f2;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #56423e;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #9f402d;
+    }
+    .nav-link.active {
+      background: white;
+      color: #9f402d;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
+    }
+  </style>
+</head>
+
+<body class="h-screen flex overflow-hidden text-[#1c1c18]">
+
+  <aside class="hidden md:flex flex-col w-64 h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0 overflow-y-auto">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl" style="font-variation-settings: 'FILL' 1;">security</span>
+      </div>
+      <div>
+        <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+        <p class="text-xs text-[#89726d] font-medium">Safety Command</p>
+      </div>
+    </div>
+    <nav class="flex-1 flex flex-col gap-1 px-3">
+      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
+      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify Users</a>
+      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
+      <a href="admin_booking.html" class="nav-link active"><span class="material-symbols-outlined text-xl">receipt_long</span> System Bookings</a>
+      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
+      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
+    </nav>
+    <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'" class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+    </div>
+  </aside>
+
+  <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
+    <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
+      <h2 class="text-2xl font-black text-[#1c1c18]">System Bookings</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-8 max-w-6xl w-full mx-auto space-y-6">
+      
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="relative w-full md:max-w-md flex-grow">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#89726d]">search</span>
+          <input type="text" id="booking-search-input" onkeyup="filterLiveBookingsTable()" placeholder="Search worker name, client name, or service description..." 
+            class="w-full pl-12 pr-4 py-3.5 bg-[#f6f3ec]/60 border border-[#ddc0ba]/40 focus:border-[#9f402d] text-sm rounded-xl outline-none transition-all placeholder:text-[#89726d]/60 font-medium text-[#1c1c18]" />
+        </div>
+        <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+          <span class="text-xs font-bold text-[#89726d] uppercase tracking-wider whitespace-nowrap">Filter Logs:</span>
+          <select id="status-filter" onchange="filterLiveBookingsTable()" class="px-4 py-2.5 bg-[#f6f3ec]/60 text-xs font-bold text-[#1c1c18] border border-[#ddc0ba]/30 rounded-full outline-none focus:border-[#9f402d]">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
+        <div class="px-8 py-5 border-b border-[#f1eee7] bg-stone-50/40 flex items-center justify-between">
+          <h3 class="text-lg font-bold text-[#1c1c18]">Active Network Allocation Rows</h3>
+          <span id="record-count-badge" class="bg-orange-100 text-[#9f402d] font-bold px-3 py-1 rounded-full text-xs">0 Records Found</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse table-auto min-w-[800px]">
+            <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d] border-b border-[#f1eee7]">
+              <tr>
+                <th class="px-8 py-4">Transaction ID</th>
+                <th class="px-8 py-4">Client (User)</th>
+                <th class="px-8 py-4">Expert Worker</th>
+                <th class="px-8 py-4">Job Description</th>
+                <th class="px-8 py-4">Status</th>
+                <th class="px-8 py-4">Price Matrix</th>
+                <th class="px-8 py-4">Created Date</th>
+              </tr>
+            </thead>
+            <tbody id="master-bookings-table" class="divide-y divide-[#f1eee7] text-sm text-[#1c1c18]">
+              <tr>
+                <td colspan="7" class="px-8 py-12 text-center text-[#89726d]">
+                  <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d] mb-2"></div>
+                  <p class="text-xs font-semibold">Syncing booking data arrays from cloud PostgreSQL fields...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const API = 'http://localhost:8000/api';
+    let cachedBookings = [];
+
+    async function loadMasterBookings() {
+      const tbody = document.getElementById('master-bookings-table');
+      const badge = document.getElementById('record-count-badge');
+      const sessionKey = localStorage.getItem('session_key');
+      const headers = { 'Content-Type': 'application/json' };
+      if (sessionKey) headers['X-Session-Key'] = sessionKey;
+
+      try {
+        const res = await fetch(`${API}/admin/bookings/`, { credentials: 'include', headers });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          cachedBookings = data.data || [];
+          renderTableRows(cachedBookings);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="7" class="px-8 py-6 text-center text-red-600 font-bold">API operational failure: ${data.message}</td></tr>`;
+        }
+      } catch (e) {
+        console.error('Error matching relational row properties:', e);
+        tbody.innerHTML = `<tr><td colspan="7" class="px-8 py-6 text-center text-red-600 font-bold">Failed connecting to server. Ensure Django service pipeline is active.</td></tr>`;
+      }
+    }
+
+    function renderTableRows(bookingArray) {
+      const tbody = document.getElementById('master-bookings-table');
+      const badge = document.getElementById('record-count-badge');
+      
+      badge.textContent = `${bookingArray.length} Records Found`;
+
+      if (bookingArray.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="px-8 py-8 text-center text-[#89726d] font-medium">No matching booking allocations verified inside system tables.</td></tr>`;
+        return;
+      }
+
+      const statusColors = { 
+        pending: 'bg-yellow-100 text-yellow-800 border border-yellow-200', 
+        accepted: 'bg-emerald-100 text-emerald-800 border border-emerald-200', 
+        completed: 'bg-blue-100 text-blue-800 border border-blue-200', 
+        cancelled: 'bg-red-100 text-red-800 border border-red-200' 
+      };
+
+      tbody.innerHTML = bookingArray.map(b => `
+        <tr class="hover:bg-[#f6f3ec]/50 transition-colors">
+          <td class="px-8 py-4 font-mono text-xs font-bold text-stone-400">#BK-${b.id}</td>
+          <td class="px-8 py-4 font-bold text-[#1c1c18]">${b.client_name || 'System User'}</td>
+          <td class="px-8 py-4 text-[#9f402d] font-bold">${b.worker_name || 'Unassigned Worker'}</td>
+          <td class="px-8 py-4 text-[#89726d] max-w-xs truncate font-medium" title="${b.service_desc}">${b.service_desc}</td>
+          <td class="px-8 py-4">
+            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide ${statusColors[b.status] || 'bg-gray-100 text-gray-700'}">
+              ${b.status}
+            </span>
+          </td>
+          <td class="px-8 py-4 font-extrabold text-stone-900">₹${parseInt(b.price || 0).toLocaleString('en-IN')}</td>
+          <td class="px-8 py-4 text-[#89726d] font-medium">${b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-IN') : b.created_at ? new Date(b.created_at).toLocaleDateString('en-IN') : '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Dynamic filtering engine mapping worker_name, client_name, job description, and status codes instantly
+    function filterLiveBookingsTable() {
+      const searchVal = document.getElementById('booking-search-input').value.toLowerCase().trim();
+      const statusFilter = document.getElementById('status-filter').value;
+
+      const filtered = cachedBookings.filter(b => {
+        const matchesWorker = (b.worker_name || '').toLowerCase().includes(searchVal);
+        const matchesClient = (b.client_name || '').toLowerCase().includes(searchVal);
+        const matchesJobName = (b.service_desc || '').toLowerCase().includes(searchVal);
+        const matchesSearch = matchesWorker || matchesClient || matchesJobName;
+
+        const matchesStatus = (statusFilter === 'all' || b.status === statusFilter);
+
+        return matchesSearch && matchesStatus;
+      });
+
+      renderTableRows(filtered);
+    }
+
+    // Fire off execution loop on panel runtime boot up
+    loadMasterBookings();
+  </script>
+</body>
+
+</html>
