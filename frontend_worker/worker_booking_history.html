@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Worknest — Job Schedule</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ea580c",
+            "surface": "#ffffff",
+            "on-surface": "#0f172a",
+            "on-surface-variant": "#475569",
+            "surface-container-low": "#f6f3ec",
+            "surface-container-highest": "#e5e2db",
+            "background": "#fcf4ed",
+            "outline-variant": "#ddc0ba"
+          },
+          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Be Vietnam Pro"] },
+        },
+      },
+    }
+  </script>
+  <style>
+    .paper-grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
+  <div class="fixed inset-0 paper-grain z-0"></div>
+
+  <div id="verification-shield-screen"
+    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#fcf4ed]">
+    <div class="bg-[#f6f3ec] max-w-md p-10 border border-[#ddc0ba]/40 shadow-xl space-y-6 rounded-[2rem]">
+      <div
+        class="w-20 h-20 bg-amber-100 text-[#ea580c] rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
+        <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
+      </div>
+      <h2 class="font-headline text-3xl font-extrabold text-[#0f172a]">Verification Pending</h2>
+      <p class="text-[#475569] text-sm leading-relaxed">
+        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
+        your profile details and identity credentials.
+      </p>
+
+      <div class="bg-white p-4 rounded-2xl border border-[#ddc0ba] text-left space-y-3">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-[#475569] ml-1">Message System
+          Administration</label>
+        <textarea id="pending-msg-input"
+          placeholder="Type a note or ask the admin for a status check on your registration documents..."
+          class="w-full p-4 bg-[#fcf4ed]/50 border border-[#ddc0ba]/40 focus:border-[#ea580c] rounded-xl text-xs outline-none resize-none font-medium text-[#0f172a]"
+          rows="3"></textarea>
+        <button id="send-pending-btn" onclick="sendVerificationMessage()"
+          class="w-full py-3 bg-[#ea580c] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:opacity-90 transition-opacity">
+          Send Note to Admin
+        </button>
+      </div>
+
+      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+        class="w-full py-4 bg-stone-200 hover:bg-stone-300 text-[#475569] font-bold rounded-2xl text-sm transition-colors">
+        Sign Out Safely
+      </button>
+    </div>
+  </div>
+
+
+  <header
+    class="fixed top-0 w-full z-50 bg-[#fcf9f2] backdrop-blur-xl flex justify-between items-center px-6 py-4 border-b border-outline-variant/20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary fill-icon">calendar_today</span>
+      </div>
+      <h1 class="font-headline font-bold text-xl tracking-tight text-orange-800">Job History</h1>
+    </div>
+  </header>
+
+  <main class="relative z-10 pt-24 px-6 max-w-3xl mx-auto space-y-4">
+    <div id="history-list-target" class="space-y-3"></div>
+  </main>
+
+  <div id="details-modal"
+    class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
+    <div class="bg-surface w-full max-w-md p-6 rounded-[2rem] border border-outline-variant/40 space-y-4 relative">
+      <button onclick="closeDetailsModal()"
+        class="absolute right-4 top-4 w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-on-surface-variant hover:text-primary">✕</button>
+      <h3 class="font-headline font-bold text-xl text-on-surface border-b border-outline-variant/20 pb-2">Allocation
+        Dossier</h3>
+      <div class="space-y-2 text-sm text-on-surface-variant font-medium">
+        <p><strong>Customer Name:</strong> <span id="modal-client-name" class="text-on-surface font-bold"></span></p>
+        <p><strong>Contact Line:</strong> <span id="modal-client-phone" class="text-primary font-bold"></span></p>
+        <p><strong>Service Request:</strong> <span id="modal-desc"
+            class="block bg-surface-container-low p-3 rounded-xl border border-outline-variant/10 mt-1"></span></p>
+        <p><strong>Earnings Total:</strong> <span id="modal-price" class="text-stone-900 font-extrabold text-lg"></span>
+        </p>
+        <p><strong>Logged Timestamp:</strong> <span id="modal-date"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <nav
+    class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/90 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(28,28,24,0.06)]">
+    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
+      href="worker_dashboard.html">
+      <span class="material-symbols-outlined">home_work</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
+      href="worker_requests.html">
+      <span class="material-symbols-outlined">hail</span>
+    </a>
+    <a class="flex flex-col items-center justify-center bg-orange-100 text-orange-900 rounded-full px-5 py-2 transition-transform duration-300 translate-y-[-2px]"
+      href="worker_booking_history.html">
+      <span class="material-symbols-outlined fill-icon">calendar_today</span>
+      <span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Schedule</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
+      href="worker_profile.html">
+      <span class="material-symbols-outlined">person</span>
+    </a>
+  </nav>
+
+  <script>
+    const API_BASE = 'http://localhost:8000/api';
+    let cachedRecords = [];
+
+
+    async function checkCurrentStatus() {
+      const sessionKey = localStorage.getItem('session_key');
+      if (!sessionKey) { window.location.href = '../frontend_user/login.html'; return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (data.status === 'success' && data.data) {
+          const worker = data.data;
+
+          // 🛡️ THE ABSOLUTE VERIFICATION GUARD LAYER
+          if (worker.is_verified === false) {
+            // Force display the message screen and keep all real components completely hidden!
+            document.getElementById('verification-shield-screen').classList.remove('hidden');
+
+            // Hide your active headers, bento grids, navigation decks, and main lists
+            const mainElements = document.querySelectorAll('header, main, nav');
+            mainElements.forEach(el => {
+              if (el.id !== 'verification-shield-screen' && !el.contains(document.getElementById('verification-shield-screen'))) {
+                el.classList.add('hidden');
+              }
+            });
+            return;
+          }
+
+          // If verified, proceed with your page rendering logic normally as written...
+        }
+      } catch (e) { console.error("Identity status validation breakdown:", e); }
+    }
+
+    // 📩 Transmit the message straight into the worker's bio field model row
+    async function sendVerificationMessage() {
+      const note = document.getElementById('pending-msg-input').value.trim();
+      if (!note) { alert("Please input a message first."); return; }
+
+      const btn = document.getElementById('send-pending-btn');
+      btn.textContent = "Transmitting message...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
+          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` }) // Store note cleanly inside the bio string block
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          alert("Your message note has been appended to your validation files. The admin will review it immediately.");
+          document.getElementById('pending-msg-input').value = "";
+          btn.textContent = "Note Sent ✓";
+        }
+      } catch (e) { console.error(e); btn.textContent = "Send Note to Admin"; btn.disabled = false; }
+    }
+
+
+    async function loadHistory() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/bookings/`, {
+          headers: {
+            'X-Session-Key': localStorage.getItem('session_key') || '',
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          cachedRecords = data.data || [];
+          const nonPending = cachedRecords.filter(b => b.status !== 'pending');
+
+          document.getElementById('history-list-target').innerHTML = nonPending.map(b => `
+            <div onclick="openDetailsModal(${b.id})" class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/10 flex justify-between items-center cursor-pointer hover:border-primary transition-all">
+              <div>
+                <h4 class="font-headline font-bold text-on-surface">${b.client_name || 'System User'}</h4>
+                <p class="text-xs text-on-surface-variant font-medium">${b.service_desc.substring(0, 30)}...</p>
+              </div>
+              <span class="text-sm font-bold text-primary">₹${parseInt(b.price || 0)}</span>
+            </div>
+          `).join('');
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    function openDetailsModal(id) {
+      // Find matching row out of your local array memory cache
+      const match = cachedRecords.find(b => b.id === id);
+      if (!match) return;
+
+      // Render elements cleanly into your template text nodes
+      document.getElementById('modal-client-name').textContent = match.client_name || 'Worknest Customer';
+      document.getElementById('modal-client-phone').textContent = match.client_phone || 'Provided upon request accept';
+      document.getElementById('modal-desc').textContent = match.service_desc || 'No description attached.';
+      document.getElementById('modal-price').textContent = `₹${parseInt(match.price || 0).toLocaleString('en-IN')}`;
+
+      // Format timestamps nicely
+      const formattedDate = match.created_at
+        ? new Date(match.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+        : 'Live Transaction Record';
+      document.getElementById('modal-date').textContent = formattedDate;
+
+      // Reveal the hidden container modal instantly
+      document.getElementById('details-modal').classList.remove('hidden');
+    }
+
+    function closeDetailsModal() { document.getElementById('details-modal').classList.add('hidden'); }
+    loadHistory();
+    checkCurrentStatus();
+  </script>
+</body>
+
+</html>

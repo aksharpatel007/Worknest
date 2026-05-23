@@ -1,251 +1,350 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "surface-variant": "#e5e2dd",
-              "inverse-surface": "#31302d",
-              "on-surface-variant": "#56423e",
-              "inverse-primary": "#ffb4a5",
-              "tertiary": "#006b5b",
-              "surface-container-highest": "#e5e2dd",
-              "on-primary": "#ffffff",
-              "on-secondary": "#ffffff",
-              "on-secondary-fixed-variant": "#4b472b",
-              "background": "#fcf9f4",
-              "on-primary-container": "#5a0d02",
-              "primary-container": "#e2725b",
-              "on-secondary-fixed": "#1f1c04",
-              "outline-variant": "#ddc0ba",
-              "surface-container-lowest": "#ffffff",
-              "primary-fixed": "#ffdad3",
-              "on-tertiary-container": "#00322a",
-              "inverse-on-surface": "#f3f0eb",
-              "surface-bright": "#fcf9f4",
-              "on-error-container": "#93000a",
-              "secondary-container": "#e8e0ba",
-              "on-primary-fixed-variant": "#802918",
-              "secondary-fixed-dim": "#cec7a2",
-              "tertiary-fixed-dim": "#5cdbc2",
-              "on-tertiary-fixed": "#00201a",
-              "on-secondary-container": "#686344",
-              "outline": "#89726d",
-              "secondary-fixed": "#eae3bc",
-              "error-container": "#ffdad6",
-              "surface-container-low": "#f6f3ee",
-              "on-primary-fixed": "#3e0500",
-              "on-tertiary": "#ffffff",
-              "surface-container-high": "#ebe8e3",
-              "error": "#ba1a1a",
-              "secondary": "#635f40",
-              "surface-tint": "#9f402d",
-              "on-background": "#1c1c19",
-              "primary": "#9f402d",
-              "tertiary-container": "#00a58e",
-              "surface-container": "#f0ede8",
-              "on-surface": "#1c1c19",
-              "on-error": "#ffffff",
-              "tertiary-fixed": "#7bf8dd",
-              "on-tertiary-fixed-variant": "#005144",
-              "surface-dim": "#dcdad5",
-              "primary-fixed-dim": "#ffb4a5",
-              "surface": "#fcf9f4"
-            },
-            fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Manrope"],
-              "label": ["Manrope"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-variant": "#e5e2dd",
+            "inverse-surface": "#31302d",
+            "on-surface-variant": "#56423e",
+            "inverse-primary": "#ffb4a5",
+            "tertiary": "#006b5b",
+            "surface-container-highest": "#e5e2dd",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed-variant": "#4b472b",
+            "background": "#fcf9f4",
+            "on-primary-container": "#5a0d02",
+            "primary-container": "#e2725b",
+            "on-secondary-fixed": "#1f1c04",
+            "outline-variant": "#ddc0ba",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed": "#ffdad3",
+            "on-tertiary-container": "#00322a",
+            "inverse-on-surface": "#f3f0eb",
+            "surface-bright": "#fcf9f4",
+            "on-error-container": "#93000a",
+            "secondary-container": "#e8e0ba",
+            "on-primary-fixed-variant": "#802918",
+            "secondary-fixed-dim": "#cec7a2",
+            "tertiary-fixed-dim": "#5cdbc2",
+            "on-tertiary-fixed": "#00201a",
+            "on-secondary-container": "#686344",
+            "outline": "#89726d",
+            "secondary-fixed": "#eae3bc",
+            "error-container": "#ffdad6",
+            "surface-container-low": "#f6f3ee",
+            "on-primary-fixed": "#3e0500",
+            "on-tertiary": "#ffffff",
+            "surface-container-high": "#ebe8e3",
+            "error": "#ba1a1a",
+            "secondary": "#635f40",
+            "surface-tint": "#9f402d",
+            "on-background": "#1c1c19",
+            "primary": "#9f402d",
+            "tertiary-container": "#00a58e",
+            "surface-container": "#f0ede8",
+            "on-surface": "#1c1c19",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#7bf8dd",
+            "on-tertiary-fixed-variant": "#005144",
+            "surface-dim": "#dcdad5",
+            "primary-fixed-dim": "#ffb4a5",
+            "surface": "#fcf9f4"
           },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Manrope"],
+            "label": ["Manrope"]
+          },
+          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
         },
-      }
-    </script>
-<!-- Leaflet Map -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>
-  #map { position: absolute; inset: 0; z-index: 1; }
-  .leaflet-container { background: #f0ede8; }
-</style>
-<style>
+      },
+    }
+  </script>
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .leaflet-container {
+      background: #f0ede8;
+    }
+  </style>
+  <style>
     body {
       min-height: max(884px, 100dvh);
     }
   </style>
-  </head>
+</head>
+
 <body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md shadow-sm dark:shadow-none">
-<div class="flex justify-between items-center px-6 py-4 w-full">
-<button class="p-2 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors rounded-full active:scale-95 duration-200" onclick="window.location.href='worker_list.html'">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</button>
-<h1 class="text-2xl font-extrabold text-orange-700 dark:text-orange-500 tracking-tighter font-manrope">Worknest</h1>
-<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20 shadow-sm">
-<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a friendly professional man with a neat beard, soft outdoor lighting, natural skin tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Yn0FsEgVYKF7TdkFi7rP8OgrH-FS3qg95gtrDft4Gi-XUVh7LLtkZE6PPXYRIrmbkn5j8AbiBdztULvC7fzzugx30_AhfrGdNctCfuvdvvJzSYxkuncaiXrcIRvBP_DHvs-LAoQsA2hfCOG6KEoPD9iIh18b9KsLskN7U2CwUeQQd6eoW4yu308TKHuZXm2rLHjcxAKFuKI2PAOmh8udJueKREEHotTmOHWz7KNxNCgWXnthYNBwcyWitdMZsbw-kkYLTVpF77Xh"/>
-</div>
-</div>
-</header>
-<!-- Main Map Content -->
-<main class="relative h-screen w-full overflow-hidden">
-  <div id="map" class="absolute inset-0 z-0"></div>
-<!-- Custom Markers (Workers) -->
-<!-- Marker 1 -->
-<div class="absolute top-[30%] left-[25%] z-10">
-<div class="relative flex flex-col items-center">
-<div class="w-12 h-12 rounded-full border-4 border-white shadow-xl overflow-hidden active:scale-95 transition-transform cursor-pointer">
-<img class="w-full h-full object-cover" data-alt="Portrait of a young woman with a warm smile, wearing a casual linen shirt, natural sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbYF-5asftVPGf1YgOXMB7IrFI-jgYvhBmens1EMQsq_s5I6P7QE35ASAdhQ6UiyQm4qLWeUeGVczvG3MUB5F71rav5ylUFTX9M51wv9R-IEK-HkoPzniUS42UaNNCrUqCkaToxhHbPOiXjGL9qT4Wr7KbP_lHtdHUZASpvA2OPrAWROR5oaQD-SrJBH7WMqeFuTa5VVIxyidplFc4S5zPFTRr22RSOpuTdchJX62ac1d8iz9pm4zY5kSqpo0PNQrlCi6HoEV9xtKI"/>
-</div>
-<div class="mt-2 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[10px] font-bold tracking-wider text-primary uppercase">Handyman</div>
-</div>
-</div>
-<!-- Marker 2 (Clicked State Visual) -->
-<div class="absolute top-[50%] left-[60%] z-20">
-<div class="relative flex flex-col items-center">
-<!-- Community Pulse Animation logic represented by Sage Ring -->
-<div class="absolute -inset-2 bg-tertiary-container/20 rounded-full animate-pulse"></div>
-<div class="w-14 h-14 rounded-full border-4 border-primary-container shadow-2xl overflow-hidden ring-4 ring-primary-container/20 transition-all scale-110 cursor-pointer">
-<img class="w-full h-full object-cover" data-alt="Friendly middle-aged male gardener with a kind face, wearing a worn baseball cap, soft greenhouse lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA47vdWOs_ElcE5dshbV867qwxWGDl6wxjfZIkXAFAXr_8FikE_fdUsyUmnzujdog0HDmv-84cX7YnF7nQqPhmMrDoYCHIP7DDfiVBDCjMcbL2drlNtBSejSkqbA3_NEBddLuZv_mpEylAp9PgF6iWi01xfWUW9HwG_RYyp0BbkCrZqUNAFLfDLGo5df_smMuZ6FSJ9JWoR1fpoiM1sa04UvVqRpZn0naOvSjQkMYktZFSZN6ZvZH6cORVJaMp5fiFWieY_H-JlX7-I"/>
-</div>
-<div class="mt-2 px-3 py-1 bg-primary text-white rounded-full shadow-md text-[10px] font-bold tracking-wider uppercase">Active Now</div>
-</div>
-</div>
-<!-- Marker 3 -->
-<div class="absolute top-[65%] left-[20%] z-10">
-<div class="w-10 h-10 rounded-full border-2 border-white shadow-lg overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer">
-<img class="w-full h-full object-cover" data-alt="Professional young male carpenter in a woodshop setting, focused expression, warm workshop lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmRP3_odu9unlFzNxh-FYRQ3cq4qsBYdtk3uUArN7s5EacVxMjqD21pnxGlngl8oz90zJiOlEsgQLQXeftT0wusYHlhpSUoPu1ChDcO9eZADVBqjPTIvG5sg0owrAxw3LP_pIe7Hej5LLQZv-foII6Jdt1NL7JGaT0tPp5RjrUz5-AwUDTMVlbyjzWlgKwo2sdYVzpiTU9Y2DXkUvCICcTm7VZyLgxOv-EW9VJAXpvdWkTrdnsANLKQVAObkIUX26pZpBbdD50wlbu"/>
-</div>
-</div>
-<!-- Floating Action Controls -->
-<div class="absolute top-24 right-6 z-30 flex flex-col gap-3">
-<button class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all" onclick="window.location.href='dashboard.html'">
-<span class="material-symbols-outlined" data-icon="layers">layers</span>
-</button>
-<button class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all" onclick="window.location.href='dashboard.html'">
-<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
-</button>
-</div>
-<!-- Organic Bottom Drawer (Pebble Shaped) -->
-<div class="fixed bottom-[88px] left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40">
-<div class="bg-surface-container-lowest rounded-lg shadow-2xl border border-outline-variant/10 p-6 overflow-hidden relative">
-<!-- Aesthetic Corner Shape -->
-<div class="absolute -top-12 -right-12 w-24 h-24 bg-secondary-container/30 rounded-full blur-2xl"></div>
-<div class="flex items-start gap-5">
-<!-- Worker Avatar Large -->
-<div class="relative">
-<div class="w-20 h-20 rounded-lg overflow-hidden shadow-inner">
-<img class="w-full h-full object-cover" data-alt="Detailed portrait of a local gardener, friendly expression, terracotta and sage colored background environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcHa0SpjalQgy8UOVPHMzMOj8YVnQfyvntQmTfP7miTtK0ubaemtiBbhGVRtcyTQGIWmuoX-f73LghNzFFc22bJXX5pQcvAffTdHNAyJe7nprsI42o59oIMS53Hk3N0KNlTz0wjD-r84YcvSshaIHy2wlQPEd37rrO4Y2aib8kZOT0ZWY2HsD_UTZpovMhLlb76Xup2i63VuClY0epyKf-4hALFVjCu9vuhmJH6eYwwBQDJUjKy2arp0mBC4dWHbE4v3Fy_BAB9AIf"/>
-</div>
-<div class="absolute -bottom-2 -right-2 bg-tertiary text-white w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
-<span class="material-symbols-outlined text-sm" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
-</div>
-</div>
-<!-- Details -->
-<div class="flex-1">
-<div class="flex justify-between items-start">
-<div>
-<h3 class="font-headline font-extrabold text-xl text-on-surface tracking-tight">Marcus Thorne</h3>
-<p class="text-on-surface-variant text-sm font-medium">Landscape &amp; Garden Specialist</p>
-</div>
-</div>
-<div class="mt-3 flex items-center gap-1">
-<div class="flex text-primary">
-<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-lg" data-icon="star_half" style="font-variation-settings: 'FILL' 1;">star_half</span>
-</div>
-<span class="text-xs font-bold text-on-surface-variant ml-1">4.8 (124 reviews)</span>
-</div>
-</div>
-</div>
-<div class="mt-6 flex gap-3">
-<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all" onclick="window.location.href='dashboard.html'">
-                        Request Availability
-                    </button>
-<button class="w-14 bg-secondary-container text-on-secondary-container rounded-xl flex items-center justify-center active:scale-95 transition-all" onclick="window.location.href='dashboard.html'">
-<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
-</button>
-</div>
-<!-- Verified Badge Indicator (Eco-Trust) -->
-<div class="mt-4 flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-full w-fit">
-<span class="material-symbols-outlined text-tertiary text-sm" data-icon="shield_with_heart" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
-<span class="text-[11px] font-bold text-on-surface-variant tracking-wide">Worknest Verified Safety Guarantee</span>
-</div>
-</div>
-</div>
-</main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl shadow-2xl">
-<a class="flex flex-col items-center justify-center bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-200 rounded-full px-6 py-2 transition-all active:scale-90 duration-300 ease-out" href="map.html">
-<span class="material-symbols-outlined" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
-<span class="font-manrope text-[11px] font-semibold tracking-wide">Explore</span>
-</a>
-<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-6 py-2 hover:text-orange-500 transition-all" href="booking_request.html">
-<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
-<span class="font-manrope text-[11px] font-semibold tracking-wide">Saved</span>
-</a>
-<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-6 py-2 hover:text-orange-500 transition-all" href="dashboard.html">
-<span class="material-symbols-outlined" data-icon="work_outline">work_outline</span>
-<span class="font-manrope text-[11px] font-semibold tracking-wide">Jobs</span>
-</a>
-<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-6 py-2 hover:text-orange-500 transition-all" href="profile.html">
-<span class="material-symbols-outlined" data-icon="person">person</span>
-<span class="font-manrope text-[11px] font-semibold tracking-wide">Profile</span>
-</a>
-</nav>
-<script>
-// Initialize Leaflet map
-const map = L.map('map').setView([20.5937, 78.9629], 12); // Default: India center
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+  <!-- TopAppBar -->
+  <header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md shadow-sm dark:shadow-none">
+    <div class="flex justify-between items-center px-6 py-4 w-full">
+      <button
+        class="p-2 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors rounded-full active:scale-95 duration-200"
+        onclick="window.location.href='worker_list.html'">
+        <span class="material-symbols-outlined" data-icon="search">search</span>
+      </button>
+      <h1 class="text-2xl font-extrabold text-orange-700 dark:text-orange-500 tracking-tighter font-manrope">Worknest
+      </h1>
+      <div
+        class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20 shadow-sm">
+        <img alt="User Profile" class="w-full h-full object-cover"
+          data-alt="Close-up portrait of a friendly professional man with a neat beard, soft outdoor lighting, natural skin tones"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Yn0FsEgVYKF7TdkFi7rP8OgrH-FS3qg95gtrDft4Gi-XUVh7LLtkZE6PPXYRIrmbkn5j8AbiBdztULvC7fzzugx30_AhfrGdNctCfuvdvvJzSYxkuncaiXrcIRvBP_DHvs-LAoQsA2hfCOG6KEoPD9iIh18b9KsLskN7U2CwUeQQd6eoW4yu308TKHuZXm2rLHjcxAKFuKI2PAOmh8udJueKREEHotTmOHWz7KNxNCgWXnthYNBwcyWitdMZsbw-kkYLTVpF77Xh" />
+      </div>
+    </div>
+  </header>
+  <!-- Main Map Content -->
+  <main class="relative h-screen w-full overflow-hidden">
+    <div id="map" class="absolute inset-0 z-0"></div>
+    <!-- Custom Markers (Workers) -->
+    <!-- Marker 1 -->
+    <div class="absolute top-[30%] left-[25%] z-10">
+      <div class="relative flex flex-col items-center">
+        <div
+          class="w-12 h-12 rounded-full border-4 border-white shadow-xl overflow-hidden active:scale-95 transition-transform cursor-pointer">
+          <img class="w-full h-full object-cover"
+            data-alt="Portrait of a young woman with a warm smile, wearing a casual linen shirt, natural sunlight"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbYF-5asftVPGf1YgOXMB7IrFI-jgYvhBmens1EMQsq_s5I6P7QE35ASAdhQ6UiyQm4qLWeUeGVczvG3MUB5F71rav5ylUFTX9M51wv9R-IEK-HkoPzniUS42UaNNCrUqCkaToxhHbPOiXjGL9qT4Wr7KbP_lHtdHUZASpvA2OPrAWROR5oaQD-SrJBH7WMqeFuTa5VVIxyidplFc4S5zPFTRr22RSOpuTdchJX62ac1d8iz9pm4zY5kSqpo0PNQrlCi6HoEV9xtKI" />
+        </div>
+        <div
+          class="mt-2 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[10px] font-bold tracking-wider text-primary uppercase">
+          Handyman</div>
+      </div>
+    </div>
+    <!-- Marker 2 (Clicked State Visual) -->
+    <div class="absolute top-[50%] left-[60%] z-20">
+      <div class="relative flex flex-col items-center">
+        <!-- Community Pulse Animation logic represented by Sage Ring -->
+        <div class="absolute -inset-2 bg-tertiary-container/20 rounded-full animate-pulse"></div>
+        <div
+          class="w-14 h-14 rounded-full border-4 border-primary-container shadow-2xl overflow-hidden ring-4 ring-primary-container/20 transition-all scale-110 cursor-pointer">
+          <img class="w-full h-full object-cover"
+            data-alt="Friendly middle-aged male gardener with a kind face, wearing a worn baseball cap, soft greenhouse lighting"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA47vdWOs_ElcE5dshbV867qwxWGDl6wxjfZIkXAFAXr_8FikE_fdUsyUmnzujdog0HDmv-84cX7YnF7nQqPhmMrDoYCHIP7DDfiVBDCjMcbL2drlNtBSejSkqbA3_NEBddLuZv_mpEylAp9PgF6iWi01xfWUW9HwG_RYyp0BbkCrZqUNAFLfDLGo5df_smMuZ6FSJ9JWoR1fpoiM1sa04UvVqRpZn0naOvSjQkMYktZFSZN6ZvZH6cORVJaMp5fiFWieY_H-JlX7-I" />
+        </div>
+        <div
+          class="mt-2 px-3 py-1 bg-primary text-white rounded-full shadow-md text-[10px] font-bold tracking-wider uppercase">
+          Active Now</div>
+      </div>
+    </div>
+    <!-- Marker 3 -->
+    <div class="absolute top-[65%] left-[20%] z-10">
+      <div
+        class="w-10 h-10 rounded-full border-2 border-white shadow-lg overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer">
+        <img class="w-full h-full object-cover"
+          data-alt="Professional young male carpenter in a woodshop setting, focused expression, warm workshop lighting"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmRP3_odu9unlFzNxh-FYRQ3cq4qsBYdtk3uUArN7s5EacVxMjqD21pnxGlngl8oz90zJiOlEsgQLQXeftT0wusYHlhpSUoPu1ChDcO9eZADVBqjPTIvG5sg0owrAxw3LP_pIe7Hej5LLQZv-foII6Jdt1NL7JGaT0tPp5RjrUz5-AwUDTMVlbyjzWlgKwo2sdYVzpiTU9Y2DXkUvCICcTm7VZyLgxOv-EW9VJAXpvdWkTrdnsANLKQVAObkIUX26pZpBbdD50wlbu" />
+      </div>
+    </div>
+    <!-- Floating Action Controls -->
+    <div class="absolute top-24 right-6 z-30 flex flex-col gap-3">
+      <button
+        class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all"
+        onclick="window.location.href='dashboard.html'">
+        <span class="material-symbols-outlined" data-icon="layers">layers</span>
+      </button>
+      <button
+        class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all"
+        onclick="window.location.href='dashboard.html'">
+        <span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+      </button>
+    </div>
+    <!-- Organic Bottom Drawer (Pebble Shaped) -->
+    <div class="fixed bottom-[88px] left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40">
+      <div
+        class="bg-surface-container-lowest rounded-lg shadow-2xl border border-outline-variant/10 p-6 overflow-hidden relative">
+        <!-- Aesthetic Corner Shape -->
+        <div class="absolute -top-12 -right-12 w-24 h-24 bg-secondary-container/30 rounded-full blur-2xl"></div>
+        <div class="flex items-start gap-5">
+          <!-- Worker Avatar Large -->
+          <div class="relative">
+            <div class="w-20 h-20 rounded-lg overflow-hidden shadow-inner">
+              <img class="w-full h-full object-cover"
+                data-alt="Detailed portrait of a local gardener, friendly expression, terracotta and sage colored background environment"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcHa0SpjalQgy8UOVPHMzMOj8YVnQfyvntQmTfP7miTtK0ubaemtiBbhGVRtcyTQGIWmuoX-f73LghNzFFc22bJXX5pQcvAffTdHNAyJe7nprsI42o59oIMS53Hk3N0KNlTz0wjD-r84YcvSshaIHy2wlQPEd37rrO4Y2aib8kZOT0ZWY2HsD_UTZpovMhLlb76Xup2i63VuClY0epyKf-4hALFVjCu9vuhmJH6eYwwBQDJUjKy2arp0mBC4dWHbE4v3Fy_BAB9AIf" />
+            </div>
+            <div
+              class="absolute -bottom-2 -right-2 bg-tertiary text-white w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
+              <span class="material-symbols-outlined text-sm" data-icon="verified"
+                style="font-variation-settings: 'FILL' 1;">verified</span>
+            </div>
+          </div>
+          <!-- Details -->
+          <div class="flex-1">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-headline font-extrabold text-xl text-on-surface tracking-tight">Marcus Thorne</h3>
+                <p class="text-on-surface-variant text-sm font-medium">Landscape &amp; Garden Specialist</p>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center gap-1">
+              <div class="flex text-primary">
+                <span class="material-symbols-outlined text-lg" data-icon="star"
+                  style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-lg" data-icon="star"
+                  style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-lg" data-icon="star"
+                  style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-lg" data-icon="star"
+                  style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-lg" data-icon="star_half"
+                  style="font-variation-settings: 'FILL' 1;">star_half</span>
+              </div>
+              <span class="text-xs font-bold text-on-surface-variant ml-1">4.8 (124 reviews)</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 flex gap-3">
+          <button
+            class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all"
+            onclick="window.location.href='dashboard.html'">
+            Request Availability
+          </button>
+          <button
+            class="w-14 bg-secondary-container text-on-secondary-container rounded-xl flex items-center justify-center active:scale-95 transition-all"
+            onclick="window.location.href='dashboard.html'">
+            <span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+          </button>
+        </div>
+        <!-- Verified Badge Indicator (Eco-Trust) -->
+        <div class="mt-4 flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-full w-fit">
+          <span class="material-symbols-outlined text-tertiary text-sm" data-icon="shield_with_heart"
+            style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+          <span class="text-[11px] font-bold text-on-surface-variant tracking-wide">Worknest Verified Safety
+            Guarantee</span>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- BottomNavBar -->
+  <nav
+    class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl shadow-2xl">
+    <a class="flex flex-col items-center justify-center bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-200 rounded-full px-6 py-2 transition-all active:scale-90 duration-300 ease-out"
+      href="map.html">
+      <span class="material-symbols-outlined" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
+      <span class="font-manrope text-[11px] font-semibold tracking-wide">Explore</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-6 py-2 hover:text-orange-500 transition-all"
+      href="booking_request.html">
+      <span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+      <span class="font-manrope text-[11px] font-semibold tracking-wide">Saved</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-6 py-2 hover:text-orange-500 transition-all"
+      href="dashboard.html">
+      <span class="material-symbols-outlined" data-icon="work_outline">work_outline</span>
+      <span class="font-manrope text-[11px] font-semibold tracking-wide">Jobs</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-6 py-2 hover:text-orange-500 transition-all"
+      href="profile.html">
+      <span class="material-symbols-outlined" data-icon="person">person</span>
+      <span class="font-manrope text-[11px] font-semibold tracking-wide">Profile</span>
+    </a>
+  </nav>
+  <script>
+    const API_BASE = 'http://localhost:8000/api';
+    let activeWorkersCache = [];
 
-// Custom orange marker icon
-const workerIcon = L.divIcon({
-  className: '',
-  html: `<div style="width:44px;height:44px;border-radius:50%;border:3px solid #fff;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:#f0ede8">
-    <div style="width:100%;height:100%;background:linear-gradient(135deg,#ea580c,#c2410c);display:flex;align-items:center;justify-content:center;color:white;font-size:18px">👷</div>
-  </div>`,
-  iconSize: [44, 44],
-  iconAnchor: [22, 22]
-});
+    // Initialize the Leaflet map matrix
+    const map = L.map('map').setView([23.0225, 72.5714], 13); // Default view center: Ahmedabad, India
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-// Try to get user's location
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    map.setView([pos.coords.latitude, pos.coords.longitude], 14);
-    L.circle([pos.coords.latitude, pos.coords.longitude], { radius: 200, color: '#ea580c', fillOpacity: 0.1 }).addTo(map);
-  });
-}
+    // Define custom orange icon framework for verified active workers
+    const workerIcon = L.divIcon({
+      className: '',
+      html: `<div style="width:44px;height:44px;border-radius:50%;border:3px solid #fff;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:#fff flex items-center justify-center">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#ea580c,#c2410c);display:flex;align-items:center;justify-content:center;color:white;font-size:18px">👷</div>
+    </div>`,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
+    });
 
-// Load available workers from backend
-async function loadWorkers() {
-  try {
-    const res = await fetch('http://localhost:8000/api/workers/');
-    const data = await res.json();
-    if (data.status === 'success') {
-      data.data.forEach(w => {
-        if (w.latitude && w.longitude) {
-          const marker = L.marker([w.latitude, w.longitude], { icon: workerIcon }).addTo(map);
-          marker.bindPopup(`<b>${w.fullname}</b><br>${w.skill}<br>⭐ ${w.rating}<br><a href="booking_request.html?worker_id=${w.id}" style="color:#ea580c;font-weight:bold">Book Now</a>`);
+    // Target client location and synchronize coordinates with the PostgreSQL user table
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        map.setView([lat, lon], 14);
+        L.circle([lat, lon], { radius: 400, color: '#9f402d', fillOpacity: 0.08 }).addTo(map);
+
+        // Save user live position coordinates back into user profile database row fields
+        const sessionKey = localStorage.getItem('session_key');
+        if (sessionKey) {
+          try {
+            await fetch(`${API_BASE}/profile/`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+              body: JSON.stringify({ latitude: lat, longitude: lon })
+            });
+          } catch (err) { console.error("Geographical mapping sync failure:", err); }
         }
       });
     }
-  } catch(e) { console.log('Load XAMPP to see live workers on map'); }
-}
-loadWorkers();
-</script>
-</body></html>
+
+    // Fetch verified active worker arrays from the database pipeline
+    async function loadLiveMapNetwork() {
+      try {
+        const res = await fetch(`${API_BASE}/workers/`);
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          activeWorkersCache = data.data || [];
+
+          activeWorkersCache.forEach(w => {
+            if (w.latitude && w.longitude) {
+              const marker = L.marker([parseFloat(w.latitude), parseFloat(w.longitude)], { icon: workerIcon }).addTo(map);
+
+              // Interaction hook: Click marker to populate the organic bottom info drawer instantly
+              marker.on('click', () => populateBottomDrawer(w));
+            }
+          });
+        }
+      } catch (e) { console.error("Map layer initialization anomaly:", e); }
+    }
+
+    // Populate info drawer elements on map item selections
+    function populateBottomDrawer(worker) {
+      const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname || 'Worker')}&background=ea580c&color=fff&bold=true`;
+
+      document.querySelector('main h3').textContent = worker.fullname || 'Artisan Provider';
+      document.querySelector('main p').textContent = worker.skill || 'General Specialist';
+      document.querySelector('main img').src = worker.profile_pic ? `http://localhost:8000${worker.profile_pic}` : fallbackAvatar;
+      document.querySelector('main .text-primary').textContent = `₹${worker.hourly_rate || 0}/hr`;
+      document.querySelector('main .text-on-surface-variant').textContent = `⭐ ${parseFloat(worker.rating || 0).toFixed(1)} (${worker.total_jobs || 0} reviews)`;
+
+      // Bind checkout action redirect button to pass the parameter string dynamically
+      const bookBtn = document.querySelector('main button');
+      bookBtn.setAttribute('onclick', `window.location.href='booking_request.html?worker_id=${worker.id}'`);
+    }
+
+    loadLiveMapNetwork();
+  </script>
+</body>
+</html>

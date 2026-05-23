@@ -136,6 +136,21 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
+      <div id="appeal-review-panel" class="hidden p-5 bg-orange-50 border border-orange-200 rounded-2xl space-y-3 mt-4">
+        <div class="flex items-center gap-2 text-[#E07A5F] font-bold text-xs uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm">gavel</span> Flagged Worker Appeal Statement
+        </div>
+        <p id="appeal-message-box"
+          class="text-xs text-[#3D405B] font-medium italic bg-white p-4 rounded-xl border border-[#ddc0ba]/40 leading-relaxed">
+          "No statement submitted yet."
+        </p>
+        <div class="flex gap-2">
+          <button id="btn-admin-reinstate"
+            class="flex-1 py-3 bg-[#81B29A] hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all">
+            Accept Case & Reinstate Dashboard
+          </button>
+        </div>
+      </div>
       <div id="modal-content" class="p-8 overflow-y-auto"></div>
     </div>
   </div>
@@ -378,6 +393,37 @@
       }, 4000);
     }
 
+    function openFraudInspectionModal(workerObject) {
+      const reviewPanel = document.getElementById('appeal-review-panel');
+      const messageBox = document.getElementById('appeal-message-box');
+      const reinstateBtn = document.getElementById('btn-admin-reinstate');
+
+      // If the worker sent an appeal message, unlock the review block modal instantly
+      if (workerObject.bio && workerObject.bio.startsWith('APPEAL_REQUEST:')) {
+        reviewPanel.classList.remove('hidden');
+        // Strip prefix code out to display clean text strings cleanly on screen
+        messageBox.textContent = `"${workerObject.bio.replace('APPEAL_REQUEST:', '').trim()}"`;
+
+        // Map your working verify route endpoint workaround to execute clear actions
+        reinstateBtn.onclick = async () => {
+          if (!confirm("Approve this statement and restore this artisan's complete working dashboard logs?")) return;
+
+          try {
+            const res = await fetch(`http://localhost:8000/api/admin/verify/${workerObject.id}/`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+              alert("Worker profile successfully reinstated. Security flags dropped.");
+              window.location.reload(); // Refresh state views cleanly
+            }
+          } catch (e) { console.error("Reinstatement request error:", e); }
+        };
+      } else {
+        reviewPanel.classList.add('hidden');
+      }
+    }
     async function suspendWorker(id) {
       if (!confirm("Suspend this worker instantly? They will be hidden from all user maps.")) return;
       const res = await fetch(`${API}/admin/verify/${id}/`, { method: 'POST', headers: { 'X-Session-Key': localStorage.getItem('session_key') } });

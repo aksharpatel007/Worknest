@@ -92,6 +92,7 @@
   <main class="flex-1 h-full overflow-y-auto custom-scrollbar flex flex-col min-w-0">
     <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md px-8 py-4 border-b border-[#ddc0ba]/20">
       <h2 class="text-2xl font-black">Verification Queue</h2>
+      
     </header>
 
     <div class="p-8 w-full max-w-7xl mx-auto space-y-6">
@@ -131,16 +132,16 @@
 
   <div id="user-modal"
     class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90dvh] overflow-hidden shadow-2xl flex flex-col">
+    <div class="bg-white rounded-3xl max-w-5xl w-full max-h-[90dvh] overflow-hidden shadow-2xl flex flex-col">
       <div class="p-6 border-b border-[#f1eee7] flex justify-between items-center">
         <h3 class="text-xl font-bold">Worker Verification Detail</h3>
         <button onclick="closeModal('user-modal')" class="text-2xl text-[#89726d]">✕</button>
       </div>
-      <div id="modal-content" class="p-8 overflow-y-auto"></div>
+      <div id="modal-content" class="p-8 overflow-y-auto custom-scrollbar"></div>
     </div>
   </div>
 
-  <div id="toast-container" class="fixed bottom-6 right-6 z- pointer-events-none space-y-3"></div>
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 pointer-events-none space-y-3"></div>
 
   <script>
     const API = 'http://localhost:8000/api';
@@ -151,13 +152,11 @@
       let filtered = [];
 
       if (status === 'verified') {
-        // This handles true, "true", "True", "t", and 1
         filtered = rawWorkerData.filter(w => {
           const val = String(w.is_verified).toLowerCase();
           return val === 'true' || val === 't' || w.is_verified === 1 || w.is_verified === true;
         });
       } else if (status === 'unverified') {
-        // This handles false, "false", "False", "f", and 0
         filtered = rawWorkerData.filter(w => {
           const val = String(w.is_verified).toLowerCase();
           return val === 'false' || val === 'f' || w.is_verified === 0 || w.is_verified === false;
@@ -166,7 +165,6 @@
         filtered = rawWorkerData;
       }
 
-      // Update Button Styles
       ['all', 'verified', 'unverified'].forEach(key => {
         const btn = document.getElementById(`filter-${key}`);
         if (btn) {
@@ -185,46 +183,53 @@
       const tbody = document.getElementById('verification-table');
 
       if (workers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-10 text-center text-[#89726d]">No workers found in this category.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="px-8 py-10 text-center text-[#89726d]">No workers found in this category.</td></tr>';
         return;
       }
 
       tbody.innerHTML = workers.map(w => {
         const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+
+        const hasUnreadMessage = w.bio && w.bio.length > 0;
+        const greenDotBadge = hasUnreadMessage
+          ? `<span class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse" title="Message Appended"></span>`
+          : '';
+
+        const formattedDate = w.submitted_at ? w.submitted_at : new Date(w.date_joined).toLocaleDateString('en-IN');
+
         return `
       <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer" onclick="openWorkerDetail(${JSON.stringify(w).replace(/"/g, '&quot;')})">
         <td class="px-8 py-5 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full overflow-hidden border border-[#ddc0ba]/40">
-            <img src="${w.profile_pic ? 'http://localhost:8000' + w.profile_pic : fallback}" class="w-full h-full object-cover">
+          <div class="relative w-10 h-10 rounded-full border border-[#ddc0ba]/40">
+            <img src="${w.profile_pic ? 'http://localhost:8000' + w.profile_pic : fallback}" class="w-full h-full object-cover rounded-full">
+            ${greenDotBadge}
           </div>
           <div>
             <p class="font-bold text-[#1c1c18]">${w.fullname}</p>
             <p class="text-[10px] uppercase font-black ${w.is_verified ? 'text-green-600' : 'text-orange-600'}">${w.is_verified ? 'Verified' : 'Pending'}</p>
           </div>
         </td>
-        <td class="px-8 py-5 text-[#89726d] font-medium">${new Date(w.date_joined).toLocaleDateString('en-IN')}</td>
+        <td class="px-8 py-5 text-[#89726d] font-medium">${formattedDate}</td>
         <td class="px-8 py-5 text-[#9f402d] font-bold italic underline">Inspect ID</td>
         <td class="px-8 py-5">
-  <div class="flex items-center gap-3">
-    ${!w.is_verified ? `
-      <button onclick="event.stopPropagation(); approveWorker(${w.id})" 
-              class="px-4 py-2 bg-green-600 text-white rounded-full text-xs font-bold hover:bg-green-700 transition-all">
-        Approve
-      </button>` : 'approved'}
-      </td>
+          <div class="flex items-center gap-3">
+            ${!w.is_verified ? `
+              <button onclick="event.stopPropagation(); approveWorker(${w.id})" 
+                      class="px-4 py-2 bg-green-600 text-white rounded-full text-xs font-bold hover:bg-green-700 transition-all">
+                Approve
+              </button>` : '<span class="text-xs font-semibold text-green-600">Approved</span>'}
+          </div>
+        </td>
         <td class="px-8 py-5">
-      <button onclick="event.stopPropagation(); markAsFraud(${w.id})" 
-            class="px-4 py-2 border border-red-200 bg-red-50 text-red-600 rounded-full text-xs font-black hover:bg-red-600 hover:text-white transition-all">
-      Mark Fraud
-    </button>
-  </div>
-</td>
-        
+          <button onclick="event.stopPropagation(); markAsFraud(${w.id})" 
+                class="px-4 py-2 border border-red-200 bg-red-50 text-red-600 rounded-full text-xs font-black hover:bg-red-600 hover:text-white transition-all">
+            Mark Fraud
+          </button>
+        </td>
       </tr>`;
       }).join('');
     }
 
-    //
     async function loadQueue() {
       try {
         const res = await fetch(`${API}/admin/users/`, {
@@ -234,7 +239,6 @@
         const data = await res.json();
 
         if (data.status === 'success') {
-          // FIX: Show if is_fraud is false, null, or undefined (so old workers reappear)
           rawWorkerData = data.data.filter(u =>
             u.role_id == 2 && (u.is_fraud === false || u.is_fraud === null || u.is_fraud === undefined)
           );
@@ -245,8 +249,7 @@
     }
 
     async function markAsFraud(id) {
-      // We keep the browser confirm because it's destructive, but make the success box beautiful!
-      if (!confirm("Are you sure? This worker will be blocked and moved to Fraud Reports.")) return;
+      if (!confirm("Are you sure? This worker will be blocked and moved to Fraud Reports center.")) return;
 
       try {
         const res = await fetch(`${API}/admin/fraud/${id}/`, {
@@ -259,40 +262,34 @@
         });
 
         if (!res.ok) {
-          const errorText = await res.text();
-          console.error("Server Error:", errorText);
-          showToast("Server Error", "Could not complete the action. Check logs.", "error");
+          showToast("Server Error", "Could not complete the action.", "error");
           return;
         }
 
         const data = await res.json();
         if (data.status === 'success') {
-          // FIX: Replace ugly alert with premium toast notification
           showToast("Worker Suspended", "Account successfully flagged and moved to Fraud Reports center.", "error");
-
           await loadQueue();
           closeModal('user-modal');
         }
       } catch (e) {
-        console.error("Fraud toggle failed:", e);
         showToast("Network Error", "Failed to reach the database server.", "error");
       }
     }
-
 
     async function openWorkerDetail(w) {
       const modal = document.getElementById('user-modal');
       const content = document.getElementById('modal-content');
       modal.classList.remove('hidden');
 
-      // Logic for profile picture fallback
       const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
       const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : avatarFallback;
 
-      // Dynamic Badge Color
       const statusBadge = w.is_verified
         ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Verified Expert</span>'
         : '<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Pending Review</span>';
+
+      const displayTime = w.submitted_at ? w.submitted_at : new Date(w.date_joined).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
       content.innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -340,6 +337,23 @@
           </p>
         </div>
 
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Message Notes From Worker History</label>
+          <div id="popup-messages-trail" class="space-y-3 max-h-56 overflow-y-auto pr-1">
+            <div id="verification-note-container" class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
+              <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
+                <span id="verification-note-time">${displayTime}</span>
+              </div>
+              <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
+                <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note From Worker
+              </div>
+              <p id="verification-note-text" class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
+                "${w.bio || 'i want to work i am not a fraud'}"
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div class="flex gap-3">
           <button onclick="markAsFraud(${w.id})" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold border border-red-100 hover:bg-red-600 hover:text-white transition-all">Flag Fraud</button>
           ${!w.is_verified ? `
@@ -348,16 +362,114 @@
         </div>
       </div>
 
-      <div class="lg:col-span-7 flex flex-col">
-        <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] mb-3 ml-1">Government ID Inspection</label>
-        <div class="flex-1 bg-stone-100 rounded-[2rem] overflow-hidden border-2 border-[#ddc0ba]/40 relative group">
-          <img src="http://localhost:8000${w.id_proof_image}" 
-               class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-               onerror="this.src='https://placehold.co/600x400?text=ID+Document+Not+Available'">
+      <div class="lg:col-span-7 flex flex-col space-y-6">
+        <div>
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] mb-3 ml-1">Government ID Inspection</label>
+          <div class="w-56 h-36 bg-stone-100 rounded-2xl overflow-hidden border-2 border-[#ddc0ba]/40 relative group shadow-sm">
+            <img src="http://localhost:8000${w.id_proof_image}" 
+                 class="w-full h-full object-cover cursor-pointer group-hover:scale-105 transition-transform duration-500"
+                 onerror="this.src='https://placehold.co/600x400?text=ID+Document+Not+Available'"
+                 onclick="window.open(this.src)">
+          </div>
+          <p class="text-[10px] text-slate-400 font-medium mt-1.5">Click thumbnail image box to expand full proof view panel.</p>
+        </div>
+
+        <div class="flex-1 flex flex-col space-y-2 pt-4 border-t border-[#f1eee7]">
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Worker's Handled Bookings History</label>
+          <div id="popup-worker-completed-bookings" class="flex-1 min-h-[250px] max-h-[350px] overflow-y-auto pr-1 space-y-2 custom-scrollbar">
+            <p class="text-xs text-gray-400 italic">Synchronizing related job rows context data...</p>
+          </div>
         </div>
       </div>
     </div>
   `;
+
+      // Trigger structural nested operations logic routines
+      await loadTrailMessagesAndBookings(w);
+    }
+
+    async function loadTrailMessagesAndBookings(worker) {
+      const messagesTrailBox = document.getElementById('popup-messages-trail');
+      const bookingsContainer = document.getElementById('popup-worker-completed-bookings');
+      const displayTime = worker.submitted_at ? worker.submitted_at : new Date(worker.date_joined).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      // Fetch Follow-up Notification Message Logs Queue
+      try {
+        const notesRes = await fetch(`${API}/notifications/`, {
+          headers: { 'X-Session-Key': localStorage.getItem('session_key') }
+        });
+        const notesData = await notesRes.json();
+
+        if (notesData.status === 'success' && notesData.data) {
+          let messagesHtml = `
+            <div id="verification-note-container" class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
+              <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
+                <span id="verification-note-time">${displayTime}</span>
+              </div>
+              <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
+                <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note From Worker
+              </div>
+              <p id="verification-note-text" class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
+                "${worker.bio || 'i want to work i am not a fraud'}"
+              </p>
+            </div>
+          `;
+
+          const workerAlerts = notesData.data.filter(n => n.user === worker.id);
+          
+          if (workerAlerts.length > 0) {
+            messagesHtml += workerAlerts.map(msg => `
+              <div class="relative p-4 bg-amber-50/60 border border-amber-200/40 rounded-2xl space-y-2">
+                <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-600 bg-amber-200/20 px-2.5 py-0.5 rounded-md tracking-wide">
+                  <span>${msg.formatted_date || 'Recent'}</span>
+                </div>
+                <div class="flex items-center gap-2 text-amber-700 font-bold text-xs uppercase tracking-wider pr-24">
+                  <span class="material-symbols-outlined text-sm">reply</span> Follow-up Message Update
+                </div>
+                <p class="text-xs text-amber-900 font-medium bg-white/80 p-3 rounded-xl border border-amber-200/20 leading-relaxed">
+                  "${msg.message}"
+                </p>
+              </div>
+            `).join('');
+          }
+          messagesTrailBox.innerHTML = messagesHtml;
+        }
+      } catch (e) { console.error("Error setting up sub-message elements:", e); }
+
+      // Fetch Nested Bookings Array Elements Matrix
+      try {
+        const bookingsRes = await fetch(`${API}/admin/bookings/`, {
+          headers: { 'X-Session-Key': localStorage.getItem('session_key') }
+        });
+        const bookingsData = await bookingsRes.json();
+
+        if (bookingsData.status === 'success' && bookingsData.data) {
+          const relevantJobs = bookingsData.data.filter(b => b.worker == worker.id && (b.status === 'completed' || b.status === 'accepted' || b.status === 'in_progress'));
+
+          if (relevantJobs.length === 0) {
+            bookingsContainer.innerHTML = `<p class="text-xs text-gray-400 italic py-4 text-center">This worker has not completed or accepted any client assignments yet.</p>`;
+          } else {
+            bookingsContainer.innerHTML = relevantJobs.map(j => {
+              let badgeColor = j.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-blue-50 text-blue-700 border-blue-200';
+              return `
+                <div class="p-3 bg-gray-50 border border-gray-100 rounded-xl space-y-1.5 shadow-sm">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-700">Client: ${j.client_name || 'System User'}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full border ${badgeColor} font-black uppercase tracking-wider">${j.status}</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 font-medium leading-normal bg-white p-2 rounded-lg border border-slate-100">"${j.service_desc}"</p>
+                  <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 pt-0.5">
+                    <span>Final Amount: <b class="text-[#9f402d]">₹${j.final_price || 'Hourly Calc'}</b></span>
+                    <span>${j.rating_given ? '⭐ ' + j.rating_given + '/5' : '🕒 Metric Unrated'}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+      } catch (e) {
+        bookingsContainer.innerHTML = `<p class="text-xs text-red-500">Failed to render nested job matrix logs.</p>`;
+      }
     }
 
     async function approveWorker(id) {
@@ -365,10 +477,13 @@
         method: 'POST',
         headers: { 'X-Session-Key': localStorage.getItem('session_key') }
       });
-      if ((await res.json()).status === 'success') loadQueue();
+      if ((await res.json()).status === 'success') {
+        showToast("Worker Verified", "The profile has been activated and will now appear on the mapping matrix.", "success");
+        loadQueue();
+        closeModal('user-modal');
+      }
     }
 
-    //
     function handleSearch() {
       const query = document.getElementById('worker-search').value.toLowerCase();
 
@@ -379,7 +494,7 @@
         return nameMatch || emailMatch || skillMatch;
       });
 
-      renderTable(filtered); // Re-draw the table with search results
+      renderTable(filtered);
     }
 
     function adminLogout() {
@@ -391,7 +506,6 @@
       const container = document.getElementById('toast-container');
       if (!container) return;
 
-      // Configure colors based on type (success or fraud warning)
       const isSuccess = type === 'success';
       const bgColor = isSuccess ? 'bg-green-50' : 'bg-red-50';
       const borderColor = isSuccess ? 'border-green-100' : 'border-red-100';
@@ -400,7 +514,6 @@
       const icon = isSuccess ? 'check_circle' : 'gavel';
       const iconColor = isSuccess ? 'text-green-600' : 'text-red-600';
 
-      // Create the toast element structure
       const toast = document.createElement('div');
       toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto flex items-start gap-4 p-5 rounded-2xl border-2 ${bgColor} ${borderColor} shadow-lg max-w-sm w-80`;
 
@@ -415,12 +528,10 @@
 
       container.appendChild(toast);
 
-      // Trigger entering animation
       setTimeout(() => {
         toast.classList.remove('translate-y-4', 'opacity-0');
       }, 10);
 
-      // Automatically fade out and clear after 4 seconds
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);

@@ -6,19 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Worknest Admin — System Transactions</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
   <style>
     body {
       font-family: 'Manrope', sans-serif;
       background: #faf7f2;
     }
+
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
+
     .fill-icon {
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
+
     .nav-link {
       display: flex;
       align-items: center;
@@ -31,10 +36,12 @@
       transition: all 0.2s;
       text-decoration: none;
     }
+
     .nav-link:hover {
       background: rgba(255, 255, 255, 0.6);
       color: #9f402d;
     }
+
     .nav-link.active {
       background: white;
       color: #9f402d;
@@ -46,10 +53,13 @@
 
 <body class="h-screen flex overflow-hidden text-[#1c1c18]">
 
-  <aside class="hidden md:flex flex-col w-64 h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0 overflow-y-auto">
+  <aside
+    class="hidden md:flex flex-col w-64 h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0 overflow-y-auto">
     <div class="px-6 mb-8 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
-        <span class="material-symbols-outlined text-white text-xl" style="font-variation-settings: 'FILL' 1;">security</span>
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl"
+          style="font-variation-settings: 'FILL' 1;">security</span>
       </div>
       <div>
         <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
@@ -57,21 +67,45 @@
       </div>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
-      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span> Dashboard</a>
-      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify Users</a>
-      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span> Verify Workers</a>
-      <a href="admin_booking.html" class="nav-link active"><span class="material-symbols-outlined text-xl">receipt_long</span> System Bookings</a>
-      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud Reports</a>
-      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span> Settings</a>
+      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
+        Dashboard</a>
+      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+        Users</a>
+      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+        Verify Workers</a>
+      <a href="admin_booking.html" class="nav-link active"><span
+          class="material-symbols-outlined text-xl">receipt_long</span> System Bookings</a>
+      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud
+        Reports</a>
+      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+        Settings</a>
     </nav>
     <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
-      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'" class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+        class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
     </div>
   </aside>
 
   <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
-    <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
+    <header
+      class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
       <h2 class="text-2xl font-black text-[#1c1c18]">System Bookings</h2>
+      <div id="admin-bell-dropdown"
+        class="hidden absolute right-8 top-16 w-80 bg-white border border-[#ddc0ba]/40 rounded-2xl shadow-xl z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-3 duration-200">
+        <div class="px-5 py-3.5 border-b border-[#f1eee7] bg-[#f6f3ec]/40 flex justify-between items-center">
+          <h4 class="font-black text-sm text-[#1c1c18] flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-xs text-[#9f402d]">notifications_active</span>
+            Live Worker Broadcasts
+          </h4>
+          <span id="admin-bell-badge"
+            class="bg-[#ffdad3] text-[#9f402d] text-[10px] font-black px-2 py-0.5 rounded-full">0 New</span>
+        </div>
+        <div id="admin-bell-messages-list"
+          class="max-h-64 overflow-y-auto custom-scrollbar p-3 space-y-2 divide-y divide-[#f1eee7]/40 bg-white">
+          <p class="text-center py-6 text-xs text-[#89726d] font-medium italic">Synchronizing live network signals...
+          </p>
+        </div>
+      </div>
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
           <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
@@ -80,16 +114,19 @@
     </header>
 
     <div class="p-8 max-w-6xl w-full mx-auto space-y-6">
-      
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20 flex flex-col md:flex-row gap-4 items-center justify-between">
+
+      <div
+        class="bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:max-w-md flex-grow">
           <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#89726d]">search</span>
-          <input type="text" id="booking-search-input" onkeyup="filterLiveBookingsTable()" placeholder="Search worker name, client name, or service description..." 
+          <input type="text" id="booking-search-input" onkeyup="filterLiveBookingsTable()"
+            placeholder="Search worker name, client name, or service description..."
             class="w-full pl-12 pr-4 py-3.5 bg-[#f6f3ec]/60 border border-[#ddc0ba]/40 focus:border-[#9f402d] text-sm rounded-xl outline-none transition-all placeholder:text-[#89726d]/60 font-medium text-[#1c1c18]" />
         </div>
         <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
           <span class="text-xs font-bold text-[#89726d] uppercase tracking-wider whitespace-nowrap">Filter Logs:</span>
-          <select id="status-filter" onchange="filterLiveBookingsTable()" class="px-4 py-2.5 bg-[#f6f3ec]/60 text-xs font-bold text-[#1c1c18] border border-[#ddc0ba]/30 rounded-full outline-none focus:border-[#9f402d]">
+          <select id="status-filter" onchange="filterLiveBookingsTable()"
+            class="px-4 py-2.5 bg-[#f6f3ec]/60 text-xs font-bold text-[#1c1c18] border border-[#ddc0ba]/30 rounded-full outline-none focus:border-[#9f402d]">
             <option value="all">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="accepted">Accepted</option>
@@ -102,11 +139,13 @@
       <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
         <div class="px-8 py-5 border-b border-[#f1eee7] bg-stone-50/40 flex items-center justify-between">
           <h3 class="text-lg font-bold text-[#1c1c18]">Active Network Allocation Rows</h3>
-          <span id="record-count-badge" class="bg-orange-100 text-[#9f402d] font-bold px-3 py-1 rounded-full text-xs">0 Records Found</span>
+          <span id="record-count-badge" class="bg-orange-100 text-[#9f402d] font-bold px-3 py-1 rounded-full text-xs">0
+            Records Found</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse table-auto min-w-[800px]">
-            <thead class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d] border-b border-[#f1eee7]">
+            <thead
+              class="bg-[#f6f3ec] text-xs font-bold uppercase tracking-widest text-[#89726d] border-b border-[#f1eee7]">
               <tr>
                 <th class="px-8 py-4">Transaction ID</th>
                 <th class="px-8 py-4">Client (User)</th>
@@ -162,7 +201,7 @@
     function renderTableRows(bookingArray) {
       const tbody = document.getElementById('master-bookings-table');
       const badge = document.getElementById('record-count-badge');
-      
+
       badge.textContent = `${bookingArray.length} Records Found`;
 
       if (bookingArray.length === 0) {
@@ -170,11 +209,11 @@
         return;
       }
 
-      const statusColors = { 
-        pending: 'bg-yellow-100 text-yellow-800 border border-yellow-200', 
-        accepted: 'bg-emerald-100 text-emerald-800 border border-emerald-200', 
-        completed: 'bg-blue-100 text-blue-800 border border-blue-200', 
-        cancelled: 'bg-red-100 text-red-800 border border-red-200' 
+      const statusColors = {
+        pending: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+        accepted: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+        completed: 'bg-blue-100 text-blue-800 border border-blue-200',
+        cancelled: 'bg-red-100 text-red-800 border border-red-200'
       };
 
       tbody.innerHTML = bookingArray.map(b => `

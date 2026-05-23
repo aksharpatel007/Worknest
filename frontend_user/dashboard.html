@@ -73,6 +73,8 @@
             "body": ["Manrope"],
             "label": ["Manrope"]
           },
+
+
           borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
         },
       },
@@ -91,6 +93,50 @@
 
     .hide-scrollbar::-webkit-scrollbar {
       display: none;
+    }
+
+    /* 🔔 Swing Animation Keyframes */
+    @keyframes bellSwing {
+      0% {
+        transform: rotate(0);
+      }
+
+      15% {
+        transform: rotate(15deg);
+      }
+
+      30% {
+        transform: rotate(-12deg);
+      }
+
+      45% {
+        transform: rotate(10deg);
+      }
+
+      60% {
+        transform: rotate(-8deg);
+      }
+
+      75% {
+        transform: rotate(4deg);
+      }
+
+      90% {
+        transform: rotate(-2deg);
+      }
+
+      100% {
+        transform: rotate(0);
+      }
+    }
+
+    /* Target the anchor tag on hover to trigger the animation on the icon inside */
+    .bell-container:hover .swing-bell {
+      display: inline-block;
+      /* Required for transform properties to take effect */
+      transform-origin: top center;
+      /* Makes it swing from the top hanger */
+      animation: bellSwing 0.8s ease-in-out;
     }
 
     .hide-scrollbar {
@@ -117,8 +163,10 @@
       <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
     </div>
     <div class="flex items-center gap-4">
-      <button class="material-symbols-outlined p-2 rounded-full hover:bg-[#f6f3ec] transition-colors"
-        data-icon="notifications" onclick="window.location.href='dashboard.html'">notifications</button>
+      <a href="user_messages.html"
+        class="bell-container relative p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors">
+        <span class="material-symbols-outlined swing-bell text-2xl" style="display: inline-block;">notifications</span>
+      </a>
       <div
         class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20">
         <img alt="User Profile" class="w-full h-full object-cover"
@@ -319,20 +367,30 @@
   <script>
     const API = 'http://localhost:8000/api';
 
-    // Load profile name
+    // Secure Profile Greet Sync Engine
     async function loadProfile() {
+      const sessionKey = localStorage.getItem('session_key');
+      if (!sessionKey) { window.location.href = 'login.html'; return; }
+
       try {
-        const res = await fetch(`${API}/profile/`, { credentials: 'include' });
+        const res = await fetch(`${API}/profile/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            // 🎯 FIX: Passing the active key token straight to your updated backend view loop
+            'X-Session-Key': sessionKey
+          },
+          credentials: 'include'
+        });
         const data = await res.json();
-        if (data.status === 'success') {
-          const name = data.data.fullname.split(' ')[0];
+        if (data.status === 'success' && data.data) {
+          const name = data.data.fullname.split(' ');
           const el = document.querySelector('h2 span.text-primary');
           if (el) el.closest('h2').innerHTML = `Welcome back, <br/><span class="text-primary italic">how can we help today, ${name}?</span>`;
         }
-      } catch (e) { }
+      } catch (e) { console.error("Dashboard synchronization error:", e); }
     }
 
-    // Load recommended workers
+    // Load available workers to recommended cards display
     async function loadWorkers(skill = '') {
       try {
         const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
@@ -354,10 +412,9 @@
             <div class="flex items-center gap-2 mb-3">
               <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">star</span>
               <span class="text-sm font-bold">${w.rating} (${w.total_jobs} jobs)</span>
-              <span class="ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${w.status === 'pro' ? 'bg-[#ffdad3] text-[#9f402d]' : w.status === 'verified' ? 'bg-[#d6e7a1] text-[#56642b]' : 'bg-gray-100 text-gray-600'}">${w.status}</span>
             </div>
             <p class="text-on-surface-variant leading-relaxed text-sm mb-6">${w.bio || 'Skilled and experienced worker ready to help you.'}</p>
-            <button class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" onclick="window.location.href='booking_request.html?worker_id=${w.id}'">Book ${w.fullname.split(' ')[0]}</button>
+            <button class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" onclick="window.location.href='booking_request.html?worker_id=${w.id}'">Book ${w.fullname.split(' ')}</button>
           </div>
         </div>
       `).join('');
@@ -369,17 +426,21 @@
       loadWorkers(skill);
       document.querySelector('h3.text-xl.font-bold').textContent = skill + ' near you';
     }
-    function goToService(skill) {
-      window.location.href = 'services.html';
-    }
 
     function searchWorkers() {
       const q = document.querySelector('input[placeholder]').value.trim();
       if (q) loadWorkers(q);
     }
 
+    function goToService(skill) {
+      window.location.href = 'services.html';
+    }
+
+
     loadProfile();
     loadWorkers();
+
+
   </script>
 </body>
 

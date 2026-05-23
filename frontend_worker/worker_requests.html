@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Worknest — Client Requests</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ea580c",
+            "surface": "#ffffff",
+            "on-surface": "#0f172a",
+            "on-surface-variant": "#475569",
+            "surface-container-low": "#f6f3ec",
+            "surface-container-highest": "#e5e2db",
+            "background": "#fcf4ed",
+            "outline-variant": "#ddc0ba"
+          },
+          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Be Vietnam Pro"] },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .paper-grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
+  <div class="fixed inset-0 paper-grain z-0"></div>
+
+  <div id="verification-shield-screen"
+    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#fcf4ed]">
+    <div class="bg-[#f6f3ec] max-w-md p-10 border border-[#ddc0ba]/40 shadow-xl space-y-6 rounded-[2rem]">
+      <div
+        class="w-20 h-20 bg-amber-100 text-[#ea580c] rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
+        <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
+      </div>
+      <h2 class="font-headline text-3xl font-extrabold text-[#0f172a]">Verification Pending</h2>
+      <p class="text-[#475569] text-sm leading-relaxed">
+        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
+        your profile details and identity credentials.
+      </p>
+
+      <div class="bg-white p-4 rounded-2xl border border-[#ddc0ba] text-left space-y-3">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-[#475569] ml-1">Message System
+          Administration</label>
+        <textarea id="pending-msg-input"
+          placeholder="Type a note or ask the admin for a status check on your registration documents..."
+          class="w-full p-4 bg-[#fcf4ed]/50 border border-[#ddc0ba]/40 focus:border-[#ea580c] rounded-xl text-xs outline-none resize-none font-medium text-[#0f172a]"
+          rows="3"></textarea>
+        <button id="send-pending-btn" onclick="sendVerificationMessage()"
+          class="w-full py-3 bg-[#ea580c] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:opacity-90 transition-opacity">
+          Send Note to Admin
+        </button>
+      </div>
+
+      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+        class="w-full py-4 bg-stone-200 hover:bg-stone-300 text-[#475569] font-bold rounded-2xl text-sm transition-colors">
+        Sign Out Safely
+      </button>
+    </div>
+  </div>
+
+
+  <header
+    class="fixed top-0 w-full z-50 bg-[#fcf9f2] backdrop-blur-xl flex justify-between items-center px-6 py-4 border-b border-outline-variant/20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary fill-icon">hail</span>
+      </div>
+      <h1 class="font-headline font-bold text-xl tracking-tight text-orange-800">Job Requests</h1>
+    </div>
+  </header>
+
+  <main class="relative z-10 pt-24 px-6 max-w-3xl mx-auto space-y-6">
+    <div id="requests-list-container" class="space-y-4">
+      <div
+        class="text-center py-12 bg-surface-container-low rounded-[2rem] border-2 border-dashed border-outline-variant/40">
+        <p class="text-on-surface-variant text-xs font-medium">Scanning network for active client signals...</p>
+      </div>
+    </div>
+  </main>
+
+  <nav
+    class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/90 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(28,28,24,0.06)]">
+    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
+      href="worker_dashboard.html">
+      <span class="material-symbols-outlined">home_work</span>
+    </a>
+    <a class="flex flex-col items-center justify-center bg-orange-100 text-orange-900 rounded-full px-5 py-2 transition-transform duration-300 translate-y-[-2px]"
+      href="worker_requests.html">
+      <span class="material-symbols-outlined fill-icon">hail</span>
+      <span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Requests</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
+      href="worker_booking_history.html">
+      <span class="material-symbols-outlined">calendar_today</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
+      href="worker_profile.html">
+      <span class="material-symbols-outlined">person</span>
+    </a>
+  </nav>
+
+  <script>
+    const API_BASE = 'http://localhost:8000/api';
+
+
+    async function checkCurrentStatus() {
+      const sessionKey = localStorage.getItem('session_key');
+      if (!sessionKey) { window.location.href = '../frontend_user/login.html'; return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (data.status === 'success' && data.data) {
+          const worker = data.data;
+
+          // 🛡️ THE ABSOLUTE VERIFICATION GUARD LAYER
+          if (worker.is_verified === false) {
+            // Force display the message screen and keep all real components completely hidden!
+            document.getElementById('verification-shield-screen').classList.remove('hidden');
+
+            // Hide your active headers, bento grids, navigation decks, and main lists
+            const mainElements = document.querySelectorAll('header, main, nav');
+            mainElements.forEach(el => {
+              if (el.id !== 'verification-shield-screen' && !el.contains(document.getElementById('verification-shield-screen'))) {
+                el.classList.add('hidden');
+              }
+            });
+            return;
+          }
+
+          // If verified, proceed with your page rendering logic normally as written...
+        }
+      } catch (e) { console.error("Identity status validation breakdown:", e); }
+    }
+
+    // 📩 Transmit the message straight into the worker's bio field model row
+    async function sendVerificationMessage() {
+      const note = document.getElementById('pending-msg-input').value.trim();
+      if (!note) { alert("Please input a message first."); return; }
+
+      const btn = document.getElementById('send-pending-btn');
+      btn.textContent = "Transmitting message...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
+          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` }) // Store note cleanly inside the bio string block
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          alert("Your message note has been appended to your validation files. The admin will review it immediately.");
+          document.getElementById('pending-msg-input').value = "";
+          btn.textContent = "Note Sent ✓";
+        }
+      } catch (e) { console.error(e); btn.textContent = "Send Note to Admin"; btn.disabled = false; }
+    }
+
+
+    async function loadIncomingRequests() {
+      const container = document.getElementById('requests-list-container');
+      try {
+        const res = await fetch(`http://localhost:8000/api/bookings/`, {
+          headers: {
+            'X-Session-Key': localStorage.getItem('session_key') || '',
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          // Display requests matching 'pending' criteria
+          const pending = (data.data || []).filter(b => b.status === 'pending');
+
+          if (pending.length === 0) {
+            container.innerHTML = `
+              <div class="text-center py-12 bg-surface-container-low rounded-[2rem] border-2 border-dashed border-outline-variant/30">
+                <p class="text-on-surface-variant text-sm font-medium">No pending job requests found nearby.</p>
+              </div>`;
+            return;
+          }
+
+          container.innerHTML = pending.map(r => `
+            <div class="bg-surface-container-low p-6 rounded-[2rem] border border-outline-variant/20 space-y-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="font-headline font-bold text-lg text-on-surface">${r.client_name || 'System Client'}</h3>
+                  <p class="text-xs text-primary font-bold mt-0.5 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">distance</span> Nearby Client (Ahmedabad Area)
+                  </p>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-on-surface-variant font-bold block">Contact Details</span>
+                  <a href="tel:${r.client_phone || ''}" class="text-sm font-bold text-orange-700 underline">${r.client_phone || '+91 98765 43210'}</a>
+                </div>
+              </div>
+              <div class="bg-white/80 p-4 rounded-xl border border-outline-variant/10 text-sm font-medium text-on-surface-variant leading-relaxed">
+                ${r.service_desc}
+              </div>
+              <div class="flex gap-3">
+                <button onclick="respondToRequest(${r.id}, 'accepted')" class="flex-1 py-3 bg-primary text-white font-bold text-sm rounded-xl transition-all hover:opacity-90">Accept Job</button>
+                <button onclick="respondToRequest(${r.id}, 'cancelled')" class="flex-1 py-3 bg-stone-200 text-on-surface-variant font-bold text-sm rounded-xl transition-all hover:bg-stone-300">Decline</button>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function respondToRequest(bookingId, statusString) {
+      const sessionKey = localStorage.getItem('session_key');
+      if (!confirm(`Are you sure you want to mark this request as ${statusString}?`)) return;
+
+      try {
+        // 🎯 FIXED: Direct, clean connection to user bookings pipeline views
+        const res = await fetch(`http://localhost:8000/api/bookings/`, {
+          method: 'PATCH', // Enforces update states smoothly inside your framework logs
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-Key': sessionKey
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            booking_id: bookingId,
+            status: statusString
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          alert(`Job has been successfully marked as ${statusString}!`);
+          loadIncomingRequests(); // Live reload screen states instantly
+        } else {
+          alert("Refusal error: " + data.message);
+        }
+      } catch (e) {
+        console.error("Error patching booking index code arrays:", e);
+        alert("Could not update transaction state values.");
+      }
+    }
+
+    loadIncomingRequests();
+    checkCurrentStatus();
+  </script>
+</body>
+
+</html>

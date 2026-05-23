@@ -159,6 +159,7 @@
                 const formData = new FormData(e.target);
                 const errorMsg = document.getElementById('error-msg');
                 errorMsg.classList.add('hidden');
+
                 try {
                     const payload = { email: formData.get('email'), password: formData.get('password') };
                     const res = await fetch('http://localhost:8000/api/login/', {
@@ -168,15 +169,27 @@
                         body: JSON.stringify(payload)
                     });
                     const data = await res.json();
+
                     if (data.status === 'success') {
-                        // Store session key in localStorage
                         if (data.session_key) {
                             localStorage.setItem('session_key', data.session_key);
                         }
-                        window.location.href = data.redirect;
+
+                        if (data.redirect === 'worker_dashboard.html') {
+                            // Fallback-safe path routing string
+                            window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
+                        } else {
+                            window.location.href = window.location.origin + '/frontend_user/' + data.redirect;
+                        }
                     }
-                    else { errorMsg.textContent = data.message; errorMsg.classList.remove('hidden'); }
-                } catch (err) { errorMsg.textContent = "Cannot connect to server. Make sure it is running."; errorMsg.classList.remove('hidden'); }
+                    else {
+                        errorMsg.textContent = data.message;
+                        errorMsg.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    errorMsg.textContent = "Cannot connect to server. Make sure it is running.";
+                    errorMsg.classList.remove('hidden');
+                }
             });
         </script>
 

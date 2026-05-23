@@ -1,9 +1,6 @@
 from django.urls import path
 from . import views
 
-from django.urls import path
-from . import views
-
 urlpatterns = [
     # Auth & Signup
     path('signup/', views.signup_view, name='signup'),
@@ -14,8 +11,10 @@ urlpatterns = [
     path('workers/', views.worker_list, name='worker-list'),
     
     # Bookings
-    path('bookings/create/', views.create_booking, name='create-booking'),
-    path('bookings/', views.user_bookings, name='user-bookings'), # Consolidates user_bookings
+    # path('bookings/create/', views.create_booking, name='create-booking'),
+    path('bookings/', views.user_bookings, name='user-bookings'),
+    path('bookings/rate/', views.submit_rating, name='submit-rating'),
+    path('notifications/', views.get_user_notifications, name='user-notifications'),
     
     # Dashboard Stats
     path('dashboard/stats/', views.dashboard_stats, name='dashboard-stats'),

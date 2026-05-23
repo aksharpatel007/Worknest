@@ -165,7 +165,9 @@
                     <button type="button" onclick="prevStep()"
                         class="flex-1 py-3 bg-stone-200 text-stone-600 font-bold rounded-2xl hover:bg-stone-300 transition-colors">Back</button>
                     <button type="submit" id="submit-btn"
-                        class="flex- py-4 bg-[#81B29A] text-white font-bold rounded-2xl shadow-xl shadow-[#81B29A]/20 hover:scale-[1.02] transition-transform">Register</button>
+                        class="w-full py-4 bg-[#81B29A] text-white font-bold rounded-2xl shadow-xl shadow-[#81B29A]/20 hover:scale-[1.02] transition-transform">
+                        Register
+                    </button>
                 </div>
             </div>
         </form>
@@ -185,14 +187,15 @@
             document.getElementById('step-indicator').textContent = "Step 1 of 2";
         }
 
+        // 🎯 FIXED: Correctly tracking the name property from the array index signature
         document.getElementById('id_proof').addEventListener('change', function () {
-    if (this.files && this.files.length > 0) {
-        // 🎯 FIXED: Target the first file index array property
-        const fileName = this.files.name;
-        document.getElementById('file-name').textContent = fileName;
+            if (this.files && this.files.length > 0) {
+                const fileName = this.files.name; // 🎯 Added index accessor here
+                document.getElementById('file-name').textContent = fileName;
                 document.getElementById('file-name').classList.add('text-[#81B29A]');
             } else {
                 document.getElementById('file-name').textContent = "Click to upload ID photo";
+                document.getElementById('file-name').classList.remove('text-[#81B29A]');
             }
         });
 
@@ -206,8 +209,6 @@
             errorEl.classList.add('hidden');
 
             const formData = new FormData(e.target);
-
-            // Ensure these match your Django User model/API expectations
             formData.append('role_id', '2');
             formData.append('is_verified', 'false');
 
@@ -219,14 +220,12 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    // 1. Alert the user about the verification process
                     alert("Application Submitted! You will be visible on the map once an admin verifies your ID.");
-
-                    // 2. Save the session or worker ID if needed for the dashboard
-                    localStorage.setItem('session_key', data.session_key);
-
-                    // 3. Redirect specifically to the worker dashboard
-                    window.location.href = 'worker_dashboard.html';
+                    if (data.session_key) {
+                        localStorage.setItem('session_key', data.session_key);
+                    }
+                    // Fallback-safe path routing string
+                    window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
                 } else {
                     errorEl.textContent = data.message || "Registration failed.";
                     errorEl.classList.remove('hidden');

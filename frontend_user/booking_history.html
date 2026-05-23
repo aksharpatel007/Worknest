@@ -1,298 +1,160 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking History — Worknest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>body { font-family: 'Manrope', sans-serif; background: #fcf9f2; }</style>
+</head>
+<body class="min-h-screen text-[#1c1c18] pb-24">
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "on-primary": "#ffffff",
-              "on-secondary-container": "#686344",
-              "on-error-container": "#93000a",
-              "on-tertiary": "#ffffff",
-              "outline": "#89726d",
-              "primary": "#9f402d",
-              "on-surface-variant": "#56423e",
-              "on-secondary-fixed-variant": "#4b472b",
-              "on-tertiary-container": "#1d3021",
-              "tertiary": "#4f6352",
-              "error-container": "#ffdad6",
-              "tertiary-fixed-dim": "#b6ccb7",
-              "surface-container": "#f1eee7",
-              "on-error": "#ffffff",
-              "primary-fixed": "#ffdad3",
-              "inverse-surface": "#31312c",
-              "surface-variant": "#e5e2db",
-              "secondary-fixed-dim": "#cec7a2",
-              "on-primary-fixed-variant": "#802918",
-              "secondary-fixed": "#eae3bc",
-              "tertiary-fixed": "#d2e8d3",
-              "on-tertiary-fixed-variant": "#384b3b",
-              "surface-container-low": "#f6f3ec",
-              "on-primary-container": "#5a0d02",
-              "background": "#fcf9f2",
-              "primary-container": "#e2725b",
-              "surface-bright": "#fcf9f2",
-              "outline-variant": "#ddc0ba",
-              "surface-container-high": "#ebe8e1",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed": "#3e0500",
-              "inverse-primary": "#ffb4a5",
-              "primary-fixed-dim": "#ffb4a5",
-              "on-tertiary-fixed": "#0d1f12",
-              "surface": "#fcf9f2",
-              "tertiary-container": "#839885",
-              "on-surface": "#1c1c18",
-              "secondary-container": "#e8e0ba",
-              "inverse-on-surface": "#f3f0e9",
-              "error": "#ba1a1a",
-              "on-secondary": "#ffffff",
-              "secondary": "#635f40",
-              "surface-tint": "#9f402d",
-              "surface-container-highest": "#e5e2db",
-              "on-secondary-fixed": "#1f1c04",
-              "on-background": "#1c1c18",
-              "surface-dim": "#dcdad3"
-            },
-            fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Manrope"],
-              "label": ["Manrope"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .pebble-shape {
-            border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-        }
-        .glass-nav {
-            backdrop-filter: blur(20px);
-        }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
-<body class="bg-surface font-body text-on-surface min-h-screen pb-32">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[#fcf9f2]/80 dark:bg-stone-900/80 backdrop-blur-xl shadow-[0px_20px_40px_rgba(90,13,2,0.06)]">
-<div class="flex justify-between items-center px-6 py-4 w-full">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
-<img alt="User" data-alt="close-up portrait of a smiling woman with warm lighting and soft natural background for a professional user profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOHPD4e6AWPLVLHlVpG1bKCW9GqvcDV7Uq2psaIO9e0W-RAG08US37-QjLUAIyKt-fMXeourJk0CmcuwNu7UGO4AUyD9Ar7ZiGW39yCiTa941rWeam2D2KZw9cZf2eA-dOOHnJ4CGVuSEq11wkCROvsO9kCqptqCdNu-qa654jsiA83T7Op7JnIGQjnHUnhRvSxeTpc2hX47LNFB-WNQRpH_65LFmJeneqimi3IWt1WsgTt6ZXash9aUvb05obJNCHWxReu1dJCGm7"/>
-</div>
-<h1 class="font-['Manrope'] font-extrabold text-xl tracking-tight text-[#E2725B] dark:text-[#ef8d78]">Worknest</h1>
-</div>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#f6f3ec] transition-colors active:scale-95 transition-transform duration-200" onclick="window.location.href='dashboard.html'">
-<span class="material-symbols-outlined text-[#E2725B]">notifications</span>
-</button>
-</div>
-<div class="bg-[#f6f3ec] dark:bg-stone-800 h-px w-full self-end"></div>
+<header class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md border-b border-[#ddc0ba]/20 px-6 py-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <button onclick="window.location.href='dashboard.html'" class="p-2 rounded-full hover:bg-[#f1eee7]">
+      <span class="material-symbols-outlined text-[#9f402d]">arrow_back</span>
+    </button>
+    <h1 class="font-black text-[#9f402d] text-xl">Your Hired Bookings</h1>
+  </div>
 </header>
-<main class="pt-24 px-6 max-w-2xl mx-auto">
-<!-- Page Title & Segmented Control -->
-<div class="mb-8">
-<h2 class="text-3xl font-headline font-extrabold tracking-tight mb-6">Booking History</h2>
-<div class="bg-surface-container-low p-1.5 rounded-full flex gap-1">
-<button class="flex-1 py-2.5 rounded-full bg-surface-container-lowest shadow-sm text-sm font-bold text-primary transition-all" onclick="window.location.href='dashboard.html'">
-                    Active
-                </button>
-<button class="flex-1 py-2.5 rounded-full text-sm font-semibold text-secondary hover:bg-surface-container transition-all" onclick="window.location.href='dashboard.html'">
-                    Past
-                </button>
-</div>
-</div>
-<!-- Bookings List -->
-<div class="space-y-6">
-<!-- Booking Card 1: Confirmed -->
-<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0px_10px_30px_rgba(90,13,2,0.03)] flex flex-col gap-4 border border-outline-variant/10">
-<div class="flex items-start justify-between">
-<div class="flex gap-4">
-<div class="w-16 h-16 pebble-shape overflow-hidden bg-primary-fixed flex-shrink-0">
-<img alt="Worker" data-alt="professional headshot of a friendly male chef wearing a clean white uniform with soft warm ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAABtD4crShvOEd0kwIerl8nMSFg7yW_Y8ModSbAJYCvl4Cfgi11oec98uX1t_2v4GFst1e7bdkp1JZv1sLVOg7ue2wLNEdTJVdp7QUVInnsZri328lPgvXEtSdlmxev_XQ827x5kNXIlyLMApTRMrFXxI7Geii6QxpgIxxRgqLQ2EU5rLpPAFn8Ykay2KENmUT8wWWx0icm7vgIeNt_udfCVjXqtl_HP42d99YJtolZdOIqTdyyMcw2-r4WD7NrquUfIj7qBalPNIg"/>
-</div>
-<div>
-<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Master Home Chef</p>
-<h3 class="text-lg font-bold text-on-surface">Marco Valente</h3>
-<div class="flex items-center gap-1.5 text-secondary text-sm mt-1">
-<span class="material-symbols-outlined text-base">calendar_today</span>
-<span>Oct 24, 2023 • 18:30</span>
-</div>
-</div>
-</div>
-<span class="px-4 py-1.5 rounded-full bg-primary-container text-white text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
-                        Confirmed
-                    </span>
-</div>
-<div class="flex items-center justify-between pt-4 border-t border-surface-variant/30">
-<div class="flex -space-x-2">
-<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center border-2 border-white">
-<span class="material-symbols-outlined text-xs text-on-tertiary-fixed">verified_user</span>
-</div>
-<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center border-2 border-white">
-<span class="material-symbols-outlined text-xs text-on-secondary-fixed">eco</span>
-</div>
-</div>
-<button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" onclick="window.location.href='dashboard.html'">
-                        View Details
-                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</button>
-</div>
-</div>
-<!-- Booking Card 2: Pending -->
-<div class="bg-surface-container-low p-5 rounded-xl flex flex-col gap-4 border border-outline-variant/5">
-<div class="flex items-start justify-between">
-<div class="flex gap-4">
-<div class="w-16 h-16 pebble-shape overflow-hidden bg-secondary-fixed flex-shrink-0">
-<img alt="Worker" data-alt="warm portrait of a woman looking directly at camera, soft focus home interior background, bright morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhFiypYMz4hlvGMM4fKYoqq0HPGdoSjj4pT-NeDoGSTY9_n6WXMRc18wf_zVFY0DJjXk0AkeDje-qY0bNYCIkOT681hb1_bKwJRJZNYSfC0nWOOlLmA67cuuF10LTfFVpszyvf_nlCDW9YvHCMtnPPBj4Zds9d1FcSS8GaTnzxs9WLrWMk0A4QqOeMI3oIO2Zh1VmmZDfLJZS37Fz5dIKbRuivwfGVwqSpg-kwhUtUcfipQfNgl8IQqoUY_meyjhq326dQsJld4j56"/>
-</div>
-<div>
-<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Deep Cleaning</p>
-<h3 class="text-lg font-bold text-on-surface">Elena S.</h3>
-<div class="flex items-center gap-1.5 text-secondary text-sm mt-1">
-<span class="material-symbols-outlined text-base">calendar_today</span>
-<span>Oct 28, 2023 • 09:00</span>
-</div>
-</div>
-</div>
-<span class="px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-extrabold uppercase tracking-widest">
-                        Pending
-                    </span>
-</div>
-<div class="flex gap-3 pt-2">
-<button class="flex-1 py-2.5 rounded-full border border-outline-variant text-sm font-bold text-secondary" onclick="window.location.href='booking_history.html'">Reschedule</button>
-<button class="flex-1 py-2.5 rounded-full bg-surface-container-highest text-sm font-bold text-on-surface" onclick="window.location.href='dashboard.html'">Message</button>
-</div>
-</div>
-<!-- Booking Card 3: Completed (Asymmetric Layout Item) -->
-<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0px_10px_30px_rgba(90,13,2,0.03)] flex flex-col gap-4 border border-outline-variant/10 opacity-80">
-<div class="flex items-start justify-between">
-<div class="flex gap-4">
-<div class="w-16 h-16 pebble-shape overflow-hidden bg-tertiary-fixed flex-shrink-0">
-<img alt="Worker" data-alt="headshot of a man with a friendly expression in a modern minimalist workspace with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpQ7YuD-A2L39ARVmB4Aa-bpRCI_dq5Vb8-28igRQpgeFJmsLaInANAui0IqycPW_yABZ4O1hvJPEopJ4EDbbGHvV-Yb9zwhudD5Y4LHRu5_fdg21R6pGh-Qmx88mpMl68IE7TekKRX3b3JupDb2TBv0bxFAaZK2xUbUTpUSAJ93xhmhhmVwatrrs4g0Xj6aBD9XQZ4WjpRo7HVNQLwPz2bAzbUw8PAi5yyvjw-2vbNiCZpImean7BzwtVJSKk6mI0aDlZme1Fm4rY"/>
-</div>
-<div>
-<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Furniture Assembly</p>
-<h3 class="text-lg font-bold text-on-surface">Julian Thorne</h3>
-<div class="flex items-center gap-1.5 text-secondary text-sm mt-1">
-<span class="material-symbols-outlined text-base">task_alt</span>
-<span>Completed Oct 15</span>
-</div>
-</div>
-</div>
-<span class="px-4 py-1.5 rounded-full bg-tertiary-container text-white text-[11px] font-extrabold uppercase tracking-widest">
-                        Completed
-                    </span>
-</div>
-<div class="flex items-center justify-between pt-4 border-t border-surface-variant/30">
-<div class="flex items-center gap-1">
-<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="text-sm font-bold">5.0</span>
-<span class="text-xs text-secondary ml-1">Your rating</span>
-</div>
-<button class="bg-surface-container-low px-5 py-2 rounded-full text-xs font-bold text-on-surface" onclick="window.location.href='booking_request.html'">Book Again</button>
-</div>
-</div>
-<!-- Empty State Spacer -->
-<div class="py-12 flex flex-col items-center text-center opacity-40">
-<div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-4xl text-secondary">history</span>
-</div>
-<p class="text-secondary text-sm font-medium">Looking for older bookings?<br/>Switch to the 'Past' tab.</p>
-</div>
-</div>
+
+<main class="max-w-2xl mx-auto px-6 py-8" id="history-container">
+  <p class="text-center py-10 text-sm text-[#89726d]">Synchronizing booking history trails...</p>
 </main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/80 dark:bg-stone-900/80 backdrop-blur-xl z-50 rounded-t-[32px] shadow-[0px_-10px_30px_rgba(90,13,2,0.04)]">
-<a class="flex flex-col items-center justify-center text-[#635f40] dark:text-stone-400 px-5 py-2 hover:text-[#E2725B] transition-all active:scale-90 transition-transform duration-150" href="index.html">
-<span class="material-symbols-outlined">home</span>
-<span class="font-['Manrope'] text-[11px] font-semibold tracking-wide uppercase mt-1">Home</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#635f40] dark:text-stone-400 px-5 py-2 hover:text-[#E2725B] transition-all active:scale-90 transition-transform duration-150" href="services.html">
-<span class="material-symbols-outlined">search</span>
-<span class="font-['Manrope'] text-[11px] font-semibold tracking-wide uppercase mt-1">Search</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-[#E2725B] text-white rounded-full px-5 py-2 active:scale-90 transition-transform duration-150" href="booking_request.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_note</span>
-<span class="font-['Manrope'] text-[11px] font-semibold tracking-wide uppercase mt-1">Bookings</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#635f40] dark:text-stone-400 px-5 py-2 hover:text-[#E2725B] transition-all active:scale-90 transition-transform duration-150" href="profile.html">
-<span class="material-symbols-outlined">person</span>
-<span class="font-['Manrope'] text-[11px] font-semibold tracking-wide uppercase mt-1">Profile</span>
-</a>
-</nav>
+
+<div id="rate-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+    <h3 class="text-xl font-black text-center text-[#1c1c18]">Rate the Service</h3>
+    <p class="text-xs font-bold text-center text-[#89726d] uppercase tracking-wider">How was your experience?</p>
+    
+    <div class="flex items-center justify-center gap-2 py-2" id="star-row">
+      <span class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(1)">star</span>
+      <span class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(2)">star</span>
+      <span class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(3)">star</span>
+      <span class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(4)">star</span>
+      <span class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(5)">star</span>
+    </div>
+
+    <textarea id="rate-review" placeholder="Write a short review... (optional)" class="w-full p-3 text-sm bg-[#f6f3ec] border border-[#ddc0ba]/40 rounded-xl focus:outline-none resize-none" rows="3"></textarea>
+    
+    <button onclick="submitRating()" class="w-full py-3 bg-[#9f402d] text-white font-extrabold rounded-full text-sm uppercase tracking-wider shadow-md hover:bg-[#e2725b]">
+      Submit Feedback
+    </button>
+  </div>
+</div>
+
 <script>
-async function loadBookings() {
+const API = 'http://localhost:8000/api';
+let selectedBookingId = null;
+let currentRatingSelection = 5;
+
+async function fetchHistory() {
+  const sessionKey = localStorage.getItem('session_key');
+  const container = document.getElementById('history-container');
   try {
-    const res = await fetch('http://localhost:8000/api/bookings/', { credentials: 'include' });
+    const res = await fetch(`${API}/bookings/`, { headers: { 'X-Session-Key': sessionKey } });
     const data = await res.json();
-    if (data.status !== 'success') return;
-    const bookings = data.data;
-    if (!bookings.length) return;
+    if (data.status !== 'success' || !data.data.length) {
+      container.innerHTML = `<div class='text-center py-10'><span class='material-symbols-outlined text-4xl text-[#ddc0ba]'>assignment_late</span><p class='text-sm font-bold text-[#89726d] mt-2'>No bookings log recorded yet.</p></div>`;
+      return;
+    }
+    
+    container.innerHTML = data.data.map(b => {
+      let actionBtn = '';
+      let statusColor = 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      
+      if (b.status === 'in_progress') {
+        statusColor = 'bg-blue-50 text-blue-700 border-blue-200';
+        actionBtn = `<button onclick="closeBooking(${b.id})" class="w-full mt-4 py-2.5 bg-green-700 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-md hover:bg-green-600">Complete Booking & Calculate Pay</button>`;
+      } else if (b.status === 'completed') {
+        statusColor = 'bg-green-50 text-green-700 border-green-200';
+        if (!b.rating_given) {
+          actionBtn = `<button onclick="openRateModal(${b.id})" class="w-full mt-4 py-2.5 bg-white border-2 border-[#9f402d] text-[#9f402d] font-extrabold rounded-xl text-xs uppercase tracking-wider hover:bg-[#ffdad3]/30">Rate Worker</button>`;
+        } else {
+          actionBtn = `<p class="text-xs font-extrabold text-yellow-600 mt-3 flex items-center gap-1">⭐ Rated ${b.rating_given}/5 Stars</p>`;
+        }
+      } else if (b.status === 'accepted') {
+        statusColor = 'bg-purple-50 text-purple-700 border-purple-200';
+      }
 
-    const statusColors = {
-      pending: 'bg-yellow-100 text-yellow-700',
-      accepted: 'bg-green-100 text-green-700',
-      completed: 'bg-blue-100 text-blue-700',
-      cancelled: 'bg-red-100 text-red-700',
-    };
-
-    // Find a container to inject into
-    const main = document.querySelector('main');
-    if (!main) return;
-    const liveSection = document.createElement('div');
-    liveSection.className = 'space-y-4 mb-8';
-    liveSection.innerHTML = `<h3 class="text-lg font-bold text-on-surface">Your Bookings</h3>` +
-      bookings.map(b => `
-        <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10">
-          <div class="flex items-start justify-between mb-3">
+      return `
+        <div class="bg-white rounded-2xl p-5 border border-[#ddc0ba]/30 shadow-sm mb-4">
+          <div class="flex justify-between items-start">
             <div>
-              <p class="font-bold text-on-surface">${b.worker_name}</p>
-              <p class="text-sm text-on-surface-variant">${b.skill || 'Worker'}</p>
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${statusColor}">${b.status.replace('_', ' ')}</span>
+              <h3 class="font-extrabold text-[#1c1c18] text-lg mt-1">${b.worker_name}</h3>
+              <p class="text-xs font-bold text-[#9f402d]">${b.worker_skill || 'Artisan'}</p>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColors[b.status] || 'bg-gray-100 text-gray-600'}">${b.status.charAt(0).toUpperCase() + b.status.slice(1)}</span>
+            <p class="text-sm font-black text-[#1c1c18]">${b.final_price ? '₹'+b.final_price : 'Hourly tracking'}</p>
           </div>
-          <p class="text-sm text-on-surface-variant mb-3">${b.service_desc}</p>
-          <div class="flex items-center justify-between">
-            <p class="text-xs text-on-surface-variant">${new Date(b.booking_date).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</p>
-            ${b.status === 'pending' ? `<button onclick="cancelBooking(${b.id})" class="text-xs font-bold text-red-600 hover:underline">Cancel</button>` : ''}
-            ${b.status === 'accepted' ? `<p class="text-xs font-bold text-green-600">Contact: ${b.worker_phone || 'Check profile'}</p>` : ''}
-          </div>
-        </div>
-      `).join('');
-    main.insertBefore(liveSection, main.firstChild);
-  } catch(e) {}
+          <p class="text-sm text-[#56423e] font-medium mt-3 bg-[#f6f3ec]/60 p-3 rounded-xl border border-[#ddc0ba]/10">${b.service_desc}</p>
+          ${actionBtn}
+        </div>`;
+    }).join('');
+  } catch(e) { container.innerHTML = "<p class='text-center text-red-600 text-sm'>Failed to synchronize list records.</p>"; }
 }
 
-async function cancelBooking(id) {
-  if (!confirm('Cancel this booking?')) return;
+async function closeBooking(id) {
+  const sessionKey = localStorage.getItem('session_key');
+  if (!confirm("Are you sure the worker finished the job? This will calculate structural pricing fields and close the account assignment record lines.")) return;
+  
   try {
-    const res = await fetch('http://localhost:8000/api/bookings/', {
+    const res = await fetch(`${API}/bookings/`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ booking_id: id, status: 'cancelled' })
+      headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+      body: JSON.stringify({ booking_id: id, status: 'completed' })
     });
     const data = await res.json();
-    if (data.status === 'success') { alert('Booking cancelled.'); loadBookings(); }
-  } catch(e) {}
+    if (data.status === 'success') {
+      openRateModal(id);
+    } else { alert(data.message); }
+  } catch(e) { alert("Operational failure connecting to view models."); }
 }
 
-loadBookings();
+function openRateModal(id) {
+  selectedBookingId = id;
+  setStar(5);
+  document.getElementById('rate-review').value = '';
+  document.getElementById('rate-modal').classList.remove('hidden');
+}
+
+function setStar(rating) {
+  currentRatingSelection = rating;
+  const stars = document.querySelectorAll('#star-row span');
+  stars.forEach((s, idx) => {
+    if (idx < rating) {
+      s.classList.add('text-yellow-400', 'fill-icon');
+      s.classList.remove('text-gray-300');
+    } else {
+      s.classList.remove('text-yellow-400', 'fill-icon');
+      s.classList.add('text-gray-300');
+    }
+  });
+}
+
+async function submitRating() {
+  const sessionKey = localStorage.getItem('session_key');
+  try {
+    const res = await fetch(`${API}/bookings/rate/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+      body: JSON.stringify({
+        booking_id: selectedBookingId,
+        rating: currentRatingSelection,
+        review: document.getElementById('rate-review').value.trim()
+      })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      document.getElementById('rate-modal').classList.add('hidden');
+      fetchHistory();
+    }
+  } catch(e) { alert("Communication exception processing user evaluation parameters."); }
+}
+
+fetchHistory();
 </script>
-</body></html>
+</body>
+</html>

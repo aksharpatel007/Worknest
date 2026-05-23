@@ -2,10 +2,13 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login
+from django.db.models import Avg
+import math
 import uuid
-from .models import User, Booking
-from .serializers import UserSerializer, BookingSerializer
+from django.utils import timezone
+from .models import User, Booking, Notification
+from .serializers import UserSerializer, BookingSerializer, NotificationSerializer
 
 # --- AUTHENTICATION & SIGNUP ---
 
@@ -44,43 +47,71 @@ def signup_view(request):
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=400)
 
+from django.contrib.auth import login
+
 @csrf_exempt
 @api_view(['POST'])
 def login_view(request):
-    """Authenticates user and redirects based on role."""
+    """Authenticates a user, saves their tracking token to the DB, and logs them in."""
     email = request.data.get('email')
     password = request.data.get('password')
+    
     user = authenticate(username=email, password=password)
     
     if user:
-        key = str(uuid.uuid4()) 
-        # Logic to send workers and clients to different dashboards
+        login(request, user)  # Sets native Django cookies
+        
+        # 🎯 FIX 1: Generate a unique session key and save it to this specific user row!
+        key = str(uuid.uuid4())
+        user.session_key = key
+        user.save()
+        
+        # Route roles smoothly
         redirect_page = 'worker_dashboard.html' if user.role_id == 2 else 'dashboard.html'
+        
         return Response({
             'status': 'success',
             'session_key': key,
             'redirect': redirect_page
-        })
-    return Response({'status': 'error', 'message': 'Invalid login'}, status=401)
+        }, status=200)
+        
+    return Response({'status': 'error', 'message': 'Invalid login credentials.'}, status=401)
+
 
 # --- PROFILE & WORKER LISTS ---
 
+@csrf_exempt
 @api_view(['GET'])
 def worker_list(request):
-    """Returns only workers who have been verified by an admin."""
-    workers = User.objects.filter(role_id=2, is_verified=True) 
-    serializer = UserSerializer(workers, many=True)
-    return Response({'status': 'success', 'data': serializer.data})
+    """Fetches all workers for the system directories."""
+    workers = User.objects.filter(role_id=2).order_by('-id')
+    
+    data_list = []
+    for worker in workers:
+        data_list.append({
+            'id': worker.id,
+            'fullname': worker.fullname,
+            'email': worker.email,
+            'skill': worker.skill or 'Artisan',
+            'hourly_rate': worker.hourly_rate,
+            'bio': getattr(worker, 'bio', ''),
+            'rating': getattr(worker, 'rating', 0.0),
+            'total_jobs': getattr(worker, 'total_jobs', 0),
+            'submitted_at': worker.date_joined.strftime('%I:%M %p') if worker.date_joined else 'N/A'
+        })
+        
+    return Response({'status': 'success', 'data': data_list}, status=200)
+
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
 def profile_view(request):
-    # This ensures the logged-in user only sees their own data
-    user = request.user 
-    if not user.is_authenticated:
-         # Fallback for demo if frontend session isn't fully set
-         user = User.objects.last()
+    # 🎯 FIXED: Pull the exact active user matching the login, instead of blindly using User.objects.last()
+    user = get_authenticated_user_from_header(request)
     
+    if not user:
+        return Response({'status': 'error', 'message': 'Anonymous access denied'}, status=401)
+        
     if request.method == 'GET':
         serializer = UserSerializer(user)
         return Response({'status': 'success', 'data': serializer.data})
@@ -88,54 +119,182 @@ def profile_view(request):
     if request.method == 'POST':
         user.fullname = request.data.get('fullname', user.fullname)
         user.phone = request.data.get('phone', user.phone)
+        
+        incoming_bio = request.data.get('bio')
+        if incoming_bio:
+            user.bio = incoming_bio
+            user.trust_score = 10 
+            
         if 'profile_pic' in request.FILES:
             user.profile_pic = request.FILES['profile_pic']
         user.save()
-        return Response({'status': 'success', 'message': 'Profile updated!'})
+        return Response({'status': 'success', 'message': 'Profile state updated successfully!'})
+    
 
-# --- BOOKING & STATS LOGIC ---
+from django.utils import timezone
+import math
 
 @csrf_exempt
-@api_view(['POST'])
-def create_booking(request):
-    """Handles new job requests from clients to verified workers."""
-    try:
-        worker_id = request.data.get('worker_id')
-        client_id = request.data.get('client_id')
-        service_desc = request.data.get('service_desc')
-
-        client = User.objects.get(id=client_id)
-        worker = User.objects.get(id=worker_id)
-
-        # Security Check: Cannot book unverified workers
-        if not worker.is_verified:
-            return Response({'status': 'error', 'message': 'Worker is not verified yet.'}, status=400)
-
-        booking = Booking.objects.create(
-            client=client,
-            worker=worker,
-            service_desc=service_desc,
-            status='pending'
-        )
-        return Response({'status': 'success', 'booking_id': booking.id})
-    except Exception as e:
-        return Response({'status': 'error', 'message': str(e)}, status=400)
-
-@api_view(['GET'])
+@api_view(['GET', 'POST', 'PATCH'])
 def user_bookings(request):
-    """Fetches list of bookings for the logged-in user or worker."""
-    user = request.user
-    # Demo fallback
-    if not user.is_authenticated:
-        bookings = Booking.objects.all().order_by('-id')[:10]
-    else:
+    user = get_authenticated_user_from_header(request)
+    
+    # ------------------ GET: LISTING LEDGERS ------------------
+    if request.method == 'GET':
+        if not user:
+            return Response({'status': 'success', 'data': []}, status=200)
+        
         if user.role_id == 2:
             bookings = Booking.objects.filter(worker=user).order_by('-id')
         else:
             bookings = Booking.objects.filter(client=user).order_by('-id')
+            
+        serializer = BookingSerializer(bookings, many=True)
+        return Response({'status': 'success', 'data': serializer.data}, status=200)
+
+    # ------------------ POST: DISPATCH INITIAL JOB ------------------
+    elif request.method == 'POST':
+        try:
+            worker_id = int(request.data.get('worker_id'))
+            client_id = int(request.data.get('client_id'))
+            service_desc = request.data.get('service_desc')
+
+            client = User.objects.get(id=client_id)
+            worker = User.objects.get(id=worker_id)
+
+            booking = Booking.objects.create(
+                client=client,
+                worker=worker,
+                service_desc=service_desc,
+                status='pending',
+                hourly_rate_snapshot=getattr(worker, 'hourly_rate', 400)
+            )
+            
+            # Dispatch Alert to the Worker Inbox that a job is pending
+            Notification.objects.create(
+                user=worker,
+                title="New Booking Request Received",
+                message=f"Client {client.fullname} has sent an assignment request for: '{service_desc[:40]}...'",
+                booking_reference=booking
+            )
+            
+            return Response({'status': 'success', 'booking_id': booking.id}, status=201)
+        except Exception as e:
+            return Response({'status': 'error', 'message': str(e)}, status=400)
+
+    # ------------------ PATCH: STATE TRANSITIONS & TIME LOGS ------------------
+    elif request.method == 'PATCH':
+        try:
+            booking_id = request.data.get('booking_id')
+            new_status = request.data.get('status')
+            booking = Booking.objects.get(id=booking_id)
+            
+            if new_status == 'in_progress':
+                booking.started_at = timezone.now()
+                booking.status = 'in_progress'
+                
+                Notification.objects.create(
+                    user=booking.client,
+                    title="Job Started",
+                    message=f"Artisan specialist {booking.worker.fullname} has officially clocked in and started working on your request.",
+                    booking_reference=booking
+                )
+                
+            elif new_status == 'completed':
+                if not booking.started_at:
+                    booking.started_at = timezone.now() - timezone.timedelta(hours=1) # Fallback if worker forgot to click start
+                
+                booking.completed_at = timezone.now()
+                booking.status = 'completed'
+                
+                # Compute Exact Elapsed Time Consumed
+                duration = booking.completed_at - booking.started_at
+                hours_consumed = max(1.0, duration.total_seconds() / 3600.0)
+                
+                # Format time string for descriptive message outputs
+                mins_total = int(duration.total_seconds() / 60)
+                hrs_part = mins_total // 60
+                mins_part = mins_total % 60
+                time_str = f"{hrs_part} hrs {mins_part} mins" if hrs_part > 0 else f"{mins_total} mins"
+                if mins_total < 5: 
+                    time_str = "1 hr (Minimum Base Rate Applied)"
+                
+                booking.final_price = math.ceil(hours_consumed * booking.hourly_rate_snapshot)
+                booking.save()
+                
+                # Build rich description summary text layout
+                summary_msg = (
+                    f"Receipt Confirmation Layout:\n"
+                    f"• Job Reference ID: #{booking.id}\n"
+                    f"• Client Owner: {booking.client.fullname}\n"
+                    f"• Service Provider: {booking.worker.fullname} ({booking.worker.skill})\n"
+                    f"• Scheduled Clock In: {booking.started_at.strftime('%d %b, %I:%M %p')}\n"
+                    f"• Completion Stamp: {booking.completed_at.strftime('%d %b, %I:%M %p')}\n"
+                    f"• Total Time Consumed: {time_str}\n"
+                    f"• Rate Snapshot Applied: ₹{booking.hourly_rate_snapshot}/hr\n"
+                    f"• Absolute Total Billing Amount: ₹{booking.final_price}"
+                )
+                
+                # Inject real-time summary notification cards into BOTH users' feeds
+                Notification.objects.create(user=booking.client, title="Work Complete — Receipt Details", message=summary_msg, booking_reference=booking)
+                Notification.objects.create(user=booking.worker, title="Work Complete — Earning Summary", message=summary_msg, booking_reference=booking)
+                
+            else:
+                booking.status = new_status
+                
+            booking.save()
+            return Response({'status': 'success', 'message': f'State moved to {new_status}'}, status=200)
+        except Exception as e:
+            return Response({'status': 'error', 'message': str(e)}, status=400)
+
+@csrf_exempt
+@api_view(['POST'])
+def submit_rating(request):
+    """Handles client reviews and updates the worker's average rating dynamically."""
+    try:
+        booking_id = int(request.data.get('booking_id'))
+        rating_value = int(request.data.get('rating')) # 1 to 5
+        review_text = request.data.get('review', '')
+        
+        booking = Booking.objects.get(id=booking_id)
+        booking.rating_given = rating_value
+        booking.review_given = review_text
+        booking.save()
+        
+        # Recalculate Global Worker Metrics Snapshot values
+        worker = booking.worker
+        all_completed_jobs = Booking.objects.filter(worker=worker, status='completed')
+        
+        worker.total_jobs = all_completed_jobs.count()
+        avg_calc = all_completed_jobs.filter(rating_given__isnull=False).aggregate(Avg('rating_given'))['rating_given__avg']
+        worker.rating = round(avg_calc, 1) if avg_calc else float(rating_value)
+        worker.save()
+        
+        return Response({'status': 'success', 'message': 'Rating saved successfully and added to worker profile totals!'})
+    except Exception as e:
+        return Response({'status': 'error', 'message': str(e)}, status=400)
+
+@csrf_exempt
+@api_view(['GET'])
+def get_user_notifications(request):
+    """Fetches user-specific notification logs for message feeds."""
+    user = get_authenticated_user_from_header(request)
+    if not user:
+        return Response({'status': 'error', 'message': 'Session authentication invalid'}, status=401)
     
+    notifications = Notification.objects.filter(user=user).order_by('-id')
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response({'status': 'success', 'data': serializer.data}, status=200)
+
+# ================== ADMIN PANEL QUERIES UPDATES ==================
+@csrf_exempt
+@api_view(['GET'])
+def get_all_bookings(request):
+    """Admin operational grid loading query."""
+    bookings = Booking.objects.all().order_by('-id')
     serializer = BookingSerializer(bookings, many=True)
     return Response({'status': 'success', 'data': serializer.data})
+
 
 @api_view(['GET'])
 def dashboard_stats(request):
@@ -162,24 +321,49 @@ def dashboard_stats(request):
 
 # --- ADMIN ACTIONS ---
 
+@csrf_exempt
 @api_view(['GET'])
 def get_unverified_workers(request):
-    """Queue for Admin to see who needs ID verification."""
-    workers = User.objects.filter(role_id=2, is_verified=False)
-    serializer = UserSerializer(workers, many=True)
-    return Response({'status': 'success', 'data': serializer.data})
+    """Fetches all workers awaiting admin verification approval."""
+    # Filter for users with role_id=2 (Workers) who are not verified yet
+    unverified_workers = User.objects.filter(role_id=2, is_verified=False).order_by('-id')
+    
+    data_list = []
+    for worker in unverified_workers:
+        data_list.append({
+            'id': worker.id,
+            'fullname': worker.fullname,
+            'email': worker.email,
+            'skill': worker.skill or 'Artisan',
+            'hourly_rate': worker.hourly_rate,
+            'bio': getattr(worker, 'bio', ''),
+            # 🎯 NEW: Format the date_joined timestamp nicely for the admin to read
+            'submitted_at': worker.date_joined.strftime('%d %b %Y, %I:%M %p') if worker.date_joined else 'N/A'
+        })
+        
+    return Response({'status': 'success', 'data': data_list}, status=200)
+
 
 @api_view(['POST'])
 def verify_worker(request, worker_id):
     try:
         worker = User.objects.get(id=worker_id)
+        
+        # Check if the frontend requested a fraud flag instead of approval
+        if request.data.get('action') == 'fraud':
+            worker.is_fraud = True
+            worker.is_verified = False
+            worker.save()
+            return Response({'status': 'success', 'message': 'Flagged successfully'})
+            
+        # Standard validation approval path
         worker.is_verified = True
-        worker.is_fraud = False # If we approve them, they aren't fraud
+        worker.is_fraud = False 
         worker.save()
         return Response({'status': 'success'})
     except User.DoesNotExist:
         return Response({'status': 'error'}, status=404)
-         
+        
 
 @api_view(['GET'])
 def get_admin_stats(request):
@@ -231,27 +415,7 @@ def update_report_status(request):
     return Response({'status': 'success', 'message': 'Worker status updated'})
 
 
-@api_view(['GET'])
-def get_all_bookings(request):
-    """Fetches bookings, with optional filtering by client or worker."""
-    try:
-        bookings = Booking.objects.all().order_by('-created_at')
-        
-        # Filter by Client ID if provided in the URL
-        client_id = request.query_params.get('client_id')
-        if client_id:
-            bookings = bookings.filter(client_id=client_id)
-            
-        # Filter by Worker ID if provided in the URL
-        worker_id = request.query_params.get('worker_id')
-        if worker_id:
-            bookings = bookings.filter(worker_id=worker_id)
-            
-        serializer = BookingSerializer(bookings, many=True)
-        return Response({'status': 'success', 'data': serializer.data})
-    except Exception as e:
-        return Response({'status': 'error', 'message': str(e)}, status=400)
-    
+
 
 @api_view(['GET'])
 def get_fraud_reports(request):
@@ -261,14 +425,48 @@ def get_fraud_reports(request):
     return Response({'status': 'success', 'data': serializer.data})
 
 
-#
-@api_view(['POST'])
+
+@csrf_exempt
+@api_view(['POST']) # 🎯 Enforces matching the POST call from your HTML script
 def flag_fraud(request, worker_id):
     try:
+        # Pull the specific worker index pattern cleanly
         worker = User.objects.get(id=worker_id)
-        worker.is_fraud = True      # This makes them appear in admin_fraud.html
-        worker.is_verified = False  # This stops them from working
+        worker.is_fraud = True      # Instantly locks their dashboard profile view
+        worker.is_verified = False  # Suspends client search visibility flags
         worker.save()
-        return Response({'status': 'success', 'message': 'Worker flagged as fraud'})
+        
+        return Response({
+            'status': 'success', 
+            'message': f'Worker profile #{worker_id} successfully flagged as fraud.'
+        }, status=200)
+        
     except User.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Worker not found'}, status=404)
+        return Response({
+            'status': 'error', 
+            'message': 'Targeted artisan profile could not be found inside PostgreSQL records.'
+        }, status=404)
+    except Exception as e:
+        return Response({
+            'status': 'error', 
+            'message': f'Internal engine breakdown: {str(e)}'
+        }, status=500)
+    
+def get_authenticated_user_from_header(request):
+    """
+    Finds the exact user row matching the frontend session key.
+    Completely eliminates cross-account data leaks.
+    """
+    # 1. If standard Django session cookies match, use them first
+    if request.user and request.user.is_authenticated:
+        return request.user
+        
+    # 2. Port Fallback: Search the database for the user who owns this custom token header
+    token = request.headers.get('X-Session-Key')
+    if token:
+        try:
+            return User.objects.get(session_key=token)
+        except User.DoesNotExist:
+            pass
+            
+    return None

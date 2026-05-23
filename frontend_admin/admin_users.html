@@ -182,7 +182,7 @@
       }
 
       tbody.innerHTML = users.map(u => `
-        <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer group" onclick="openUserDetail(${u.id})">
+        <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer group" >
             <td class="px-8 py-5 flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full bg-[#9f402d] overflow-hidden border border-[#ddc0ba]/40 group-hover:ring-2 ring-[#9f402d]">
                     <img src="${u.profile_pic ? 'http://localhost:8000' + u.profile_pic : 'https://ui-avatars.com/api/?name=' + u.fullname}" class="w-full h-full object-cover">
@@ -194,8 +194,8 @@
             </td>
             <td class="px-8 py-5 text-[#56423e] font-medium">${u.email}</td>
             <td class="px-8 py-5 text-[#89726d]">${new Date(u.date_joined).toLocaleDateString('en-IN')}</td>
-            <td class="px-8 py-5">
-                <button class="px-4 py-2 border border-[#ddc0ba]/60 rounded-lg text-xs font-bold text-[#9f402d]">View History</button>
+            <td class="px-8 py-5" onclick="openUserDetail(${u.id})">
+                <button class="px-4 py-2 hover:bg-[#9f402d] hover:text-white border border-[#ddc0ba]/60 rounded-lg text-xs font-bold text-[#9f402d]">View History</button>
             </td>
         </tr>
     `).join('');
@@ -257,6 +257,12 @@
             <div class="flex flex-col">
               <span class="text-[10px] font-black text-[#89726d] uppercase">Member Since</span>
               <span class="text-sm font-semibold">${new Date(user.date_joined).toLocaleDateString('en-IN')}</span>
+            </div>
+             <div class="flex flex-col">
+              <span class="text-[10px] font-black text-[#89726d] uppercase">Contact Number</span>
+              <span class="text-sm font-semibold">
+                ${user.phone || 'Not provided'}
+              </span>
             </div>
              <div class="flex flex-col">
               <span class="text-[10px] font-black text-[#89726d] uppercase">Total Expenditure</span>

@@ -102,9 +102,22 @@
       class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
       <h2 class="text-2xl font-black text-[#1c1c18]">Dashboard</h2>
       <div class="flex items-center gap-3">
-        <button class="p-2 rounded-full hover:bg-[#f1eee7] transition-colors">
-          <span class="material-symbols-outlined text-[#56423e]">notifications</span>
-        </button>
+        <div id="admin-bell-dropdown"
+          class="hidden absolute right-8 top-16 w-80 bg-white border border-[#ddc0ba]/40 rounded-2xl shadow-xl z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-3 duration-200">
+          <div class="px-5 py-3.5 border-b border-[#f1eee7] bg-[#f6f3ec]/40 flex justify-between items-center">
+            <h4 class="font-black text-sm text-[#1c1c18] flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-xs text-[#9f402d]">notifications_active</span>
+              Live Worker Broadcasts
+            </h4>
+            <span id="admin-bell-badge"
+              class="bg-[#ffdad3] text-[#9f402d] text-[10px] font-black px-2 py-0.5 rounded-full">0 New</span>
+          </div>
+          <div id="admin-bell-messages-list"
+            class="max-h-64 overflow-y-auto custom-scrollbar p-3 space-y-2 divide-y divide-[#f1eee7]/40 bg-white">
+            <p class="text-center py-6 text-xs text-[#89726d] font-medium italic">Synchronizing live network signals...
+            </p>
+          </div>
+        </div>
         <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
           <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
         </div>
