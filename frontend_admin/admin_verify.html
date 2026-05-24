@@ -55,8 +55,8 @@
 
 <body class="flex flex-row h-screen w-screen bg-[#faf7f2] overflow-hidden text-[#1c1c18]">
 
-  <aside
-    class="hidden md:flex flex-col w-64 min-h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0">
+  <aside id="admin-sidebar"
+    class="fixed md:sticky top-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col w-64 h-screen bg-[#f5f0e8] shadow-2xl md:shadow-lg z-40 py-8 shrink-0 overflow-y-auto">
     <div class="px-6 mb-8 flex items-center gap-3">
       <div
         class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
@@ -67,6 +67,11 @@
         <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
         <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
       </div>
+
+      <button onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full')"
+        class="md:hidden p-2 rounded-full text-[#89726d] hover:bg-[#ddc0ba]/40 transition-colors flex items-center justify-center absolute top-7 right-1">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
       <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
@@ -90,9 +95,16 @@
   </aside>
 
   <main class="flex-1 h-full overflow-y-auto custom-scrollbar flex flex-col min-w-0">
-    <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md px-8 py-4 border-b border-[#ddc0ba]/20">
-      <h2 class="text-2xl font-black">Verification Queue</h2>
-      
+    <header
+      class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-6 md:px-8 py-4 border-b border-[#ddc0ba]/20">
+      <div class="flex items-center gap-3">
+        <button onclick="document.getElementById('admin-sidebar').classList.toggle('-translate-x-full')"
+          class="md:hidden p-2 rounded-full hover:bg-[#ddc0ba]/30 transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d]">more_vert</span>
+        </button>
+        <h2 class="text-xl md:text-2xl font-black text-[#1c1c18]">Verify Workers</h2>
+      </div>
+
     </header>
 
     <div class="p-8 w-full max-w-7xl mx-auto space-y-6">
@@ -131,7 +143,7 @@
   </main>
 
   <div id="user-modal"
-    class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    class="hidden fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-5xl w-full max-h-[90dvh] overflow-hidden shadow-2xl flex flex-col">
       <div class="p-6 border-b border-[#f1eee7] flex justify-between items-center">
         <h3 class="text-xl font-bold">Worker Verification Detail</h3>
@@ -190,9 +202,9 @@
       tbody.innerHTML = workers.map(w => {
         const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
 
-        const hasUnreadMessage = w.bio && w.bio.length > 0;
+        const hasUnreadMessage = w.bio && (w.bio.includes('VERIFICATION_NOTE:') || w.bio.includes('APPEAL_REQUEST:'));
         const greenDotBadge = hasUnreadMessage
-          ? `<span class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse" title="Message Appended"></span>`
+          ? `<span class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse" title="Message Received"></span>`
           : '';
 
         const formattedDate = w.submitted_at ? w.submitted_at : new Date(w.date_joined).toLocaleDateString('en-IN');
@@ -337,20 +349,9 @@
           </p>
         </div>
 
-        <div class="space-y-2">
-          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Message Notes From Worker History</label>
+        <div class="space-y-2 hidden" id="worker-message-container">
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Message Notes From Worker</label>
           <div id="popup-messages-trail" class="space-y-3 max-h-56 overflow-y-auto pr-1">
-            <div id="verification-note-container" class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
-              <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
-                <span id="verification-note-time">${displayTime}</span>
-              </div>
-              <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
-                <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note From Worker
-              </div>
-              <p id="verification-note-text" class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
-                "${w.bio || 'i want to work i am not a fraud'}"
-              </p>
-            </div>
           </div>
         </div>
 
@@ -390,53 +391,55 @@
 
     async function loadTrailMessagesAndBookings(worker) {
       const messagesTrailBox = document.getElementById('popup-messages-trail');
+      const messageSectionWrapper = messagesTrailBox.parentElement; // The container holding the "Message Notes" title
       const bookingsContainer = document.getElementById('popup-worker-completed-bookings');
-      const displayTime = worker.submitted_at ? worker.submitted_at : new Date(worker.date_joined).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-      // Fetch Follow-up Notification Message Logs Queue
-      try {
-        const notesRes = await fetch(`${API}/notifications/`, {
-          headers: { 'X-Session-Key': localStorage.getItem('session_key') }
-        });
-        const notesData = await notesRes.json();
+      // Extract and separate multiple messages
+      let allParsedMessages = [];
+      if (worker.bio) {
+        const rawMessages = worker.bio.split('|MSG|');
+        rawMessages.forEach(msgBlock => {
+          if (msgBlock.includes('VERIFICATION_NOTE:') || msgBlock.includes('APPEAL_REQUEST:')) {
+            let cleanText = msgBlock.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
 
-        if (notesData.status === 'success' && notesData.data) {
-          let messagesHtml = `
-            <div id="verification-note-container" class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
-              <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
-                <span id="verification-note-time">${displayTime}</span>
-              </div>
-              <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
-                <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note From Worker
-              </div>
-              <p id="verification-note-text" class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
-                "${worker.bio || 'i want to work i am not a fraud'}"
-              </p>
-            </div>
-          `;
+            // Extract timestamp
+            let dateStr = 'Recent';
+            let finalMessage = cleanText;
+            const timeMatch = cleanText.match(/^\[(.*?)\]\s*(.*)/);
+            if (timeMatch) {
+              dateStr = timeMatch[1];
+              finalMessage = timeMatch[2];
+            }
 
-          const workerAlerts = notesData.data.filter(n => n.user === worker.id);
-          
-          if (workerAlerts.length > 0) {
-            messagesHtml += workerAlerts.map(msg => `
-              <div class="relative p-4 bg-amber-50/60 border border-amber-200/40 rounded-2xl space-y-2">
-                <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-600 bg-amber-200/20 px-2.5 py-0.5 rounded-md tracking-wide">
-                  <span>${msg.formatted_date || 'Recent'}</span>
-                </div>
-                <div class="flex items-center gap-2 text-amber-700 font-bold text-xs uppercase tracking-wider pr-24">
-                  <span class="material-symbols-outlined text-sm">reply</span> Follow-up Message Update
-                </div>
-                <p class="text-xs text-amber-900 font-medium bg-white/80 p-3 rounded-xl border border-amber-200/20 leading-relaxed">
-                  "${msg.message}"
-                </p>
-              </div>
-            `).join('');
+            allParsedMessages.push({ text: finalMessage, date: dateStr });
           }
-          messagesTrailBox.innerHTML = messagesHtml;
-        }
-      } catch (e) { console.error("Error setting up sub-message elements:", e); }
+        });
+      }
 
-      // Fetch Nested Bookings Array Elements Matrix
+      // If messages exist, show the wrapper and map them. If not, hide the entire wrapper.
+      if (allParsedMessages.length > 0) {
+        messageSectionWrapper.classList.remove('hidden');
+
+        // Reverse to put latest on top
+        messagesTrailBox.innerHTML = allParsedMessages.reverse().map(msg => `
+        <div class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2 mb-3">
+          <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
+            <span>${msg.date}</span>
+          </div>
+          <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
+            <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note
+          </div>
+          <p class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
+            "${msg.text}"
+          </p>
+        </div>
+      `).join('');
+      } else {
+        messageSectionWrapper.classList.add('hidden');
+        messagesTrailBox.innerHTML = '';
+      }
+
+      // --- Fetch Nested Bookings Array Elements Matrix ---
       try {
         const bookingsRes = await fetch(`${API}/admin/bookings/`, {
           headers: { 'X-Session-Key': localStorage.getItem('session_key') }
@@ -452,18 +455,18 @@
             bookingsContainer.innerHTML = relevantJobs.map(j => {
               let badgeColor = j.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-blue-50 text-blue-700 border-blue-200';
               return `
-                <div class="p-3 bg-gray-50 border border-gray-100 rounded-xl space-y-1.5 shadow-sm">
-                  <div class="flex justify-between items-center text-xs">
-                    <span class="font-bold text-slate-700">Client: ${j.client_name || 'System User'}</span>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full border ${badgeColor} font-black uppercase tracking-wider">${j.status}</span>
-                  </div>
-                  <p class="text-[11px] text-slate-500 font-medium leading-normal bg-white p-2 rounded-lg border border-slate-100">"${j.service_desc}"</p>
-                  <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 pt-0.5">
-                    <span>Final Amount: <b class="text-[#9f402d]">₹${j.final_price || 'Hourly Calc'}</b></span>
-                    <span>${j.rating_given ? '⭐ ' + j.rating_given + '/5' : '🕒 Metric Unrated'}</span>
-                  </div>
-                </div>
-              `;
+            <div class="p-3 bg-gray-50 border border-gray-100 rounded-xl space-y-1.5 shadow-sm">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-700">Client: ${j.client_name || 'System User'}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full border ${badgeColor} font-black uppercase tracking-wider">${j.status}</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-medium leading-normal bg-white p-2 rounded-lg border border-slate-100">"${j.service_desc}"</p>
+              <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 pt-0.5">
+                <span>Final Amount: <b class="text-[#9f402d]">₹${j.final_price || 'Hourly Calc'}</b></span>
+                <span>${j.rating_given ? '⭐ ' + j.rating_given + '/5' : '🕒 Metric Unrated'}</span>
+              </div>
+            </div>
+          `;
             }).join('');
           }
         }
@@ -471,6 +474,7 @@
         bookingsContainer.innerHTML = `<p class="text-xs text-red-500">Failed to render nested job matrix logs.</p>`;
       }
     }
+
 
     async function approveWorker(id) {
       const res = await fetch(`${API}/admin/verify/${id}/`, {

@@ -324,20 +324,32 @@ def dashboard_stats(request):
 @csrf_exempt
 @api_view(['GET'])
 def get_unverified_workers(request):
-    """Fetches all workers awaiting admin verification approval."""
-    # Filter for users with role_id=2 (Workers) who are not verified yet
+    """
+    Fetches all workers awaiting admin verification approval.
+    Extracts verification notes out of the bio text stream to keep 
+    the inspector panel and notification bell clean.
+    """
     unverified_workers = User.objects.filter(role_id=2, is_verified=False).order_by('-id')
     
     data_list = []
     for worker in unverified_workers:
+        raw_bio = getattr(worker, 'bio', '') or ''
+        admin_note = ""
+        clean_bio = raw_bio
+        
+        # Extract administrative notes if they exist
+        if raw_bio.startswith("VERIFICATION_NOTE:"):
+            admin_note = raw_bio.replace("VERIFICATION_NOTE:", "").strip()
+            clean_bio = "" # Clear from professional profile overview if it was just a message
+            
         data_list.append({
             'id': worker.id,
             'fullname': worker.fullname,
             'email': worker.email,
             'skill': worker.skill or 'Artisan',
             'hourly_rate': worker.hourly_rate,
-            'bio': getattr(worker, 'bio', ''),
-            # 🎯 NEW: Format the date_joined timestamp nicely for the admin to read
+            'bio': clean_bio,
+            'admin_note': admin_note, # Explicit variable payload targeting admin panels
             'submitted_at': worker.date_joined.strftime('%d %b %Y, %I:%M %p') if worker.date_joined else 'N/A'
         })
         

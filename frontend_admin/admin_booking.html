@@ -53,8 +53,7 @@
 
 <body class="h-screen flex overflow-hidden text-[#1c1c18]">
 
-  <aside
-    class="hidden md:flex flex-col w-64 h-screen bg-[#f5f0e8] sticky top-0 rounded-r-3xl shadow-lg z-50 py-8 shrink-0 overflow-y-auto">
+  <aside id="admin-sidebar" class="fixed md:sticky top-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col w-64 h-screen bg-[#f5f0e8] shadow-2xl md:shadow-lg z-40 py-8 shrink-0 overflow-y-auto">
     <div class="px-6 mb-8 flex items-center gap-3">
       <div
         class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
@@ -65,6 +64,10 @@
         <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
         <p class="text-xs text-[#89726d] font-medium">Safety Command</p>
       </div>
+      <button onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full')"
+        class="md:hidden p-2 rounded-full text-[#89726d] hover:bg-[#ddc0ba]/40 transition-colors flex items-center justify-center absolute top-7 right-1">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
       <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
@@ -89,7 +92,13 @@
   <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
     <header
       class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20">
-      <h2 class="text-2xl font-black text-[#1c1c18]">System Bookings</h2>
+      <div class="flex items-center gap-3">
+        <button onclick="document.getElementById('admin-sidebar').classList.toggle('-translate-x-full')"
+          class="md:hidden p-2 rounded-full hover:bg-[#ddc0ba]/30 transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d]">more_vert</span>
+        </button>
+        <h2 class="text-xl md:text-2xl font-black text-[#1c1c18]">System Booking</h2>
+      </div>
       <div id="admin-bell-dropdown"
         class="hidden absolute right-8 top-16 w-80 bg-white border border-[#ddc0ba]/40 rounded-2xl shadow-xl z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-3 duration-200">
         <div class="px-5 py-3.5 border-b border-[#f1eee7] bg-[#f6f3ec]/40 flex justify-between items-center">

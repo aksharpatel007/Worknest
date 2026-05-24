@@ -234,7 +234,6 @@
       } catch (e) { console.error("Identity status validation breakdown:", e); }
     }
 
-    // 📩 Transmit the message straight into the worker's bio field model row
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
       if (!note) { alert("Please input a message first."); return; }
@@ -243,20 +242,46 @@
       btn.textContent = "Transmitting message...";
       btn.disabled = true;
 
+      const sessionKey = localStorage.getItem('session_key');
+
       try {
+        // 1. Fetch current profile to get old messages so we don't overwrite them
+        const profileRes = await fetch(`${API_BASE}/profile/`, {
+          headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+        const profileData = await profileRes.json();
+
+        // 2. Prepare the new message with Date & Time
+        let currentBio = (profileData.data && profileData.data.bio) ? profileData.data.bio : '';
+        const timestamp = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        const newMessage = `[${timestamp}] ${note}`;
+
+        // 3. Append safely using a |MSG| separator
+        let newBio = currentBio
+          ? `${currentBio} |MSG| VERIFICATION_NOTE: ${newMessage}`
+          : `VERIFICATION_NOTE: ${newMessage}`;
+
+        // 4. Send updated data to the server
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
-          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` }) // Store note cleanly inside the bio string block
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          body: JSON.stringify({ bio: newBio })
         });
+
         const data = await res.json();
         if (data.status === 'success') {
-          alert("Your message note has been appended to your validation files. The admin will review it immediately.");
+          alert("Your message note has been appended. The admin will review it immediately.");
           document.getElementById('pending-msg-input').value = "";
-          btn.textContent = "Note Sent ✓";
         }
-      } catch (e) { console.error(e); btn.textContent = "Send Note to Admin"; btn.disabled = false; }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        btn.textContent = "Send Note to Admin";
+        btn.disabled = false;
+      }
     }
+
 
     async function submitFraudAppeal() {
       const txt = document.getElementById('appeal-text-input').value.trim();
