@@ -60,7 +60,8 @@
 
 <body class="h-screen flex overflow-hidden text-[#1c1c18]">
 
-  <aside id="admin-sidebar" class="fixed md:sticky top-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col w-64 h-screen bg-[#f5f0e8] shadow-2xl md:shadow-lg z-40 py-8 shrink-0 overflow-y-auto">
+  <aside id="admin-sidebar"
+    class="fixed md:sticky top-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col w-64 h-screen bg-[#f5f0e8] shadow-2xl md:shadow-lg z-40 py-8 shrink-0 overflow-y-auto">
     <div class="px-6 mb-8 flex items-center gap-3">
       <div
         class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
@@ -135,7 +136,8 @@
     </div>
   </main>
 
- <div id="user-modal" class="hidden fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div id="user-modal"
+    class="hidden fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-[2.5rem] w-full max-w-4xl max-h-[90dvh] overflow-hidden shadow-2xl flex flex-col">
       <div class="p-6 border-b border-[#f1eee7] flex justify-between items-center bg-[#faf7f2]">
         <h3 class="text-xl font-black text-[#9f402d]">Fraud Investigation Detail</h3>
@@ -265,11 +267,19 @@
           </div>
         </div>
 
-        <div>
-          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d]">Worker Bio</label>
+         <div>
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Professional Bio</label>
           <p class="mt-2 text-sm text-[#56423e] leading-relaxed italic bg-white p-4 rounded-2xl border border-[#f1eee7]">
-            "${w.bio || 'No bio provided.'}"
+            "${cleanBio(w.bio)}"
           </p>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Message Notes From Worker</label>
+          <div id="worker-message-container" class="hidden space-y-2 mt-2">
+            <div id="popup-messages-trail" class="space-y-3 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
+            </div>
+          </div>
         </div>
 
         <button onclick="restoreWorker(${w.id})" class="w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-lg hover:scale-[1.02] transition-transform">
@@ -286,10 +296,25 @@
     </div>`;
 
       modal.classList.remove('hidden');
+
+      loadTrailMessages(w);
     }
 
-    //
-    //
+    function cleanBio(bio) {
+      if (!bio) return 'This worker has not provided a bio yet.';
+
+      // Split by our separator
+      let parts = bio.split('|MSG|');
+
+      // Check the first part. If it's NOT a system message, it's the real bio.
+      let firstPart = parts[0].trim();
+      if (firstPart.includes('VERIFICATION_NOTE:') || firstPart.includes('APPEAL_REQUEST:')) {
+        return 'This worker has not provided a bio yet.';
+      }
+
+      return firstPart;
+    }
+
     function closeModal(id) {
       // If the function is called with an ID, use it; otherwise default to 'user-modal'
       const targetId = id || 'user-modal';
@@ -399,6 +424,49 @@
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);
       }, 4000);
+    }
+
+    async function loadTrailMessages(worker) {
+      const messagesTrailBox = document.getElementById('popup-messages-trail');
+      const messageSectionWrapper = document.getElementById('worker-message-container');
+
+      let allParsedMessages = [];
+      if (worker.bio) {
+        const rawMessages = worker.bio.split('|MSG|');
+        rawMessages.forEach(msgBlock => {
+          if (msgBlock.includes('VERIFICATION_NOTE:') || msgBlock.includes('APPEAL_REQUEST:')) {
+            let cleanText = msgBlock.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
+
+            let dateStr = 'Recent';
+            const timeMatch = cleanText.match(/^\[(.*?)\]\s*(.*)/);
+            if (timeMatch) {
+              dateStr = timeMatch[1];
+              cleanText = timeMatch[2];
+            }
+
+            allParsedMessages.push({ text: cleanText, date: dateStr });
+          }
+        });
+      }
+
+      if (allParsedMessages.length > 0) {
+        messageSectionWrapper.classList.remove('hidden');
+        messagesTrailBox.innerHTML = allParsedMessages.reverse().map(msg => `
+            <div class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2 mb-3">
+              <div class="absolute top-6 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
+                <span>${msg.date}</span>
+              </div>
+              <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
+                <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note
+              </div>
+              <p class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
+                "${msg.text}"
+              </p>
+            </div>
+        `).join('');
+      } else {
+        messageSectionWrapper.classList.add('hidden');
+      }
     }
 
     function openFraudInspectionModal(workerObject) {

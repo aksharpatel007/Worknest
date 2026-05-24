@@ -297,6 +297,8 @@
       const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
       const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : avatarFallback;
 
+
+
       const statusBadge = w.is_verified
         ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Verified Expert</span>'
         : '<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Pending Review</span>';
@@ -345,7 +347,7 @@
         <div>
           <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Professional Bio</label>
           <p class="mt-2 text-sm text-[#56423e] leading-relaxed italic bg-white p-4 rounded-2xl border border-[#f1eee7]">
-            "${w.bio || 'This worker has not provided a bio yet.'}"
+            "${cleanBio(w.bio)}"
           </p>
         </div>
 
@@ -423,7 +425,7 @@
         // Reverse to put latest on top
         messagesTrailBox.innerHTML = allParsedMessages.reverse().map(msg => `
         <div class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2 mb-3">
-          <div class="absolute top-4 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
+          <div class="absolute top-6 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
             <span>${msg.date}</span>
           </div>
           <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
@@ -486,6 +488,22 @@
         loadQueue();
         closeModal('user-modal');
       }
+    }
+
+    // Helper to clean the bio for display
+    function cleanBio(bio) {
+      if (!bio) return 'This worker has not provided a bio yet.';
+
+      // Split by our separator
+      let parts = bio.split('|MSG|');
+
+      // Check the first part. If it's NOT a system message, it's the real bio.
+      let firstPart = parts[0].trim();
+      if (firstPart.includes('VERIFICATION_NOTE:') || firstPart.includes('APPEAL_REQUEST:')) {
+        return 'This worker has not provided a bio yet.';
+      }
+
+      return firstPart;
     }
 
     function handleSearch() {
