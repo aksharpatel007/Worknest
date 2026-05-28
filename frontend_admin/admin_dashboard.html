@@ -440,7 +440,6 @@
 
       let allMessages = [];
 
-      // Loop through workers and split their bio to find multiple messages
       allData.rawUsers.filter(u => u.role_id == 2 && u.bio).forEach(w => {
         const rawMessages = w.bio.split('|MSG|');
 
@@ -448,15 +447,15 @@
           if (msgBlock.includes('VERIFICATION_NOTE:') || msgBlock.includes('APPEAL_REQUEST:')) {
             let msgType = msgBlock.includes('APPEAL_REQUEST:') ? 'Appeal' : 'Note';
             let badgeColor = msgBlock.includes('APPEAL_REQUEST:') ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700';
-
             let cleanText = msgBlock.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
 
-            // Extract the exact time we appended earlier
-            let dateStr = 'Recent';
+            let dateObj = new Date(0); // Default old date
             let finalMessage = cleanText;
+            
+            // Extract the exact time inside [ ]
             const timeMatch = cleanText.match(/^\[(.*?)\]\s*(.*)/);
             if (timeMatch) {
-              dateStr = timeMatch[1];
+              dateObj = new Date(timeMatch[1]); // Parse the string into a real Date object
               finalMessage = timeMatch[2];
             }
 
@@ -465,14 +464,14 @@
               type: msgType,
               color: badgeColor,
               text: finalMessage,
-              date: dateStr
+              date: dateObj // Store the Date object for sorting
             });
           }
         });
       });
 
-      // Reverse array to show the newest messages at the top
-      allMessages.reverse();
+      // 🚀 SORTING LOGIC: Newest date first
+      allMessages.sort((a, b) => b.date - a.date);
 
       badge.textContent = `${allMessages.length} New`;
 
@@ -482,15 +481,15 @@
       }
 
       list.innerHTML = allMessages.map(m => `
-    <div class="p-3 bg-white border border-[#ddc0ba]/40 hover:border-[#9f402d]/40 transition-colors cursor-pointer rounded-xl mb-2 shadow-sm" onclick="window.location.href='admin_verify.html'">
-      <div class="flex justify-between items-start mb-1.5">
-        <h5 class="text-xs font-bold text-[#1c1c18]">${m.workerName}</h5>
-        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${m.color} uppercase tracking-wider">${m.type}</span>
-      </div>
-      <p class="text-[11px] text-[#56423e] font-medium leading-relaxed italic mb-2 break-words">"${m.text}"</p>
-      <p class="text-[9px] text-[#89726d] text-right font-bold">${m.date}</p>
-    </div>
-  `).join('');
+        <div class="p-3 bg-white border border-[#ddc0ba]/40 hover:border-[#9f402d]/40 transition-colors cursor-pointer rounded-xl mb-2 shadow-sm" onclick="window.location.href='admin_verify.html'">
+          <div class="flex justify-between items-start mb-1.5">
+            <h5 class="text-xs font-bold text-[#1c1c18]">${m.workerName}</h5>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${m.color} uppercase tracking-wider">${m.type}</span>
+          </div>
+          <p class="text-[11px] text-[#56423e] font-medium leading-relaxed italic mb-2 break-words">"${m.text}"</p>
+          <p class="text-[9px] text-[#89726d] text-right font-bold">${m.date.toLocaleString()}</p>
+        </div>
+      `).join('');
     }
 
     loadStats();

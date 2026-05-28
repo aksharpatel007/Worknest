@@ -152,7 +152,7 @@
 </head>
 
 <body
-  class="bg-background text-on-background font-body min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
+  class="bg-background text-on-background font-body min-h-screen overflow-x-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
   <div class="fixed inset-0 bg-grain z-[60]"></div>
   <!-- TopAppBar -->
   <header
@@ -167,43 +167,42 @@
         class="bell-container relative p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors">
         <span class="material-symbols-outlined swing-bell text-2xl" style="display: inline-block;">notifications</span>
       </a>
-      <div
-        class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20">
-        <img alt="User Profile" class="w-full h-full object-cover"
-          data-alt="portrait of a smiling woman with warm lighting and a natural soft focus background"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa08CxdFMAEUxpOn0M7ibhzMpGse_9fhiOIFK76OxBwanB6uNzKkK5QgTsShRhelizeVhrP7e8kVTUDcrCHAXDa-DPZKG0rCCJPsbMhx95xI3DkQtcChfLC21moFDquUemZFEs1vR9SAQaFbZSLNTUcZ0o5c8TGBfzcUdpVMSncNl--W25-rtgtoBCjtRVv35jJvTcwrmNQ5FyznvrpSu8KcGjsp9cBk7-OmdksKh2iJeJ8gTElYCKl5RcpmSb0OmFCs9HAVK0pv_E" />
+      <div onclick="window.location.href='profile.html'"
+        class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 cursor-pointer hover:border-primary transition-all hover:scale-105 active:scale-95 group">
+        <img id="header-profile-img" alt="User Profile" class="w-full h-full object-cover"
+          src="https://ui-avatars.com/api/?name=User&background=ffdad3&color=9f402d" />
       </div>
     </div>
   </header>
   <main class="max-w-4xl mx-auto px-6 pt-8 pb-32">
-    <!-- Hero Search Section -->
     <section class="mb-16">
-      <h2 class="text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight mb-8">
+      <h2 class="text-3xl md:text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight mb-6 md:mb-8">
         Welcome back,<br /><span class="text-primary italic">how can we help today?</span>
       </h2>
       <div class="relative group">
-        <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+        <div class="absolute inset-y-0 left-4 md:left-6 flex items-center pointer-events-none">
           <span class="material-symbols-outlined text-outline" data-icon="search">search</span>
         </div>
-        <input
-          class="w-full bg-surface-container-lowest border-none h-20 pl-16 pr-8 rounded-full shadow-[0_10px_40px_rgba(28,28,24,0.04)] text-lg placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 transition-all"
+        <input id="search-input" onkeyup="liveCategorySearch()"
+          class="w-full bg-surface-container-lowest border-none h-16 md:h-20 pl-12 md:pl-16 pr-24 md:pr-32 rounded-full shadow-[0_10px_40px_rgba(28,28,24,0.04)] text-base md:text-lg placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 transition-all"
           placeholder="What help do you need?" type="text" />
         <button
-          class="absolute right-3 top-3 bottom-3 px-8 bg-primary text-on-primary rounded-full font-bold hover:bg-primary-container transition-all active:scale-95"
+          class="absolute right-2 md:right-3 top-2 md:top-3 bottom-2 md:bottom-3 px-5 md:px-8 bg-primary text-on-primary rounded-full text-sm md:text-base font-bold hover:bg-primary-container transition-all active:scale-95"
           onclick="searchWorkers()">
           Find
         </button>
       </div>
     </section>
-    <!-- Categories Horizontal Scroll -->
+
     <section class="mb-16">
       <div class="flex items-center justify-between mb-6 px-2">
-        <h3 class="text-xl font-bold text-on-surface">Categories</h3>
-        <a class="text-primary font-semibold text-sm hover:underline" href="services.html">View All</a>
+        <h3 id="categories-title" class="text-xl font-bold text-on-surface">Categories</h3>
       </div>
-      <div class="flex gap-6 overflow-x-auto hide-scrollbar py-4 -mx-2 px-2">
-        <!-- Cook -->
-        <button class="flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Home Cook')">
+
+      <div id="category-container" class="flex gap-6 overflow-x-auto hide-scrollbar py-4 -mx-2 px-2">
+
+        <button data-category="maid cleaner cleaning sweep"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Maid')">
           <div
             class="w-24 h-24 rounded-[2rem] rounded-tr-[3.5rem] bg-primary-fixed flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-3 shadow-sm group-hover:shadow-xl">
             <span class="material-symbols-outlined text-on-primary-fixed text-4xl" data-icon="cleaning_services"
@@ -211,9 +210,9 @@
           </div>
           <span class="font-bold text-sm tracking-wide text-secondary uppercase">Maid</span>
         </button>
-        <!-- Plumber -->
-        <button class="flex-shrink-0 flex flex-col items-center gap-3 group"
-          onclick="window.location.href='dashboard.html'">
+
+        <button data-category="plumber pipes water leak"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Plumber')">
           <div
             class="w-24 h-24 rounded-[3.5rem] rounded-bl-[1.5rem] bg-tertiary-fixed flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-2 shadow-sm group-hover:shadow-xl">
             <span class="material-symbols-outlined text-on-tertiary-fixed text-4xl" data-icon="plumbing"
@@ -221,9 +220,10 @@
           </div>
           <span class="font-bold text-sm tracking-wide text-secondary uppercase">Plumber</span>
         </button>
-        <!-- Electrician -->
-        <button class="flex-shrink-0 flex flex-col items-center gap-3 group"
-          onclick="window.location.href='dashboard.html'">
+
+        <button data-category="electrician wiring power lights"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="filterBySkill('Electrician')">
           <div
             class="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-6 shadow-sm group-hover:shadow-xl border-2 border-dashed border-outline-variant">
             <span class="material-symbols-outlined text-on-surface text-4xl" data-icon="electric_bolt"
@@ -231,9 +231,9 @@
           </div>
           <span class="font-bold text-sm tracking-wide text-secondary uppercase">Electrician</span>
         </button>
-        <!-- Gardener (Bonus for scroll feel) -->
-        <button class="flex-shrink-0 flex flex-col items-center gap-3 group"
-          onclick="window.location.href='dashboard.html'">
+
+        <button data-category="gardener yard plants tree lawn"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Gardener')">
           <div
             class="w-24 h-24 rounded-[3rem] rounded-tl-[1rem] bg-secondary-fixed-dim flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-6 shadow-sm group-hover:shadow-xl">
             <span class="material-symbols-outlined text-on-secondary-fixed-variant text-4xl" data-icon="yard"
@@ -241,11 +241,95 @@
           </div>
           <span class="font-bold text-sm tracking-wide text-secondary uppercase">Gardener</span>
         </button>
+
+        <button data-category="painter colors wall paint"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Painter')">
+          <div
+            class="w-24 h-24 rounded-2xl rounded-br-[3rem] bg-[#d6e7a1] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-3 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-[#5a682f] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">format_paint</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Painter</span>
+        </button>
+
+        <button data-category="carpenter wood furniture repair"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="filterBySkill('Carpenter')">
+          <div
+            class="w-24 h-24 rounded-3xl rounded-tr-md rounded-bl-md bg-[#ffdad6] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-6 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-[#93000a] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">handyman</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Carpenter</span>
+        </button>
+
+        <button data-category="driver car ride transport cab"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Driver')">
+          <div
+            class="w-24 h-24 rounded-[2.5rem] bg-[#e5e2db] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-6 shadow-sm group-hover:shadow-xl border border-[#ddc0ba]/40">
+            <span class="material-symbols-outlined text-[#56423e] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">directions_car</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Driver</span>
+        </button>
+
+        <button data-category="tutor teacher study math school"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Tutor')">
+          <div
+            class="w-24 h-24 rounded-[1.5rem] rounded-tl-[3.5rem] rounded-br-[3.5rem] bg-[#ffdcbd] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-3 shadow-sm group-hover:shadow-xl border border-[#b88a5c]/30">
+            <span class="material-symbols-outlined text-[#432501] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">school</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Tutor</span>
+        </button>
+
+        <button data-category="cook chef food culinary meal"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Cook')">
+          <div
+            class="w-24 h-24 rounded-[1.5rem] rounded-b-[3rem] bg-[#f3f0e9] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-6 shadow-sm group-hover:shadow-xl border border-[#ddc0ba]/40">
+            <span class="material-symbols-outlined text-[#7d562d] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">restaurant</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Cook</span>
+        </button>
+
+        <button data-category="ac repair hvac cooling air condition"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="filterBySkill('AC Repair')">
+          <div
+            class="w-24 h-24 rounded-[1rem] rounded-br-[4rem] rounded-tl-[4rem] bg-[#ebe8e1] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-6 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-[#1c1c18] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">ac_unit</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">AC Repair</span>
+        </button>
+
+        <button data-category="beautician salon makeup hair spa"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group"
+          onclick="filterBySkill('Beautician')">
+          <div
+            class="w-24 h-24 rounded-[2.5rem] rounded-t-full bg-[#ffb4a5]/30 flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-2 shadow-sm group-hover:shadow-xl border border-[#ffb4a5]">
+            <span class="material-symbols-outlined text-[#802918] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">face_retouching_natural</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Salon</span>
+        </button>
+
+        <button data-category="movers packers shift relocation moving"
+          class="category-btn flex-shrink-0 flex flex-col items-center gap-3 group" onclick="filterBySkill('Movers')">
+          <div
+            class="w-24 h-24 rounded-full rounded-br-none bg-[#d9eaa3] flex items-center justify-center transition-all duration-300 group-hover:-translate-y-2 group-hover:-rotate-3 shadow-sm group-hover:shadow-xl">
+            <span class="material-symbols-outlined text-[#3e4c16] text-4xl"
+              style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+          </div>
+          <span class="font-bold text-sm tracking-wide text-secondary uppercase">Movers</span>
+        </button>
+
       </div>
     </section>
     <!-- Recommended Section -->
     <section class="mb-12">
-      <h3 class="text-xl font-bold text-on-surface mb-8 px-2">Recommended for you</h3>
+      <h3 id="workers-title" class="text-xl font-bold text-on-surface mb-8 px-2">Recommended for you</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Card 1 -->
         <div
@@ -276,7 +360,7 @@
               Bringing 10+ years of restaurant experience to your home kitchen.</p>
             <button
               class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
-              onclick="window.location.href='booking_request.html'">Book Elena</button>
+             onclick="window.location.href='booking_request.html?worker_id=${w.id}'">Book Elena</button>
           </div>
         </div>
         <!-- Card 2 -->
@@ -376,60 +460,178 @@
         const res = await fetch(`${API}/profile/`, {
           headers: {
             'Content-Type': 'application/json',
-            // 🎯 FIX: Passing the active key token straight to your updated backend view loop
             'X-Session-Key': sessionKey
           },
           credentials: 'include'
         });
         const data = await res.json();
+
         if (data.status === 'success' && data.data) {
-          const name = data.data.fullname.split(' ');
+          // 1. Format the greeting to use only their First Name
+          const firstName = data.data.fullname.split(' ');
           const el = document.querySelector('h2 span.text-primary');
-          if (el) el.closest('h2').innerHTML = `Welcome back, <br/><span class="text-primary italic">how can we help today, ${name}?</span>`;
+          if (el) {
+            el.closest('h2').innerHTML = `Welcome back, <br/><span class="text-primary italic">how can we help today, ${firstName}?</span>`;
+          }
+
+          // 2. Hydrate the Clickable Avatar Photo from the database
+          const profileImg = document.getElementById('header-profile-img');
+          if (profileImg) {
+            if (data.data.profile_pic) {
+              // Load their actual uploaded photo
+              profileImg.src = `http://localhost:8000${data.data.profile_pic}`;
+            } else {
+              // Generate a beautiful monogram if no photo exists
+              profileImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.data.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+            }
+          }
         }
-      } catch (e) { console.error("Dashboard synchronization error:", e); }
+      } catch (e) {
+        console.error("Dashboard synchronization error:", e);
+      }
     }
 
-    // Load available workers to recommended cards display
-    async function loadWorkers(skill = '') {
+    function cleanBio(bio) {
+      if (!bio) return 'Skilled and experienced professional ready to help you with your tasks.';
+
+      // Split by our message separator
+      let firstPart = bio.split('|MSG|')[0].trim();
+
+      // If the first part is a system message, they never wrote a real bio
+      if (firstPart.includes('VERIFICATION_NOTE:') || firstPart.includes('APPEAL_REQUEST:')) {
+        return 'Skilled and experienced professional ready to help you with your tasks.';
+      }
+
+      return firstPart;
+    }
+
+    // Instantly hides/shows category shapes as the user types
+    function liveCategorySearch() {
+      const query = document.getElementById('search-input').value.trim().toLowerCase();
+      const categoryBtns = document.querySelectorAll('.category-btn');
+
+      categoryBtns.forEach(btn => {
+        const keywords = btn.getAttribute('data-category').toLowerCase();
+        const title = btn.querySelector('span.uppercase').textContent.toLowerCase();
+
+        // If search is empty, or query matches the keywords/title, show the shape
+        if (query === '' || keywords.includes(query) || title.includes(query)) {
+          btn.style.display = 'flex';
+        } else {
+          // Otherwise, hide it completely
+          btn.style.display = 'none';
+        }
+      });
+    }
+
+    // Main search button click (also searches the backend for actual workers)
+    function searchWorkers() {
+      const q = document.getElementById('search-input').value.trim();
+
+      // Update the categories visually
+      liveCategorySearch();
+
+      // Fetch actual worker profiles from your Django database
+      if (q) {
+        loadWorkers(q);
+        document.querySelector('h3.text-xl.font-bold').textContent = q + " Near you";
+      } else {
+        loadWorkers();
+        document.querySelector('h3.text-xl.font-bold').textContent = 'Recommended for you';
+      }
+    }
+
+    // Load available workers and dynamically filter them based on search queries
+    async function loadWorkers(query = '') {
       try {
-        const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
-        const res = await fetch(url);
+        const res = await fetch(`${API}/workers/`);
         const data = await res.json();
-        if (data.status === 'success' && data.data.length > 0) {
+
+        if (data.status === 'success' && data.data) {
+          let workers = data.data;
+
+          // 1. If a search query exists, filter the workers smartly
+          if (query) {
+            const q = query.toLowerCase();
+            workers = workers.filter(w => {
+              const nameMatch = (w.fullname || "").toLowerCase().includes(q);
+              const skillMatch = (w.skill || "").toLowerCase().includes(q);
+
+              // USE CLEAN BIO FOR SEARCH: Don't search through admin messages!
+              const bioMatch = cleanBio(w.bio).toLowerCase().includes(q);
+
+              return nameMatch || skillMatch || bioMatch;
+            });
+          }
+
           const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
           if (!container) return;
-          container.innerHTML = data.data.slice(0, 4).map(w => `
-        <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group">
-          <div class="p-8">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <span class="inline-block px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest mb-2">${w.skill}</span>
-                <h4 class="text-xl font-extrabold text-on-surface">${w.fullname}</h4>
-              </div>
-              <span class="text-lg font-bold text-primary">₹${w.hourly_rate || '—'}/hr</span>
-            </div>
-            <div class="flex items-center gap-2 mb-3">
-              <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">star</span>
-              <span class="text-sm font-bold">${w.rating} (${w.total_jobs} jobs)</span>
-            </div>
-            <p class="text-on-surface-variant leading-relaxed text-sm mb-6">${w.bio || 'Skilled and experienced worker ready to help you.'}</p>
-            <button class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" onclick="window.location.href='booking_request.html?worker_id=${w.id}'">Book ${w.fullname.split(' ')}</button>
-          </div>
-        </div>
-      `).join('');
-        }
-      } catch (e) { }
-    }
 
+          if (workers.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full py-12 text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed">
+                  <span class="material-symbols-outlined text-outline/50 text-5xl mb-2" style="font-variation-settings: 'FILL' 0;">search_off</span>
+                  <p class="text-on-surface-variant font-medium">No workers found matching "${query}".</p>
+                  <button onclick="document.getElementById('search-input').value=''; searchWorkers();" class="mt-4 text-primary font-bold text-sm hover:underline">Clear Search</button>
+                </div>`;
+            return;
+          }
+
+          // 2. Render the matching worker cards with CLEAN BIO
+          container.innerHTML = workers.slice(0, 4).map(w => `
+            <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_15px_50px_rgba(28,28,24,0.04)] group flex flex-col">
+              <div class="p-8 flex-1 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest mb-2">${w.skill || 'Expert'}</span>
+                    <h4 class="text-xl font-extrabold text-on-surface">${w.fullname}</h4>
+                  </div>
+                  <span class="text-lg font-bold text-primary">₹${w.hourly_rate || '—'}/hr</span>
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">star</span>
+                  <span class="text-sm font-bold">${w.rating || '0.0'} (${w.total_jobs || 0} jobs)</span>
+                </div>
+                
+                <!-- USE CLEAN BIO HERE -->
+                <p class="text-on-surface-variant leading-relaxed text-sm mb-6 flex-1 line-clamp-3">${cleanBio(w.bio)}</p>
+                
+                <button 
+                  class="w-full py-4 mt-auto rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" 
+                  onclick="window.location.href='booking_request.html?worker_id=${w.id}'">
+                  Book ${w.fullname.split(' ')}
+                </button>
+                </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error("Error loading worker data:", e);
+      }
+    }
+    // Triggered when a user clicks a specific category shape
     function filterBySkill(skill) {
       loadWorkers(skill);
-      document.querySelector('h3.text-xl.font-bold').textContent = skill + ' near you';
+      // Updates the bottom title
+      document.getElementById('workers-title').textContent = skill + ' near you';
+      // Locks the top title
+      document.getElementById('categories-title').textContent = 'Categories';
     }
 
+    // Triggered when a user types in the search bar or clicks "Find"
     function searchWorkers() {
-      const q = document.querySelector('input[placeholder]').value.trim();
-      if (q) loadWorkers(q);
+      const q = document.getElementById('search-input').value.trim();
+      liveCategorySearch();
+
+      if (q) {
+        loadWorkers(q);
+        document.getElementById('workers-title').textContent = `${q} near you`;
+      } else {
+        loadWorkers();
+        document.getElementById('workers-title').textContent = 'Recommended for you';
+      }
+
+      document.getElementById('categories-title').textContent = 'Categories';
     }
 
     function goToService(skill) {

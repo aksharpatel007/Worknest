@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate,login
 from django.db.models import Avg
+from django.http import JsonResponse
 import math
 import uuid
+import json
 from django.utils import timezone
 from .models import User, Booking, Notification
 from .serializers import UserSerializer, BookingSerializer, NotificationSerializer

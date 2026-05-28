@@ -1,141 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Worknest — Find Workers</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>
-  body { font-family: 'Manrope', sans-serif; background: #fcf9f2; }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; }
-  .cat-btn { transition: all 0.2s; }
-  .cat-btn.active { background: #9f402d; color: white; }
-  .cat-btn:not(.active) { background: white; color: #56423e; border: 1px solid #ddc0ba; }
-  #map { height: 280px; border-radius: 1.5rem; }
-  .worker-card { transition: all 0.2s; }
-  .worker-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(159,64,45,0.1); }
-  .hide-scroll::-webkit-scrollbar { display: none; }
-  .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
-</head>
-<body class="min-h-screen text-[#1c1c18] pb-32">
-<div class="fixed inset-0 grain z-[60] pointer-events-none"></div>
-
-<!-- Header -->
-<header class="sticky top-0 z-50 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-[#ddc0ba]/20 px-6 py-4">
-  <div class="flex items-center justify-between mb-3">
-    <h1 class="text-2xl font-black text-[#9f402d]">Find Workers</h1>
-    <a href="map.html" class="flex items-center gap-1 text-sm font-bold text-[#9f402d] bg-[#ffdad3] px-4 py-2 rounded-full hover:bg-[#e2725b] hover:text-white transition-colors">
-      <span class="material-symbols-outlined text-base fill-icon">map</span> Map View
-    </a>
-  </div>
-  <!-- Search -->
-  <div class="relative">
-    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#89726d] text-xl">search</span>
-    <input type="text" id="search-input" placeholder="Search by name or skill..." class="w-full pl-12 pr-4 py-3 bg-white border border-[#ddc0ba] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20"/>
-  </div>
-</header>
-
-<main class="max-w-2xl mx-auto px-4 py-6 space-y-6">
-
-  <!-- Category Filter -->
-  <div class="flex gap-2 overflow-x-auto hide-scroll pb-1">
-    <button class="cat-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('')" data-skill="">All</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Plumber')" data-skill="Plumber">🔧 Plumber</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Electrician')" data-skill="Electrician">⚡ Electrician</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('House Maid')" data-skill="House Maid">🧹 Maid</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Home Cook')" data-skill="Home Cook">🍳 Cook</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Carpenter')" data-skill="Carpenter">🪚 Carpenter</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Painter')" data-skill="Painter">🎨 Painter</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Gardener')" data-skill="Gardener">🌿 Gardener</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Baby Sitter')" data-skill="Baby Sitter">👶 Baby Sitter</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Labourer')" data-skill="Labourer">💪 Labourer</button>
-    <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Driver')" data-skill="Driver">🚗 Driver</button>
-  </div>
-
-  <!-- Map -->
-  <div>
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="font-bold text-[#1c1c18]" id="map-title">Workers near you</h2>
-      <span class="text-xs text-[#89726d]" id="map-count"></span>
-    </div>
-    <div id="map"></div>
-  </div>
-
-  <!-- Workers List -->
-  <div>
-    <h2 class="font-bold text-[#1c1c18] mb-4" id="list-title">All Workers</h2>
-    <div id="workers-list" class="space-y-4">
-      <div class="text-center py-8 text-[#89726d]">Loading workers...</div>
-    </div>
-  </div>
-
-</main>
-
-<!-- Bottom Nav -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)]">
-  <a href="dashboard.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
-    <span class="material-symbols-outlined text-xl">home</span>
-    <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
-  </a>
-  <a href="services.html" class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2">
-    <span class="material-symbols-outlined text-xl fill-icon">grid_view</span>
-    <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
-  </a>
-  <a href="booking_history.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
-    <span class="material-symbols-outlined text-xl">event_note</span>
-    <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
-  </a>
-  <a href="profile.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
-    <span class="material-symbols-outlined text-xl">person</span>
-    <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
-  </a>
-</nav>
-
-<script>
-const API = 'http://localhost:8000/api';
-let allWorkers = [];
-let map, markers = [];
-
-// Init map
-map = L.map('map').setView([28.6139, 77.2090], 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    map.setView([pos.coords.latitude, pos.coords.longitude], 13);
-    L.circle([pos.coords.latitude, pos.coords.longitude], { radius: 300, color: '#9f402d', fillOpacity: 0.1 }).addTo(map);
-  });
-}
-
-function makeIcon(skill) {
-  const emojis = { Plumber:'🔧', Electrician:'⚡', 'House Maid':'🧹', 'Home Cook':'🍳', Carpenter:'🪚', Painter:'🎨', Gardener:'🌿', 'Baby Sitter':'👶', Labourer:'💪', Driver:'🚗' };
-  const e = emojis[skill] || '👷';
-  return L.divIcon({ className: '', html: `<div style="width:40px;height:40px;border-radius:50%;background:#9f402d;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">${e}</div>`, iconSize:[40,40], iconAnchor:[20,20] });
-}
-
-function renderMap(workers) {
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
-  workers.forEach(w => {
-    if (w.latitude && w.longitude) {
-      const m = L.marker([parseFloat(w.latitude), parseFloat(w.longitude)], { icon: makeIcon(w.skill) }).addTo(map);
-      m.bindPopup(`<b>${w.fullname}</b><br>${w.skill}<br>⭐ ${w.rating}<br><a href="booking_request.html?worker_id=${w.id}" style="color:#9f402d;font-weight:bold">Book Now</a>`);
-      markers.push(m);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worknest — Find Workers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #fcf9f2;
     }
-  });
-  document.getElementById('map-count').textContent = `${markers.length} on map`;
-}
 
-function renderList(workers) {
-  const el = document.getElementById('workers-list');
-  if (!workers.length) { el.innerHTML = '<div class="text-center py-8 text-[#89726d]">No workers found for this category.</div>'; return; }
-  el.innerHTML = workers.map(w => `
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .cat-btn {
+      transition: all 0.2s;
+    }
+
+    .cat-btn.active {
+      background: #9f402d;
+      color: white;
+    }
+
+    .cat-btn:not(.active) {
+      background: white;
+      color: #56423e;
+      border: 1px solid #ddc0ba;
+    }
+
+    #map {
+      height: 280px;
+      border-radius: 1.5rem;
+    }
+
+    .worker-card {
+      transition: all 0.2s;
+    }
+
+    .worker-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(159, 64, 45, 0.1);
+    }
+
+    .hide-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-[#1c1c18] pb-32">
+  <div class="fixed inset-0 grain z-[60] pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-[#ddc0ba]/20 px-6 py-4">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl"
+          data-icon="potted_plant">potted_plant</span>
+        <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
+      </div>
+      <a href="map.html"
+        class="flex items-center gap-1 text-sm font-bold text-[#9f402d] bg-[#ffdad3] px-4 py-2 rounded-full hover:bg-[#e2725b] hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-base fill-icon">map</span> Map View
+      </a>
+    </div>
+    <!-- Search -->
+    <div class="relative">
+      <span
+        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#89726d] text-xl">search</span>
+      <input type="text" id="search-input" placeholder="Search by name or skill..."
+        class="w-full pl-12 pr-4 py-3 bg-white border border-[#ddc0ba] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20" />
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Category Filter -->
+    <div class="flex gap-2 overflow-x-auto hide-scroll pb-1">
+      <button class="cat-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('')"
+        data-skill="">All</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Plumber')"
+        data-skill="Plumber">🔧 Plumber</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold"
+        onclick="filterSkill('Electrician')" data-skill="Electrician">⚡ Electrician</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('House Maid')"
+        data-skill="House Maid">🧹 Maid</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Home Cook')"
+        data-skill="Home Cook">🍳 Cook</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Carpenter')"
+        data-skill="Carpenter">🪚 Carpenter</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Painter')"
+        data-skill="Painter">🎨 Painter</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Gardener')"
+        data-skill="Gardener">🌿 Gardener</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold"
+        onclick="filterSkill('Baby Sitter')" data-skill="Baby Sitter">👶 Baby Sitter</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Labourer')"
+        data-skill="Labourer">💪 Labourer</button>
+      <button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill('Driver')"
+        data-skill="Driver">🚗 Driver</button>
+    </div>
+
+    <!-- Map -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="font-bold text-[#1c1c18]" id="map-title">Workers near you</h2>
+        <span class="text-xs text-[#89726d]" id="map-count"></span>
+      </div>
+      <div id="map"></div>
+    </div>
+
+    <!-- Workers List -->
+    <div>
+      <h2 class="font-bold text-[#1c1c18] mb-4" id="list-title">All Workers</h2>
+      <div id="workers-list" class="space-y-4">
+        <div class="text-center py-8 text-[#89726d]">Loading workers...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav
+    class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)]">
+    <a href="dashboard.html"
+      class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">home</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2">
+      <span class="material-symbols-outlined text-xl fill-icon">grid_view</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
+    </a>
+    <a href="booking_history.html"
+      class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">event_note</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
+    </a>
+    <a href="profile.html"
+      class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">person</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
+    </a>
+  </nav>
+
+  <script>
+    const API = 'http://localhost:8000/api';
+    let allWorkers = [];
+    let map, markers = [];
+
+    // Init map
+    map = L.map('map').setView([28.6139, 77.2090], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+        L.circle([pos.coords.latitude, pos.coords.longitude], { radius: 300, color: '#9f402d', fillOpacity: 0.1 }).addTo(map);
+      });
+    }
+
+    function makeIcon(skill) {
+      const emojis = { Plumber: '🔧', Electrician: '⚡', 'House Maid': '🧹', 'Home Cook': '🍳', Carpenter: '🪚', Painter: '🎨', Gardener: '🌿', 'Baby Sitter': '👶', Labourer: '💪', Driver: '🚗' };
+      const e = emojis[skill] || '👷';
+      return L.divIcon({ className: '', html: `<div style="width:40px;height:40px;border-radius:50%;background:#9f402d;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">${e}</div>`, iconSize: [40, 40], iconAnchor: [20, 20] });
+    }
+
+    function renderMap(workers) {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+      workers.forEach(w => {
+        if (w.latitude && w.longitude) {
+          const m = L.marker([parseFloat(w.latitude), parseFloat(w.longitude)], { icon: makeIcon(w.skill) }).addTo(map);
+          m.bindPopup(`<b>${w.fullname}</b><br>${w.skill}<br>⭐ ${w.rating}<br><a href="booking_request.html?worker_id=${w.id}" style="color:#9f402d;font-weight:bold">Book Now</a>`);
+          markers.push(m);
+        }
+      });
+      document.getElementById('map-count').textContent = `${markers.length} on map`;
+    }
+
+    function renderList(workers) {
+      const el = document.getElementById('workers-list');
+      if (!workers.length) { el.innerHTML = '<div class="text-center py-8 text-[#89726d]">No workers found for this category.</div>'; return; }
+      el.innerHTML = workers.map(w => `
     <div class="worker-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20">
       <div class="flex items-start justify-between mb-3">
         <div class="flex items-center gap-3">
@@ -145,7 +215,7 @@ function renderList(workers) {
             <p class="text-[#9f402d] font-semibold text-sm">${w.skill}</p>
           </div>
         </div>
-        <span class="px-3 py-1 rounded-full text-xs font-bold ${w.status==='pro'?'bg-[#ffdad3] text-[#9f402d]':w.status==='verified'?'bg-[#d6e7a1] text-[#56642b]':'bg-gray-100 text-gray-600'}">${w.status}</span>
+        <span class="px-3 py-1 rounded-full text-xs font-bold ${w.status === 'pro' ? 'bg-[#ffdad3] text-[#9f402d]' : w.status === 'verified' ? 'bg-[#d6e7a1] text-[#56642b]' : 'bg-gray-100 text-gray-600'}">${w.status}</span>
       </div>
       <p class="text-sm text-[#56423e] mb-3 leading-relaxed">${w.bio || 'Experienced and reliable worker.'}</p>
       <div class="flex items-center justify-between">
@@ -154,45 +224,49 @@ function renderList(workers) {
           ${w.hourly_rate ? `<span>₹${w.hourly_rate}/hr</span>` : ''}
           ${w.is_available ? '<span class="text-green-600 font-bold">● Available</span>' : '<span class="text-gray-400">○ Busy</span>'}
         </div>
-        <a href="booking_request.html?worker_id=${w.id}" class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book</a>
+       <a href="booking_request.html?worker_id=${w.id}" 
+          class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">
+          Book
+        </a>
       </div>
     </div>
   `).join('');
-}
-
-async function loadWorkers(skill = '') {
-  try {
-    const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.status === 'success') {
-      allWorkers = data.data;
-      renderMap(allWorkers);
-      renderList(allWorkers);
-      document.getElementById('list-title').textContent = skill ? `${skill}s (${allWorkers.length})` : `All Workers (${allWorkers.length})`;
-      document.getElementById('map-title').textContent = skill ? `${skill}s near you` : 'Workers near you';
     }
-  } catch(e) {
-    document.getElementById('workers-list').innerHTML = '<div class="text-center py-8 text-[#89726d]">Start the server to see workers.</div>';
-  }
-}
 
-function filterSkill(skill) {
-  document.querySelectorAll('.cat-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.skill === skill);
-  });
-  loadWorkers(skill);
-}
+    async function loadWorkers(skill = '') {
+      try {
+        const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === 'success') {
+          allWorkers = data.data;
+          renderMap(allWorkers);
+          renderList(allWorkers);
+          document.getElementById('list-title').textContent = skill ? `${skill}s (${allWorkers.length})` : `All Workers (${allWorkers.length})`;
+          document.getElementById('map-title').textContent = skill ? `${skill}s near you` : 'Workers near you';
+        }
+      } catch (e) {
+        document.getElementById('workers-list').innerHTML = '<div class="text-center py-8 text-[#89726d]">Start the server to see workers.</div>';
+      }
+    }
 
-// Search
-document.getElementById('search-input').addEventListener('input', e => {
-  const q = e.target.value.toLowerCase();
-  const filtered = allWorkers.filter(w => w.fullname.toLowerCase().includes(q) || w.skill.toLowerCase().includes(q));
-  renderList(filtered);
-  renderMap(filtered);
-});
+    function filterSkill(skill) {
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.skill === skill);
+      });
+      loadWorkers(skill);
+    }
 
-loadWorkers();
-</script>
+    // Search
+    document.getElementById('search-input').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = allWorkers.filter(w => w.fullname.toLowerCase().includes(q) || w.skill.toLowerCase().includes(q));
+      renderList(filtered);
+      renderMap(filtered);
+    });
+
+    loadWorkers();
+  </script>
 </body>
+
 </html>

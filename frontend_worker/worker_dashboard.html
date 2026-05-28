@@ -234,6 +234,29 @@
       } catch (e) { console.error("Identity status validation breakdown:", e); }
     }
 
+    async function initializeDashboard() {
+      const sessionKey = localStorage.getItem('session_key');
+      if (!sessionKey) { window.location.href = '../frontend_user/login.html'; return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        // Check if the response is actually OK
+        if (!res.ok) {
+          console.error("API call failed with status:", res.status);
+          return; // Stop here if the API is down or the URL is wrong
+        }
+
+        const data = await res.json();
+        // ... rest of your code ...
+      } catch (e) {
+        console.error("Dashboard failed to initialize:", e);
+      }
+    }
+
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
       if (!note) { alert("Please input a message first."); return; }
@@ -245,7 +268,6 @@
       const sessionKey = localStorage.getItem('session_key');
 
       try {
-        // 1. Fetch current profile to get old messages so we don't overwrite them
         const profileRes = await fetch(`${API_BASE}/profile/`, {
           headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
           credentials: 'include'

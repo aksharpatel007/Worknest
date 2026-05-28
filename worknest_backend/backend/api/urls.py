@@ -13,6 +13,7 @@ urlpatterns = [
     # Bookings
     # path('bookings/create/', views.create_booking, name='create-booking'),
     path('bookings/', views.user_bookings, name='user-bookings'),
+    path('bookings/<int:booking_id>/', views.user_bookings, name='booking-detail'),
     path('bookings/rate/', views.submit_rating, name='submit-rating'),
     path('notifications/', views.get_user_notifications, name='user-notifications'),
     
