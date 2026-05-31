@@ -19,14 +19,14 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#ea580c",
+            "primary": "#0f766e",        // Deep Teal
             "surface": "#ffffff",
-            "on-surface": "#0f172a",
-            "on-surface-variant": "#475569",
-            "surface-container-low": "#f6f3ec",
-            "surface-container-highest": "#e5e2db",
-            "background": "#fcf4ed",
-            "outline-variant": "#ddc0ba"
+            "on-surface": "#1e293b",     // Slate 800
+            "on-surface-variant": "#64748b",
+            "surface-container-low": "#f8fafc",
+            "clay": "#3b82f6",           // Vibrant Blue accent
+            "sage": "#0ea5e9",           // Sky Blue accent
+            "stone": "#334155"
           },
           fontFamily: {
             "headline": ["Plus Jakarta Sans"],
@@ -51,6 +51,41 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
       opacity: 0.03;
       pointer-events: none;
+    }
+
+    :root {
+      --bg-soft: #fcf9f2;
+      --clay: #d6a495;
+      --sage: #a8b8a5;
+      --stone: #57534e;
+    }
+
+    body {
+      background-color: var(--bg-soft);
+      color: var(--stone);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Soft Glassmorphism Card */
+    .premium-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      padding: 1.5rem;
+    }
+
+    /* Smooth Glow Button */
+    .btn-soft {
+      transition: all 0.4s ease;
+      background: #fdfaf5;
+      border: 1px solid #e5e2db;
+    }
+
+    .btn-soft:hover {
+      background: #f0ede5;
+      border-color: #d6a495;
     }
   </style>
 </head>
@@ -117,87 +152,143 @@
 
   <div id="screen-verified-dashboard" class="hidden">
     <header
-      class="fixed top-0 w-full z-50 bg-[#fcf9f2] backdrop-blur-xl flex justify-between items-center px-6 py-4 border-b border-outline-variant/20">
+      class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
+
+      <!-- Left Side: Logo and Title -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-surface border border-outline-variant/40 overflow-hidden">
-          <img id="worker-nav-avatar" class="w-full h-full object-cover"
-            src="https://ui-avatars.com/api/?name=Worker&background=ea580c&color=fff" alt="Profile">
+        <div class="w-8 h-8">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="swirlGrad">
+                <stop offset="0%" style="stop-color:#C56E4D" />
+                <stop offset="100%" style="stop-color:#E8B99D" />
+              </radialGradient>
+            </defs>
+            <path
+              d="M100 20 C 140 20, 180 50, 180 100 C 180 150, 140 180, 100 180 C 60 180, 20 150, 20 100 C 20 50, 60 20, 100 20 Z"
+              fill="url(#swirlGrad)" />
+            <path d="M65 90 C 75 110, 85 110, 100 110 C 115 110, 125 110, 135 90" stroke="#FFFFFF" stroke-width="12"
+              stroke-linecap="round" fill="none" />
+            <circle cx="100" cy="80" r="8" fill="#FFFFFF" />
+          </svg>
         </div>
-        <h1 class="font-headline font-bold text-xl tracking-tight text-orange-800">Worknest</h1>
+        <h1 class="font-headline font-black text-slate-800 text-xl tracking-tight">WorkNest</h1>
+      </div>
+
+      <!-- Right Side: Icons -->
+      <div class="flex items-center gap-4">
+        <a href="worker_messages.html" class="text-slate-600 hover:text-teal-700 transition-colors">
+          <span class="material-symbols-outlined text-2xl">notifications</span>
+        </a>
+
+        <!-- Profile (User Icon) -->
+        <a href="worker_profile.html"
+          class="w-9 h-9 rounded-full border-2 border-slate-200 overflow-hidden hover:border-teal-700 transition-all">
+          <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true" class="w-full h-full object-cover rounded-full">
+        </a>
       </div>
     </header>
 
     <main class="relative z-10 pt-24 px-6 max-w-5xl mx-auto space-y-10">
-      <section
-        class="flex flex-col md:flex-row items-center justify-between gap-6 bg-surface-container-low p-8 rounded-xl">
-        <div class="space-y-1">
-          <h2 id="worker-greeting" class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Hello,
-            Mateo</h2>
-          <p id="worker-subheading" class="text-on-surface-variant font-medium">Ready for your next craft?</p>
-        </div>
-        <div class="flex items-center bg-surface-container-highest p-2 rounded-full shadow-inner w-full md:w-auto">
-          <button id="btn-online" onclick="toggleStatus(true)"
-            class="flex-1 md:w-32 py-3 rounded-full font-label font-semibold text-sm bg-primary text-white shadow-lg flex items-center justify-center gap-2">Online</button>
-          <button id="btn-offline" onclick="toggleStatus(false)"
-            class="flex-1 md:w-32 py-3 rounded-full font-label font-semibold text-sm text-on-surface-variant flex items-center justify-center gap-2">Offline</button>
+      <section class="px-6 pt-4">
+        <div class="flex justify-between items-end">
+          <div>
+            <p id="time-greeting" class="text-sm font-bold text-teal-700 uppercase tracking-widest"></p>
+            <h2 class="text-4xl font-black text-slate-900 mt-1">Hello, <span id="worker-name-display">Mateo</span></h2>
+          </div>
+          <div class="bg-teal-50 px-4 py-2 rounded-full border border-teal-100">
+            <span class="text-teal-800 text-xs font-bold flex items-center gap-1">
+              <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span> Status: Online
+            </span>
+          </div>
         </div>
       </section>
 
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <section class="px-6">
         <div
-          class="bg-primary text-white p-8 rounded-xl md:rounded-tr-[4rem] flex flex-col justify-between min-h-[180px] shadow-sm relative overflow-hidden group">
+          class="bg-gradient-to-r from-teal-600 to-sky-600 rounded-3xl p-6 shadow-xl text-white flex justify-between items-center">
           <div>
-            <p class="font-label text-xs uppercase tracking-[0.2em] opacity-80 mb-2">Earnings Balance</p>
-            <h3 id="worker-earnings-num" class="font-headline text-4xl font-bold">₹0</h3>
+            <p class="text-teal-100 text-xs font-bold uppercase tracking-widest">Next Priority</p>
+            <h4 class="text-xl font-bold mt-1">Repairing faucet at Sector 4</h4>
           </div>
+          <button class="bg-white/20 backdrop-blur-sm p-3 rounded-full hover:bg-white/30 transition-all">
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      </section>
+
+
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
+        <!-- Earnings Card with subtle transition -->
+        <div class="premium-card border-t-4 border-blue-500 hover:scale-[1.02] transition-transform duration-300">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Balance</p>
+          <h3 id="worker-earnings-num" class="text-3xl font-black mt-2 text-blue-600">₹0</h3>
         </div>
 
-        <div
-          class="bg-surface-container-low text-on-surface p-8 rounded-xl md:rounded-bl-[4rem] flex flex-col justify-between min-h-[180px] shadow-sm border border-outline-variant/30">
-          <div>
-            <p class="font-label text-xs uppercase tracking-[0.2em] mb-2 text-on-surface-variant">Jobs Completed</p>
-            <h3 id="worker-jobs-num" class="font-headline text-4xl font-bold">0</h3>
-          </div>
+        <!-- Jobs Card -->
+        <div class="premium-card border-t-4 border-sky-500 hover:scale-[1.02] transition-transform duration-300">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Jobs Done</p>
+          <h3 id="worker-jobs-num" class="text-3xl font-black mt-2 text-sky-600">0</h3>
         </div>
 
-        <div
-          class="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-between min-h-[180px] border border-outline-variant/20">
-          <div>
-            <p class="font-label text-xs uppercase tracking-[0.2em] mb-2 text-on-surface-variant">Worker Rating</p>
-            <div class="flex items-center gap-1">
-              <h3 id="worker-rating-num" class="font-headline text-4xl font-bold">0.0</h3>
-              <span class="material-symbols-outlined text-primary fill-icon text-3xl">star</span>
-            </div>
-          </div>
-          <p id="worker-review-text" class="text-xs text-on-surface-variant leading-relaxed font-medium italic">"No
-            biography configured."</p>
+        <!-- Rating Card -->
+        <div class="premium-card border-t-4 border-indigo-500 hover:scale-[1.02] transition-transform duration-300">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Rating</p>
+          <h3 id="worker-rating-num" class="text-3xl font-black mt-2 text-indigo-600">0.0</h3>
         </div>
       </section>
     </main>
   </div>
 
   <nav
-    class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/90 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(28,28,24,0.06)]">
-    <a class="flex flex-col items-center justify-center bg-orange-100 text-orange-900 rounded-full px-5 py-2 transition-transform duration-300 translate-y-[-2px]"
-      href="worker_dashboard.html">
-      <span class="material-symbols-outlined fill-icon">home_work</span>
-      <span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Home</span>
+    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg">
+    <style>
+      .nav-item {
+        color: #89726d;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px;
+      }
+
+      .nav-item.active {
+        color: #56642b !important;
+        background: #d6e7a1;
+        transform: scale(1.05);
+      }
+    </style>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_dashboard.html" id="nav-home">
+      <span class="material-symbols-outlined text-[20px]">home_work</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_requests.html">
-      <span class="material-symbols-outlined">hail</span>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+      id="nav-requests">
+      <span class="material-symbols-outlined text-[20px]">hail</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_booking_history.html">
-      <span class="material-symbols-outlined">calendar_today</span>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+      id="nav-history">
+      <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_profile.html">
-      <span class="material-symbols-outlined">person</span>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_search.html" id="nav-search">
+      <span class="material-symbols-outlined text-[20px]">search</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">search</span>
     </a>
   </nav>
 
   <script>
+
+    const path = window.location.pathname;
+    if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
+    else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
+    else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
+    else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
+
+
     const API_BASE = 'http://localhost:8000/api';
 
     async function checkCurrentStatus() {
@@ -213,23 +304,27 @@
 
         if (data.status === 'success' && data.data) {
           const worker = data.data;
+          const navElement = document.querySelector('nav'); // Select your navbar
 
-          // 🛡️ THE ABSOLUTE VERIFICATION GUARD LAYER
-          if (worker.is_verified === false) {
-            // Force display the message screen and keep all real components completely hidden!
-            document.getElementById('verification-shield-screen').classList.remove('hidden');
+          // 🛡️ Guard Layer for Pending or Fraud
+          if (worker.is_verified === false || worker.is_fraud === true) {
+            // Show the correct warning screen
+            if (worker.is_fraud === true) {
+              document.getElementById('screen-fraud').classList.remove('hidden');
+            } else {
+              document.getElementById('verification-shield-screen').classList.remove('hidden');
+            }
 
-            // Hide your active headers, bento grids, navigation decks, and main lists
-            const mainElements = document.querySelectorAll('header, main, nav');
-            mainElements.forEach(el => {
-              if (el.id !== 'verification-shield-screen' && !el.contains(document.getElementById('verification-shield-screen'))) {
-                el.classList.add('hidden');
-              }
-            });
+            // Hide dashboard and NAV
+            document.getElementById('screen-verified-dashboard').classList.add('hidden');
+            if (navElement) navElement.classList.add('hidden'); // 🎯 Hide nav here
+
             return;
           }
 
-          // If verified, proceed with your page rendering logic normally as written...
+          // ✅ Verified: Show dashboard and ensure NAV is visible
+          document.getElementById('screen-verified-dashboard').classList.remove('hidden');
+          if (navElement) navElement.classList.remove('hidden'); // 🎯 Show nav here
         }
       } catch (e) { console.error("Identity status validation breakdown:", e); }
     }
@@ -320,6 +415,14 @@
     }
 
     function toggleStatus(val) { console.log("Availability changed to:", val); }
+
+    function updateGreeting() {
+      const hour = new Date().getHours();
+      const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+      document.getElementById('time-greeting').textContent = greeting;
+    }
+
+    updateGreeting();
     checkCurrentStatus();
   </script>
 </body>

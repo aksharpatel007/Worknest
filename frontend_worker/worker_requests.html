@@ -107,27 +107,52 @@
   </main>
 
   <nav
-    class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/90 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(28,28,24,0.06)]">
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_dashboard.html">
-      <span class="material-symbols-outlined">home_work</span>
+    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg">
+    <style>
+      .nav-item {
+        color: #89726d;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px;
+      }
+
+      .nav-item.active {
+        color: #56642b !important;
+        background: #d6e7a1;
+        transform: scale(1.05);
+      }
+    </style>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_dashboard.html" id="nav-home">
+      <span class="material-symbols-outlined text-[20px]">home_work</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
     </a>
-    <a class="flex flex-col items-center justify-center bg-orange-100 text-orange-900 rounded-full px-5 py-2 transition-transform duration-300 translate-y-[-2px]"
-      href="worker_requests.html">
-      <span class="material-symbols-outlined fill-icon">hail</span>
-      <span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Requests</span>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+      id="nav-requests">
+      <span class="material-symbols-outlined text-[20px]">hail</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_booking_history.html">
-      <span class="material-symbols-outlined">calendar_today</span>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+      id="nav-history">
+      <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_profile.html">
-      <span class="material-symbols-outlined">person</span>
+
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_search.html" id="nav-search">
+      <span class="material-symbols-outlined text-[20px]">search</span>
+      <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Search</span>
     </a>
   </nav>
 
   <script>
+
+
+    const path = window.location.pathname;
+    if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
+    else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
+    else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
+    else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
     const API_BASE = 'http://localhost:8000/api';
 
 
@@ -253,7 +278,7 @@
             'Content-Type': 'application/json',
             'X-Session-Key': sessionKey
           },
-          
+
           body: JSON.stringify({
             booking_id: bookingId,
             status: statusString

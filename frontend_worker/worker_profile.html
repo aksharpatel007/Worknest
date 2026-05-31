@@ -95,7 +95,7 @@
       enctype="multipart/form-data">
       <div class="flex flex-col items-center space-y-3">
         <div class="relative group w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
-          <img id="my-avatar-view" class="w-full h-full object-cover" src="" alt="Avatar">
+           <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true" class="w-full h-full object-cover rounded-full">
           <input type="file" name="profile_pic" id="file-selector" class="hidden" accept="image/*">
           <label for="file-selector"
             class="absolute inset-0 bg-black/50 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer">Edit</label>
@@ -116,41 +116,11 @@
         Changes</button>
     </form>
 
-    <section class="space-y-4">
-      <h2 class="font-headline text-lg font-bold text-on-surface">Explore Network Experts</h2>
-      <div class="relative">
-        <span
-          class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-        <input type="text" id="network-search" onkeyup="filterNetworkProfiles()"
-          class="w-full pl-12 pr-4 py-3.5 bg-surface-container-low border border-outline-variant/30 rounded-xl outline-none text-sm placeholder:text-on-surface-variant/50"
-          placeholder="Search workers by full name or skill craft description..." />
-      </div>
-      <div id="explorer-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </section>
   </main>
 
-  <nav
-    class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#fcf9f2]/90 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(28,28,24,0.06)]">
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_dashboard.html">
-      <span class="material-symbols-outlined">home_work</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_requests.html">
-      <span class="material-symbols-outlined">hail</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 hover:text-primary"
-      href="worker_booking_history.html">
-      <span class="material-symbols-outlined">calendar_today</span>
-    </a>
-    <a class="flex flex-col items-center justify-center bg-orange-100 text-orange-900 rounded-full px-5 py-2 transition-transform duration-300 translate-y-[-2px]"
-      href="worker_profile.html">
-      <span class="material-symbols-outlined fill-icon">person</span>
-      <span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold uppercase tracking-widest mt-1">Profile</span>
-    </a>
-  </nav>
 
   <script>
+
     const API_BASE = 'http://localhost:8000/api';
     let globalWorkersList = [];
 
@@ -213,80 +183,7 @@
     }
 
 
-    async function initializeProfileExplorer() {
-      try {
-        // 1. Fetch own current data
-        const ownRes = await fetch(`${API_BASE}/profile/`, {
-          headers: { 'X-Session-Key': localStorage.getItem('session_key') || '' },
-          credentials: 'include'
-        });
-        const ownData = await ownRes.json();
-        if (ownData.status === 'success') {
-          const user = ownData.data;
-          document.getElementById('my-name-title').textContent = user.fullname || user.username;
-          document.getElementById('my-fullname-input').value = user.fullname || '';
-          document.getElementById('my-phone-input').value = user.phone || '';
-          document.getElementById('my-bio-input').value = user.bio || '';
-          document.getElementById('my-avatar-view').src = user.profile_pic ? `http://localhost:8000${user.profile_pic}` : `https://ui-avatars.com/api/?name=${user.username}`;
-        }
-
-        // 2. Load worker network
-        const listRes = await fetch(`${API_BASE}/workers/`); //
-        const listData = await listRes.json();
-        if (listData.status === 'success') {
-          globalWorkersList = listData.data || []; //
-          renderNetworkCards(globalWorkersList);
-        }
-      } catch (e) { console.error(e); }
-    }
-
-    function renderNetworkCards(arr) {
-      const grid = document.getElementById('explorer-cards-grid');
-      if (arr.length === 0) {
-        grid.innerHTML = `<p class="text-xs font-medium text-on-surface-variant col-span-full text-center py-6">No other workers match this query.</p>`;
-        return;
-      }
-      grid.innerHTML = arr.map(w => `
-        <div class="bg-surface-container-low p-5 rounded-2xl border border-outline-variant/10 flex items-center gap-4">
-          <img class="w-12 h-12 rounded-full object-cover border border-primary/20" src="${w.profile_pic ? 'http://localhost:8000' + w.profile_pic : 'https://ui-avatars.com/api/?name=' + w.username}" alt="Pic">
-          <div>
-            <h4 class="font-headline font-bold text-sm text-on-surface">${w.fullname || w.username}</h4>
-            <span class="inline-block bg-orange-100 text-primary font-bold text-[10px] px-2 py-0.5 rounded-full mt-0.5 uppercase tracking-wider">${w.skill || 'Expert'}</span>
-            <p class="text-[11px] text-on-surface-variant font-medium mt-1 truncate max-w-[180px]">${w.bio || 'No profile bio added yet.'}</p>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function filterNetworkProfiles() {
-      const q = document.getElementById('network-search').value.toLowerCase().trim();
-      const filtered = globalWorkersList.filter(w =>
-        (w.fullname || '').toLowerCase().includes(q) || (w.skill || '').toLowerCase().includes(q)
-      );
-      renderNetworkCards(filtered);
-    }
-
-    document.getElementById('file-selector').addEventListener('change', function () {
-      if (this.files && this.files) {
-        const r = new FileReader();
-        r.onload = function (e) { document.getElementById('my-avatar-view').src = e.target.result; };
-        r.readAsDataURL(this.files);
-      }
-    });
-
-    document.getElementById('owner-profile-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        await fetch(`${API_BASE}/profile/`, {
-          method: 'POST',
-          headers: { 'X-Session-Key': localStorage.getItem('session_key') || '' },
-          body: new FormData(e.target)
-        });
-        alert("Profile modifications saved.");
-        window.location.reload();
-      } catch (e) { console.error(e); }
-    });
-
+    
     initializeProfileExplorer();
     checkCurrentStatus();
   </script>

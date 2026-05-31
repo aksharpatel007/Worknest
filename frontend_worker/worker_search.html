@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Worknest — Profile Settings</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ea580c",
+                        "surface": "#ffffff",
+                        "on-surface": "#0f172a",
+                        "on-surface-variant": "#475569",
+                        "surface-container-low": "#f6f3ec",
+                        "surface-container-highest": "#e5e2db",
+                        "background": "#fcf4ed",
+                        "outline-variant": "#ddc0ba"
+                    },
+                    fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Be Vietnam Pro"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        .paper-grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
+    <div class="fixed inset-0 paper-grain z-0"></div>
+
+    <div id="verification-shield-screen"
+        class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#fcf4ed]">
+        <div class="bg-[#f6f3ec] max-w-md p-10 border border-[#ddc0ba]/40 shadow-xl space-y-6 rounded-[2rem]">
+            <div
+                class="w-20 h-20 bg-amber-100 text-[#ea580c] rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
+                <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
+            </div>
+            <h2 class="font-headline text-3xl font-extrabold text-[#0f172a]">Verification Pending</h2>
+            <p class="text-[#475569] text-sm leading-relaxed">
+                Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator
+                approves
+                your profile details and identity credentials.
+            </p>
+
+            <div class="bg-white p-4 rounded-2xl border border-[#ddc0ba] text-left space-y-3">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-[#475569] ml-1">Message System
+                    Administration</label>
+                <textarea id="pending-msg-input"
+                    placeholder="Type a note or ask the admin for a status check on your registration documents..."
+                    class="w-full p-4 bg-[#fcf4ed]/50 border border-[#ddc0ba]/40 focus:border-[#ea580c] rounded-xl text-xs outline-none resize-none font-medium text-[#0f172a]"
+                    rows="3"></textarea>
+                <button id="send-pending-btn" onclick="sendVerificationMessage()"
+                    class="w-full py-3 bg-[#ea580c] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:opacity-90 transition-opacity">
+                    Send Note to Admin
+                </button>
+            </div>
+
+            <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+                class="w-full py-4 bg-stone-200 hover:bg-stone-300 text-[#475569] font-bold rounded-2xl text-sm transition-colors">
+                Sign Out Safely
+            </button>
+        </div>
+    </div>
+
+    <!-- worker_search.html -->
+    <main class="relative z-10 pt-24 px-6 max-w-2xl mx-auto space-y-6">
+        <!-- Search Section -->
+        <section class="space-y-4">
+            <h2 class="font-headline text-lg font-bold text-on-surface">Find Experts</h2>
+
+            <!-- Search Input + Button -->
+            <div class="flex gap-2">
+                <div class="relative flex-grow">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                    <input type="text" id="network-search"
+                        class="w-full pl-12 pr-4 py-3.5 bg-surface-container-low border border-outline-variant/30 rounded-xl outline-none text-sm"
+                        placeholder="Enter skill or name to search..." />
+                </div>
+                <!-- Small Search Button -->
+                <button onclick="addSearchChip()" class="bg-primary px-4 rounded-xl text-white">
+                    <span class="material-symbols-outlined">add</span>
+                </button>
+            </div>
+
+            <!-- Rounded Search Items Container -->
+            <div id="chip-container" class="flex flex-wrap gap-2"></div>
+        </section>
+
+        <!-- Results will only show here when you want them to -->
+        <div id="explorer-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8"></div>
+    </main>
+
+
+    <nav
+        class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg">
+        <style>
+            .nav-item {
+                color: #89726d;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 12px;
+            }
+
+            .nav-item.active {
+                color: #56642b !important;
+                background: #d6e7a1;
+                transform: scale(1.05);
+            }
+        </style>
+
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_dashboard.html"
+            id="nav-home">
+            <span class="material-symbols-outlined text-[20px]">home_work</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
+        </a>
+
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+            id="nav-requests">
+            <span class="material-symbols-outlined text-[20px]">hail</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
+        </a>
+
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+            id="nav-history">
+            <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
+        </a>
+
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_search.html"
+            id="nav-search">
+            <span class="material-symbols-outlined text-[20px]">search</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">search</span>
+        </a>
+    </nav>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let globalWorkersList = [];
+        let activeSearchChips = new Set();
+
+        // 1. Initial Load: Show recommendations when page opens
+        window.onload = updateView;
+
+        // 2. The Unified Data Fetcher & Renderer
+        async function updateView() {
+            const sessionKey = localStorage.getItem('session_key');
+
+            // Fetch current user profession
+            const myRes = await fetch(`${API_BASE}/profile/`, { headers: { 'X-Session-Key': sessionKey } });
+            const myData = await myRes.json();
+            const myProfession = myData.data?.skill || '';
+
+            // Fetch workers (filtered if chips exist)
+            const query = Array.from(activeSearchChips).join(' ');
+            const url = query ? `${API_BASE}/workers/?search=${query}` : `${API_BASE}/workers/`;
+
+            const res = await fetch(url);
+            const data = await res.json();
+            let workers = data.data || [];
+
+            // Sort: Prioritize matching profession
+            workers.sort((a, b) => {
+                const aMatch = a.skill === myProfession;
+                const bMatch = b.skill === myProfession;
+                return aMatch === bMatch ? 0 : aMatch ? -1 : 1;
+            });
+
+            renderNetworkCards(workers);
+        }
+
+        // 3. UI Helpers (These MUST be in the same scope)
+        function renderChips() {
+            const container = document.getElementById('chip-container');
+            container.innerHTML = Array.from(activeSearchChips).map(chip => `
+            <div class="bg-surface-container-highest px-4 py-2 rounded-full flex items-center gap-2 text-xs font-bold text-on-surface">
+                ${chip}
+                <button onclick="removeChip('${chip}')" class="text-on-surface-variant hover:text-primary">×</button>
+            </div>
+        `).join('');
+        }
+
+        function addSearchChip() {
+            const input = document.getElementById('network-search');
+            const val = input.value.trim();
+            if (val && !activeSearchChips.has(val)) {
+                activeSearchChips.add(val);
+                renderChips();
+                input.value = '';
+                updateView(); // Refresh list with filter
+            }
+        }
+
+        function removeChip(val) {
+            activeSearchChips.delete(val);
+            renderChips();
+            updateView(); // Refresh list without filter
+        }
+
+        function renderNetworkCards(arr) {
+            const grid = document.getElementById('explorer-cards-grid');
+            if (!arr || arr.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-center py-6">No experts found.</p>`;
+                return;
+            }
+            grid.innerHTML = arr.map(w => `
+            <div class="bg-surface-container-low p-5 rounded-2xl border border-outline-variant/10">
+                <h4 class="font-bold text-sm">${w.fullname || w.username}</h4>
+                <span class="text-primary text-[10px] font-bold uppercase">${w.skill || 'Expert'}</span>
+            </div>
+        `).join('');
+        }
+    </script>
+</body>
+
+</html>

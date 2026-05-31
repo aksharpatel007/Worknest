@@ -212,7 +212,6 @@
     `).join('');
     }
 
-    //
     async function openUserDetail(userId) {
       const modal = document.getElementById('user-modal');
       const content = document.getElementById('modal-content');
@@ -223,30 +222,37 @@
         // 1. Find the user info from our local master list
         const user = rawUserData.find(u => u.id === userId);
 
-        // 2. Fetch their booking history
-        const res = await fetch(`${API}/admin/bookings/?client_id=${userId}`, {
+        // 2. Fetch bookings filtering by client_id 
+        // Ensure your backend 'get_all_bookings' view is prepared to filter or 
+        // we filter the results here in the frontend to be 100% sure.
+        const res = await fetch(`${API}/admin/bookings/`, {
           headers: { 'X-Session-Key': localStorage.getItem('session_key') },
           credentials: 'include'
         });
         const d = await res.json();
 
+        // 🎯 FIX: Filter the bookings here in the frontend to ensure we ONLY show this user's data
+        const userBookings = d.status === 'success'
+          ? d.data.filter(b => b.client === userId)
+          : [];
+
         const avatar = user.profile_pic ? 'http://localhost:8000' + user.profile_pic : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullname)}&background=9f402d&color=fff`;
 
         let ordersHTML = '';
-        if (d.status === 'success' && d.data.length > 0) {
-          ordersHTML = d.data.map(b => `
-        <div class="flex items-center justify-between p-4 rounded-2xl bg-[#faf7f2] border border-[#ddc0ba]/20 hover:border-[#9f402d]/30 transition-all">
-          <div class="flex flex-col">
-            <span class="text-xs font-black text-[#89726d] uppercase tracking-tighter">Service Request</span>
-            <span class="font-bold text-[#1c1c18]">${b.service_desc}</span>
-            <span class="text-[10px] text-[#9f402d] font-bold">Worker: ${b.worker_name}</span>
-          </div>
-          <div class="text-right">
-            <span class="block text-xs font-bold text-[#1c1c18]">${new Date(b.booking_date).toLocaleDateString('en-IN')}</span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-white border border-[#ddc0ba]/30">${b.status}</span>
-          </div>
-        </div>
-      `).join('');
+        if (userBookings.length > 0) {
+          ordersHTML = userBookings.map(b => `
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-[#faf7f2] border border-[#ddc0ba]/20">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-black text-[#89726d] uppercase tracking-tighter">Service Request</span>
+                <span class="font-bold text-[#1c1c18]">${b.service_desc}</span>
+                <span class="text-[10px] text-[#9f402d] font-bold">Worker: ${b.worker_name}</span>
+              </div>
+              <div class="text-right">
+                <span class="block text-xs font-bold text-[#1c1c18]">${new Date(b.created_at).toLocaleDateString('en-IN')}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-white border border-[#ddc0ba]/30">${b.status}</span>
+              </div>
+            </div>
+          `).join('');
         } else {
           ordersHTML = '<div class="text-center py-10 text-[#89726d] italic bg-[#faf7f2] rounded-2xl">No orders found for this user yet.</div>';
         }
