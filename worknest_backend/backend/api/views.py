@@ -127,11 +127,15 @@ def profile_view(request):
             user.bio = incoming_bio
             user.trust_score = 10 
             
-        if 'profile_pic' in request.FILES:
-            user.profile_pic = request.FILES['profile_pic']
+        # --- UPDATE THIS BLOCK ---
+        # DRF often puts files in request.data instead of request.FILES
+        pic = request.data.get('profile_pic') or request.FILES.get('profile_pic')
+        if pic:
+            user.profile_pic = pic
+        # -------------------------
+            
         user.save()
         return Response({'status': 'success', 'message': 'Profile state updated successfully!'})
-    
 
 from django.utils import timezone
 import math

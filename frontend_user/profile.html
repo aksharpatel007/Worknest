@@ -226,8 +226,9 @@
         document.getElementById('edit-name').value = u.fullname || '';
         document.getElementById('edit-phone').value = u.phone || '';
 
-        if (u.created_at) {
-          document.getElementById('member-since').textContent = new Date(u.created_at).toLocaleDateString('en-IN', {
+
+        if (u.date_joined) {
+          document.getElementById('member-since').textContent = new Date(u.date_joined).toLocaleDateString('en-IN', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
@@ -288,7 +289,7 @@
       const formData = new FormData();
       if (name) formData.append('fullname', name);
       if (phone) formData.append('phone', phone);
-      const picFile = document.getElementById('pic-input').files;
+      const picFile = document.getElementById('pic-input').files[0];
       if (picFile) formData.append('profile_pic', picFile);
 
       try {
@@ -314,7 +315,9 @@
 
     // Photo live file input preview change hook
     document.getElementById('pic-input').addEventListener('change', function (e) {
-      const file = e.target.files;
+      // Add [0] here to get the actual file from the FileList
+      const file = e.target.files[0];
+
       if (file) {
         const reader = new FileReader();
         reader.onload = ev => {
@@ -322,7 +325,7 @@
           document.getElementById('avatar-img').classList.remove('hidden');
           document.getElementById('avatar-initials').classList.add('hidden');
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // This now has a valid File to read
       }
     });
 

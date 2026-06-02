@@ -7,11 +7,8 @@
   <title>Worknest — Client Requests</title>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script id="tailwind-config">
     tailwind.config = {
@@ -19,21 +16,31 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#ea580c",
-            "surface": "#ffffff",
-            "on-surface": "#0f172a",
-            "on-surface-variant": "#475569",
-            "surface-container-low": "#f6f3ec",
-            "surface-container-highest": "#e5e2db",
-            "background": "#fcf4ed",
-            "outline-variant": "#ddc0ba"
+            primary: '#9f402d',
+            'primary-light': '#e2725b',
+            'primary-container': '#ffdad3',
+            surface: '#fcf9f2',
+            'surface-container': '#f1eee7',
+            'surface-container-low': '#f6f3ec',
+            'on-surface': '#1c1c18',
+            secondary: '#56642b',
+            'secondary-container': '#d6e7a1',
+            outline: '#89726d',
+            'outline-variant': '#ddc0ba'
           },
-          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Be Vietnam Pro"] },
+          fontFamily: { sans: ['Manrope', 'sans-serif'] },
+          borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
         },
       },
     }
   </script>
   <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #fcf9f2;
+      color: #1c1c18;
+    }
+
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -42,72 +49,74 @@
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
-    .paper-grain {
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    .grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       opacity: 0.03;
       pointer-events: none;
     }
   </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
-  <div class="fixed inset-0 paper-grain z-0"></div>
+<body class="bg-surface text-on-surface font-sans min-h-screen pb-32">
+  <div class="fixed inset-0 grain z-0 pointer-events-none"></div>
 
-  <div id="verification-shield-screen"
-    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#fcf4ed]">
-    <div class="bg-[#f6f3ec] max-w-md p-10 border border-[#ddc0ba]/40 shadow-xl space-y-6 rounded-[2rem]">
-      <div
-        class="w-20 h-20 bg-amber-100 text-[#ea580c] rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
+  <div id="verification-shield-screen" class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-surface">
+    <div class="bg-surface-container-low max-w-md p-10 border border-outline-variant/40 shadow-xl space-y-6 rounded-lg">
+      <div class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
         <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
       </div>
-      <h2 class="font-headline text-3xl font-extrabold text-[#0f172a]">Verification Pending</h2>
-      <p class="text-[#475569] text-sm leading-relaxed">
-        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
-        your profile details and identity credentials.
+      <h2 class="text-3xl font-black text-on-surface tracking-tight">Verification Pending</h2>
+      <p class="text-outline text-sm leading-relaxed">
+        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves your profile details and identity credentials.
       </p>
 
-      <div class="bg-white p-4 rounded-2xl border border-[#ddc0ba] text-left space-y-3">
-        <label class="text-[10px] font-bold uppercase tracking-widest text-[#475569] ml-1">Message System
-          Administration</label>
+      <div class="bg-white p-4 rounded-2xl border border-outline-variant text-left space-y-3 shadow-sm">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Message System Administration</label>
         <textarea id="pending-msg-input"
           placeholder="Type a note or ask the admin for a status check on your registration documents..."
-          class="w-full p-4 bg-[#fcf4ed]/50 border border-[#ddc0ba]/40 focus:border-[#ea580c] rounded-xl text-xs outline-none resize-none font-medium text-[#0f172a]"
+          class="w-full p-4 bg-surface-container-low border border-outline-variant/40 focus:border-primary rounded-xl text-xs outline-none resize-none font-medium text-on-surface focus:ring-2 focus:ring-primary/20"
           rows="3"></textarea>
         <button id="send-pending-btn" onclick="sendVerificationMessage()"
-          class="w-full py-3 bg-[#ea580c] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:opacity-90 transition-opacity">
+          class="w-full py-3 bg-primary text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:bg-primary-light transition-colors">
           Send Note to Admin
         </button>
       </div>
 
       <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
-        class="w-full py-4 bg-stone-200 hover:bg-stone-300 text-[#475569] font-bold rounded-2xl text-sm transition-colors">
+        class="w-full py-4 bg-surface-container hover:bg-outline-variant/30 text-outline font-bold rounded-2xl text-sm transition-colors">
         Sign Out Safely
       </button>
     </div>
   </div>
 
+  <header class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-2xl fill-icon">potted_plant</span>
+      <span class="text-2xl font-black text-primary tracking-tight">Worknest</span>
+    </div>
 
-  <header
-    class="fixed top-0 w-full z-50 bg-[#fcf9f2] backdrop-blur-xl flex justify-between items-center px-6 py-4 border-b border-outline-variant/20">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary fill-icon">hail</span>
-      </div>
-      <h1 class="font-headline font-bold text-xl tracking-tight text-orange-800">Job Requests</h1>
+    <div class="flex items-center gap-4">
+      <a href="worker_messages.html" class="text-outline hover:text-primary transition-colors flex items-center">
+        <span class="material-symbols-outlined text-2xl">notifications</span>
+      </a>
+
+      <a href="worker_profile.html" class="w-9 h-9 rounded-full border-2 border-primary overflow-hidden hover:scale-105 transition-all block">
+        <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=713f12&color=fff" class="w-full h-full object-cover rounded-full" alt="My Profile">
+      </a>
     </div>
   </header>
 
-  <main class="relative z-10 pt-24 px-6 max-w-3xl mx-auto space-y-6">
-    <div id="requests-list-container" class="space-y-4">
-      <div
-        class="text-center py-12 bg-surface-container-low rounded-[2rem] border-2 border-dashed border-outline-variant/40">
-        <p class="text-on-surface-variant text-xs font-medium">Scanning network for active client signals...</p>
+  <main class="relative z-10 pt-10 px-6 max-w-2xl mx-auto space-y-6">
+    <h2 class="text-3xl font-black text-on-surface tracking-tight mb-2">Client Assignment Requests</h2>
+    
+    <div id="requests-list-container" class="space-y-6">
+      <div class="text-center py-12 bg-white rounded-3xl border-2 border-dashed border-outline-variant/40 shadow-sm">
+        <p class="text-outline text-sm font-semibold">Scanning network for active client signals...</p>
       </div>
     </div>
   </main>
 
-  <nav
-    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg">
+  <nav class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-outline-variant/30 rounded-2xl shadow-lg">
     <style>
       .nav-item {
         color: #89726d;
@@ -127,14 +136,12 @@
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
-      id="nav-requests">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html" id="nav-requests">
       <span class="material-symbols-outlined text-[20px]">hail</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
-      id="nav-history">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html" id="nav-history">
       <span class="material-symbols-outlined text-[20px]">calendar_today</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
     </a>
@@ -146,15 +153,25 @@
   </nav>
 
   <script>
-
-
+    // Navigation highlighting configurations
     const path = window.location.pathname;
     if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
     else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
+    
     const API_BASE = 'http://localhost:8000/api';
 
+    // Universal Avatar Handler matching the user/search modules profile updates
+    function getAvatarUrl(person, themeColor = '713f12') {
+        if (person.profile_pic) {
+            return person.profile_pic.startsWith('http') 
+                ? person.profile_pic 
+                : `http://localhost:8000${person.profile_pic}`;
+        }
+        const name = encodeURIComponent(person.fullname || person.username || 'User');
+        return `https://ui-avatars.com/api/?name=${name}&background=${themeColor}&color=fff`;
+    }
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
@@ -170,12 +187,15 @@
         if (data.status === 'success' && data.data) {
           const worker = data.data;
 
-          // 🛡️ THE ABSOLUTE VERIFICATION GUARD LAYER
-          if (worker.is_verified === false) {
-            // Force display the message screen and keep all real components completely hidden!
-            document.getElementById('verification-shield-screen').classList.remove('hidden');
+          // Sync custom profile image layout nodes
+          const headerAvatar = document.getElementById('header-avatar');
+          if (headerAvatar) {
+              headerAvatar.src = getAvatarUrl(worker);
+          }
 
-            // Hide your active headers, bento grids, navigation decks, and main lists
+          // Identity status inspection guard 
+          if (worker.is_verified === false) {
+            document.getElementById('verification-shield-screen').classList.remove('hidden');
             const mainElements = document.querySelectorAll('header, main, nav');
             mainElements.forEach(el => {
               if (el.id !== 'verification-shield-screen' && !el.contains(document.getElementById('verification-shield-screen'))) {
@@ -184,13 +204,10 @@
             });
             return;
           }
-
-          // If verified, proceed with your page rendering logic normally as written...
         }
       } catch (e) { console.error("Identity status validation breakdown:", e); }
     }
 
-    // 📩 Transmit the message straight into the worker's bio field model row
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
       if (!note) { alert("Please input a message first."); return; }
@@ -203,7 +220,7 @@
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
-          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` }) // Store note cleanly inside the bio string block
+          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` })
         });
         const data = await res.json();
         if (data.status === 'success') {
@@ -214,11 +231,10 @@
       } catch (e) { console.error(e); btn.textContent = "Send Note to Admin"; btn.disabled = false; }
     }
 
-
     async function loadIncomingRequests() {
       const container = document.getElementById('requests-list-container');
       try {
-        const res = await fetch(`http://localhost:8000/api/bookings/`, {
+        const res = await fetch(`${API_BASE}/bookings/`, {
           headers: {
             'X-Session-Key': localStorage.getItem('session_key') || '',
             'Content-Type': 'application/json'
@@ -228,37 +244,41 @@
         const data = await res.json();
 
         if (data.status === 'success') {
-          // Display requests matching 'pending' criteria
           const pending = (data.data || []).filter(b => b.status === 'pending');
 
           if (pending.length === 0) {
             container.innerHTML = `
-              <div class="text-center py-12 bg-surface-container-low rounded-[2rem] border-2 border-dashed border-outline-variant/30">
-                <p class="text-on-surface-variant text-sm font-medium">No pending job requests found nearby.</p>
+              <div class="text-center py-12 bg-white rounded-3xl border border-outline-variant/30 shadow-sm">
+                <p class="text-outline text-sm font-semibold">No pending job requests found nearby.</p>
               </div>`;
             return;
           }
 
           container.innerHTML = pending.map(r => `
-            <div class="bg-surface-container-low p-6 rounded-[2rem] border border-outline-variant/20 space-y-4">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-headline font-bold text-lg text-on-surface">${r.client_name || 'System Client'}</h3>
-                  <p class="text-xs text-primary font-bold mt-0.5 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-sm">distance</span> Nearby Client (Ahmedabad Area)
-                  </p>
+            <div class="bg-white p-6 rounded-3xl border border-outline-variant/30 space-y-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div class="flex flex-col sm:flex-row justify-between items-start gap-3">
+                <div class="flex items-center gap-3">
+                  <img class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm shrink-0" 
+                       src="https://ui-avatars.com/api/?name=${encodeURIComponent(r.client_name || 'User')}&background=56642b&color=fff" 
+                       alt="Client Avatar">
+                  <div>
+                    <h3 class="font-sans font-black text-lg text-on-surface">${r.client_name || 'System Client'}</h3>
+                    <p class="text-xs text-secondary font-extrabold mt-0.5 flex items-center gap-1 uppercase tracking-wider">
+                      <span class="material-symbols-outlined text-sm">distance</span> Ahmedabad Area
+                    </p>
+                  </div>
                 </div>
-                <div class="text-right">
-                  <span class="text-xs text-on-surface-variant font-bold block">Contact Details</span>
-                  <a href="tel:${r.client_phone || ''}" class="text-sm font-bold text-orange-700 underline">${r.client_phone || '+91 98765 43210'}</a>
+                <div class="sm:text-right w-full sm:w-auto bg-surface-container-low sm:bg-transparent p-3 sm:p-0 rounded-2xl border border-outline-variant/20 sm:border-none">
+                  <span class="text-[10px] text-outline font-extrabold uppercase tracking-widest block">Contact Details</span>
+                  <a href="tel:${r.client_phone || ''}" class="text-base font-black text-primary hover:text-primary-light transition-colors underline decoration-2">${r.client_phone || '+91 98765 43210'}</a>
                 </div>
               </div>
-              <div class="bg-white/80 p-4 rounded-xl border border-outline-variant/10 text-sm font-medium text-on-surface-variant leading-relaxed">
+              <div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/20 text-sm font-semibold text-outline leading-relaxed">
                 ${r.service_desc}
               </div>
-              <div class="flex gap-3">
-                <button onclick="respondToRequest(${r.id}, 'accepted')" class="flex-1 py-3 bg-primary text-white font-bold text-sm rounded-xl transition-all hover:opacity-90">Accept Job</button>
-                <button onclick="respondToRequest(${r.id}, 'cancelled')" class="flex-1 py-3 bg-stone-200 text-on-surface-variant font-bold text-sm rounded-xl transition-all hover:bg-stone-300">Decline</button>
+              <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button onclick="respondToRequest(${r.id}, 'accepted')" class="flex-1 py-3.5 bg-primary text-white font-bold text-sm rounded-full transition-all hover:bg-primary-light active:scale-95 shadow-md shadow-primary/10">Accept Job</button>
+                <button onclick="respondToRequest(${r.id}, 'cancelled')" class="flex-1 py-3.5 bg-surface-container text-outline hover:text-on-surface font-bold text-sm rounded-full transition-all hover:bg-outline-variant/30 active:scale-95 border border-outline-variant/40">Decline</button>
               </div>
             </div>
           `).join('');
@@ -271,14 +291,12 @@
       if (!confirm(`Are you sure you want to mark this request as ${statusString}?`)) return;
 
       try {
-        // 🎯 FIXED: Direct, clean connection to user bookings pipeline views
-        const res = await fetch(`http://localhost:8000/api/bookings/`, {
-          method: 'PATCH', // Enforces update states smoothly inside your framework logs
+        const res = await fetch(`${API_BASE}/bookings/`, {
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             'X-Session-Key': sessionKey
           },
-
           body: JSON.stringify({
             booking_id: bookingId,
             status: statusString
@@ -288,7 +306,7 @@
         const data = await res.json();
         if (data.status === 'success') {
           alert(`Job has been successfully marked as ${statusString}!`);
-          loadIncomingRequests(); // Live reload screen states instantly
+          loadIncomingRequests();
         } else {
           alert("Refusal error: " + data.message);
         }

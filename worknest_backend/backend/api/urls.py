@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings # Add this import
+from django.conf.urls.static import static # Add this import
 
 urlpatterns = [
     # Auth & Signup
@@ -11,7 +13,6 @@ urlpatterns = [
     path('workers/', views.worker_list, name='worker-list'),
     
     # Bookings
-    # path('bookings/create/', views.create_booking, name='create-booking'),
     path('bookings/', views.user_bookings, name='user-bookings'),
     path('bookings/<int:booking_id>/', views.user_bookings, name='booking-detail'),
     path('bookings/rate/', views.submit_rating, name='submit-rating'),
@@ -28,3 +29,7 @@ urlpatterns = [
     path('admin/bookings/', views.get_all_bookings, name='admin-all-bookings'),
     path('admin/fraud/<int:worker_id>/', views.flag_fraud, name='flag_fraud'),
 ]
+
+# Add this block at the very bottom!
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -94,9 +94,28 @@
 <body class="text-[#1c1c18] pb-32">
 
   <header
-    class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md border-b border-[#ddc0ba]/20 px-6 py-5 flex items-center justify-between">
-    <h1 class="font-black text-[#9f402d] text-2xl tracking-tight">Booking Ledger</h1>
-    <span class="material-symbols-outlined text-[#9f402d] text-3xl">event_note</span>
+    class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
+
+    <!-- Left Side: Logo and Title -->
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
+
+      <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
+    </div>
+
+    <!-- Right Side: Icons -->
+    <div class="flex items-center gap-4">
+      <a href="worker_messages.html" class="text-slate-600 hover:text-teal-700 transition-colors">
+        <span class="material-symbols-outlined text-2xl">notifications</span>
+      </a>
+
+      <!-- Profile (User Icon) -->
+      <a href="worker_profile.html"
+        class="w-9 h-9 rounded-full border-2 border-[9f402d] overflow-hidden hover:border-[9f402d] transition-all">
+        <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
+          class="w-full h-full object-cover rounded-full">
+      </a>
+    </div>
   </header>
 
   <main class="max-w-xl mx-auto px-6 py-8">
@@ -189,9 +208,9 @@
         // Timeline status indicators
         const statusMap = {
           'pending': { color: 'bg-amber-500', label: 'Awaiting Response' },
-          'accepted': { color: 'bg-blue-500', label: 'Accepted — Awaiting Start' },
+          'accepted': { color: 'bg-green-500', label: 'Accepted — Awaiting Start' },
           'in_progress': { color: 'bg-emerald-500', label: 'Active Service' },
-          'completed': { color: 'bg-slate-800', label: 'Finished' },
+          'completed': { color: 'bg-blue-800', label: 'Finished' },
           'cancelled': { color: 'bg-red-500', label: 'Cancelled' }
         };
         const status = statusMap[b.status] || statusMap['pending'];
@@ -209,8 +228,8 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full ${status.color}"></span>
-                <span class="text-[10px] font-black uppercase text-[#89726d]">${status.label}</span>
+                <span class="w-4 h-4 rounded-full ${status.color}"></span>
+                <span class="text-[12px] font-black uppercase text-[#89726d]">${status.label}</span>
               </div>
             </div>
 
