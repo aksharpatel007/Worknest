@@ -62,7 +62,7 @@
         <div class="w-9 h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
           <span class="material-symbols-outlined text-white text-lg fill-icon">potted_plant</span>
         </div>
-        <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
+        <span class="text-xl md:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
       </div>
 
       <div class="flex items-center gap-2">
@@ -71,7 +71,7 @@
           <span class="absolute top-2 right-2 w-2 h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
         </a>
         <a href="worker_profile.html" class="w-10 h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
-          <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true" class="w-full h-full object-cover rounded-full">
+          <img id="header-avatar" src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true" class="w-full h-full object-cover rounded-full">
         </a>
       </div>
     </header>
@@ -79,18 +79,18 @@
 
     <main class="relative z-10 pt-10 px-6 max-w-2xl mx-auto space-y-6">
         <section class="space-y-4">
-            <h2 class="text-3xl font-black text-on-surface tracking-tight">Find Experts</h2>
+            <h2 class="text-2xl md:text-3xl font-black text-on-surface tracking-tight">Find Experts</h2>
 
             <div class="flex gap-2">
                 <div class="relative w-full mx-auto">
                     <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline">search</span>
 
                     <input type="text" placeholder="Search for plumber, maid, cook..."
-                        class="w-full bg-white border border-outline-variant rounded-full py-4 pl-14 pr-32 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-on-surface"
+                        class="w-full bg-white border border-outline-variant rounded-full py-4 pl-14 pr-32 text-sm md:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 text-on-surface"
                         id="network-search" onkeypress="handleEnter(event)">
 
                     <button onclick="addSearchChip()"
-                        class="absolute right-2 top-2 bottom-2 bg-primary text-white px-6 rounded-full font-bold text-sm hover:bg-primary-light transition-colors shadow-md">Search</button>
+                        class="absolute right-2 top-2 bottom-2 bg-primary text-white px-6 rounded-full font-bold text-xs md:text-sm hover:bg-primary-light transition-colors shadow-md">Search</button>
                 </div>
             </div>
 
@@ -146,6 +146,14 @@
             updateView();
         };
 
+        // Added quick check to catch empty images/avatars safely without breaking scripts
+        document.addEventListener("DOMContentLoaded", () => {
+            const hAvatar = document.getElementById('header-avatar');
+            if(hAvatar && !hAvatar.getAttribute('src')) {
+                hAvatar.src = "https://ui-avatars.com/api/?name=Marcus%20Chen&background=ffdad3&color=9f402d&bold=true";
+            }
+        });
+
         function saveChipsToMemory() {
             localStorage.setItem('worknest_active_searches', JSON.stringify(Array.from(activeSearchChips)));
         }
@@ -159,12 +167,12 @@
 
         // Universal Avatar Handler
         function getAvatarUrl(person, themeColor = '713f12') {
-            if (person.profile_pic) {
+            if (person && person.profile_pic) {
                 return person.profile_pic.startsWith('http') 
                     ? person.profile_pic 
                     : `http://localhost:8000${person.profile_pic}`;
             }
-            const name = encodeURIComponent(person.fullname || person.username || 'User');
+            const name = encodeURIComponent(person ? (person.fullname || person.username || 'User') : 'User');
             return `https://ui-avatars.com/api/?name=${name}&background=ffdad3/&color=9f402d`;
         }
 
@@ -216,7 +224,7 @@
             } catch (error) {
                 console.error("Error updating views:", error);
                 document.getElementById('explorer-cards-grid').innerHTML = `
-                    <p class="text-sm font-medium text-primary col-span-full text-center py-6">
+                    <p class="text-xs md:text-sm font-medium text-primary col-span-full text-center py-6">
                         Unable to load experts. Please check your network connection.
                     </p>`;
             }
@@ -257,19 +265,20 @@
             const grid = document.getElementById('explorer-cards-grid');
             if (!arr || arr.length === 0) {
                 grid.innerHTML = `
-                    <p class="text-sm font-medium text-outline col-span-full text-center py-12">
+                    <p class="text-xs md:text-sm font-medium text-outline col-span-full text-center py-12">
                         No experts found matching your search matrix parameters.
                     </p>`;
                 return;
             }
 
+            // Inside the dynamic map rendering: updated the header name text to be responsive (text-sm on mobile, text-base on laptop)
             grid.innerHTML = arr.map(w => `
             <div class="bg-white p-5 rounded-2xl border border-outline-variant/30 flex items-center gap-4 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
                 <img class="w-14 h-14 rounded-full object-cover border-2 border-[#713f12]/20 shadow-sm shrink-0" 
                      src="${getAvatarUrl(w)}" 
                      alt="Profile Picture">
                 <div class="overflow-hidden">
-                    <h4 class="font-sans font-bold text-base text-on-surface truncate">${w.fullname || w.username}</h4>
+                    <h4 class="font-sans font-bold text-sm md:text-base text-on-surface truncate">${w.fullname || w.username}</h4>
                     <span class="inline-flex bg-secondary-container text-secondary text-[10px] font-extrabold px-3 py-1 rounded-full mt-1.5 uppercase tracking-wider">
                         ${w.skill || 'Expert'}
                     </span>
