@@ -4,15 +4,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Worknest — Job Schedule</title>
+  <title>Worknest — Job Schedule Ledger</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#9f402d',
+            'primary-light': '#e2725b',
+            'primary-container': '#ffdad3',
+            surface: '#fcf9f2',
+            'surface-container': '#f1eee7',
+            'on-surface': '#1c1c18',
+            secondary: '#56642b',
+            'secondary-container': '#d6e7a1',
+          },
+          fontFamily: { sans: ['Manrope', 'sans-serif'] },
+          borderRadius: { DEFAULT: '1rem', lg: '1.5rem', xl: '2rem', full: '9999px' },
+        }
+      }
+    }
+  </script>
   <style>
     body {
       font-family: 'Manrope', sans-serif;
       background: #fcf9f2;
+      color: #1c1c18;
     }
 
     .material-symbols-outlined {
@@ -23,116 +45,169 @@
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
-    nav a {
-      min-width: 60px;
-      /* Ensures buttons don't squish */
-      text-decoration: none;
+    .grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
     }
 
-    /* Active state highlight */
-    nav a[href*="current_filename.html"] {
-      color: #ea580c !important;
-      /* Primary color */
-      background: #ffedd5;
-      /* Primary container */
-      border-radius: 12px;
+    .pebble-card-1 {
+      border-radius: 2rem 1rem 2rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .pebble-card-1 {
+        border-radius: 2.5rem 1.25rem 2.5rem 1.75rem;
+      }
     }
 
-    /* Premium Filter Tabs */
+    .pebble-card-2 {
+      border-radius: 1rem 2rem 1.5rem 2rem;
+    }
+    @media (min-width: 640px) {
+      .pebble-card-2 {
+        border-radius: 1.25rem 2.5rem 1.75rem 2.5rem;
+      }
+    }
+
+    .hide-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     .tab-btn {
-      border: 1px solid #e2e8f0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      width: 0;
+      height: 3px;
+      background: #9f402d;
+      border-radius: 99px;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
     }
 
     .tab-btn.active {
-      background: #9f402d !important;
-      color: white !important;
-      box-shadow: 0 6px 15px rgba(159, 64, 45, 0.25);
-      border-color: #9f402d;
-    }
-
-    /* Elegant Action Buttons */
-    .btn-base {
-      padding: 0.75rem 1.5rem;
-      font-size: 0.75rem;
+      color: #9f402d !important;
       font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      border-radius: 16px;
-      /* Soft pill */
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-complete {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      color: white;
-      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.2);
-    }
-
-    .btn-complete:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
     }
 
-    .btn-cancel {
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fee2e2;
+    .tab-btn.active::after {
+      width: 16px;
     }
 
-    .btn-cancel:hover {
-      background: #dc2626;
-      color: white;
-      transform: translateY(-2px);
+    .nav-item {
+      color: #89726d;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-item.active {
+      color: #56642b !important;
+      background: #d6e7a1;
+      transform: scale(1.05);
+    }
+
+    .premium-glow {
+      box-shadow: 0 10px 30px rgba(159, 64, 45, 0.02);
+    }
+    @media (min-width: 640px) {
+      .premium-glow {
+        box-shadow: 0 20px 40px rgba(159, 64, 45, 0.04);
+      }
+    }
+
+    .card-hover-animation {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-hover-animation:hover {
+      transform: translateY(-4px) scale(1.005);
+    }
+    @media (min-width: 640px) {
+      .card-hover-animation:hover {
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 30px 60px rgba(159, 64, 45, 0.08);
+      }
     }
   </style>
 </head>
 
-<body class="text-[#1c1c18] pb-32">
+<body class="text-[#1c1c18] pb-32 sm:pb-36 min-h-screen">
+  <div class="fixed inset-0 grain z-[60] pointer-events-none"></div>
 
+  <!-- Header Navbar Container -->
   <header
-    class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
-
-    <!-- Left Side: Logo and Title -->
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
-
-      <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
+    class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
+    <div class="flex items-center gap-2 sm:gap-2.5">
+      <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+        <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
+      </div>
+      <span class="text-xl sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
     </div>
 
-    <!-- Right Side: Icons -->
-    <div class="flex items-center gap-4">
-      <a href="worker_messages.html" class="text-slate-600 hover:text-teal-700 transition-colors">
-        <span class="material-symbols-outlined text-2xl">notifications</span>
+    <div class="flex items-center gap-2">
+      <a href="worker_messages.html"
+        class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
+        <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
+        <span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
       </a>
-
-      <!-- Profile (User Icon) -->
       <a href="worker_profile.html"
-        class="w-9 h-9 rounded-full border-2 border-[9f402d] overflow-hidden hover:border-[9f402d] transition-all">
+        class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
         <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
           class="w-full h-full object-cover rounded-full">
       </a>
     </div>
   </header>
 
-  <main class="max-w-xl mx-auto px-6 py-8">
-    <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide">
-      <!-- Example of uniform button structure -->
-      <button onclick="filterBookings('all')" id="tab-all"
-        class="tab-btn active px-6 py-2.5 rounded-full text-sm font-bold bg-primary text-white">All</button>
-      <button onclick="filterBookings('pending')" id="tab-pending"
-        class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-[#56423e]">Pending</button>
-      <button onclick="filterBookings('in_progress')" id="tab-in_progress"
-        class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-[#56423e]">Active</button>
-      <button onclick="filterBookings('completed')" id="tab-completed"
-        class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-[#56423e]">Completed</button>
+
+  <!-- Main Grid Layout -->
+  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <div class="mb-6 sm:mb-10 flex justify-between items-end">
+      <div>
+        <div
+          class="inline-flex items-center gap-1.5 bg-[#d6e7a1] text-[#56642b] px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-extrabold tracking-wider uppercase mb-2 sm:mb-3">
+          <span class="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#56642b] animate-ping"></span>
+          Live Job 
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-[#1c1c18]">Job Management</h2>
+      </div>
+
+      <div class="bg-white px-3 sm:px-4 py-1 sm:py-2 border border-[#ddc0ba]/40 rounded-xl sm:rounded-2xl text-right premium-glow hidden sm:block">
+        <span class="text-[9px] sm:text-[10px] font-black uppercase text-[#89726d] tracking-widest block">Total Assigned</span>
+        <span id="global-job-count" class="text-lg sm:text-xl font-black text-[#9f402d]">--</span>
+      </div>
     </div>
 
-    <div id="bookings-container" class="space-y-4">
-      <p class="text-center text-[#89726d] py-10">Synchronizing records...</p>
+    <!-- Filter Tabs Layout Bar -->
+    <div class="flex gap-4 sm:gap-6 border-b border-[#ddc0ba]/30 pb-2 sm:pb-3 mb-6 sm:mb-8 overflow-x-auto hide-scroll text-xs sm:text-sm">
+      <button onclick="filterBookings('all')" id="tab-all"
+        class="tab-btn active px-1 sm:px-2 py-1 font-bold text-[#56423e] hover:text-[#9f402d]">All Bookings</button>
+      <button onclick="filterBookings('pending')" id="tab-pending"
+        class="tab-btn px-1 sm:px-2 py-1 font-bold text-[#56423e] hover:text-[#9f402d]">Awaiting Reply</button>
+      <button onclick="filterBookings('in_progress')" id="tab-in_progress"
+        class="tab-btn px-1 sm:px-2 py-1 font-bold text-[#56423e] hover:text-[#9f402d]">Active Work</button>
+      <button onclick="filterBookings('completed')" id="tab-completed"
+        class="tab-btn px-1 sm:px-2 py-1 font-bold text-[#56423e] hover:text-[#9f402d]">Completed</button>
+    </div>
+
+    <!-- Bookings Container -->
+    <div id="bookings-container" class="space-y-4 sm:space-y-6">
+      <div class="text-center py-16 sm:py-20 bg-white border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl premium-glow">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 border-4 border-[#9f402d] border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4">
+        </div>
+        <p class="text-[10px] sm:text-xs font-bold text-[#89726d] uppercase tracking-widest">Synchronizing activity trails safely...
+        </p>
+      </div>
     </div>
   </main>
 
@@ -183,75 +258,87 @@
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
-
     const API = 'http://localhost:8000/api';
     let allBookings = [];
 
     async function loadBookings() {
       const sessionKey = localStorage.getItem('session_key');
-      const res = await fetch(`${API}/bookings/`, { headers: { 'X-Session-Key': sessionKey } });
-      const data = await res.json();
-      if (data.status === 'success') {
-        allBookings = data.data.reverse();
-        renderBookings(allBookings);
+      try {
+        const res = await fetch(`${API}/bookings/`, { headers: { 'X-Session-Key': sessionKey } });
+        const data = await res.json();
+        if (data.status === 'success') {
+          // 🎯 CHRONOLOGICAL SORT ENGINE: Sorts the incoming master array chronologically 
+          // based on the raw timestamps before sending it to the rendering loop view layers.
+          allBookings = data.data.sort((x, y) => {
+            return new Date(y.created_at) - new Date(x.created_at);
+          });
+          document.getElementById('global-job-count').textContent = allBookings.length;
+          renderBookings(allBookings);
+        }
+      } catch (e) {
+        document.getElementById('bookings-container').innerHTML = `
+          <div class="text-center py-12 bg-white border border-red-100 rounded-2xl premium-glow p-4 sm:p-6">
+            <span class="material-symbols-outlined text-red-500 text-2xl sm:text-3xl mb-1.5 sm:mb-2">cloud_off</span>
+            <p class="text-xs sm:text-sm font-bold text-red-700">Database Connection Exception</p>
+            <p class="text-[10px] sm:text-xs text-red-500 mt-0.5 sm:mt-1">Please verify your server cluster status channels and refresh.</p>
+          </div>`;
       }
     }
 
     function renderBookings(bookings) {
       const container = document.getElementById('bookings-container');
       if (bookings.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-[#89726d] italic">No activity recorded.</div>`;
+        container.innerHTML = `
+          <div class="text-center py-16 sm:py-20 bg-white border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl premium-glow px-4 sm:px-6 pebble-card-1">
+            <span class="material-symbols-outlined text-[#ddc0ba] text-3xl sm:text-4xl mb-2 sm:mb-3">folder_open</span>
+            <p class="text-xs sm:text-sm font-extrabold text-[#1c1c18]">No Ledger Items Found</p>
+            <p class="text-[10px] sm:text-xs text-[#89726d] mt-0.5 sm:mt-1 max-w-xs mx-auto">There are no operational assignments logged under this category context tab.</p>
+          </div>`;
         return;
       }
 
-      container.innerHTML = bookings.map(b => {
-        // Timeline status indicators
+      container.innerHTML = bookings.map((b, index) => {
         const statusMap = {
-          'pending': { color: 'bg-amber-500', label: 'Awaiting Response' },
-          'accepted': { color: 'bg-green-500', label: 'Accepted — Awaiting Start' },
-          'in_progress': { color: 'bg-emerald-500', label: 'Active Service' },
-          'completed': { color: 'bg-blue-800', label: 'Finished' },
-          'cancelled': { color: 'bg-red-500', label: 'Cancelled' }
+          'pending': { color: 'bg-amber-50 text-amber-700 border-amber-200/60', label: 'Pending Request' },
+          'accepted': { color: 'bg-blue-50 text-blue-700 border-blue-200/60', label: 'Contract Accepted' },
+          'in_progress': { color: 'bg-emerald-50 text-emerald-800 border-emerald-200/60', label: 'In Progress' },
+          'completed': { color: 'bg-[#d6e7a1]/40 text-[#56642b] border-[#d6e7a1]/70', label: 'Closed/Paid' },
+          'cancelled': { color: 'bg-red-50 text-red-700 border-red-200/60', label: 'Cancelled' }
         };
         const status = statusMap[b.status] || statusMap['pending'];
+        const pebbleClass = (index % 2 === 0) ? 'pebble-card-1' : 'pebble-card-2';
 
         return `
-          <div class="bg-white p-6 rounded-3xl border border-[#ddc0ba]/20 shadow-sm transition-all hover:shadow-md">
-            <div class="flex justify-between items-start mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-[#ffdad3] flex items-center justify-center font-black text-[#9f402d] text-lg">
-                  ${b.worker_name ? b.worker_name.charAt(0) : 'W'}
+          <div class="bg-white p-4 sm:p-6 ${pebbleClass} border border-[#ddc0ba]/20 shadow-sm card-hover-animation premium-glow flex flex-col justify-between">
+            <div class="flex justify-between items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div class="flex items-center gap-2.5 sm:gap-3.5">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#ffdad3] text-[#9f402d] font-black flex items-center justify-center text-base sm:text-lg shadow-inner shrink-0">
+                  ${b.client_name ? b.client_name.charAt(0) : 'C'}
                 </div>
                 <div>
-                  <h3 class="font-bold text-[#1c1c18]">${b.worker_name || 'Expert'}</h3>
-                  <p class="text-[10px] uppercase tracking-widest font-black text-[#9f402d]">${b.worker_skill || 'Worker'}</p>
+                  <h3 class="font-black text-[#1c1c18] text-sm sm:text-lg leading-tight truncate max-w-[110px] sm:max-w-none">${b.client_name || 'Client User'}</h3>
+                  <div class="flex items-center gap-1 text-[9px] sm:text-xs text-[#89726d] font-bold mt-0.5">
+                    <span class="material-symbols-outlined text-[11px] sm:text-sm">calendar_month</span>
+                    <span>${b.formatted_date || 'Recent'}</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="w-4 h-4 rounded-full ${status.color}"></span>
-                <span class="text-[12px] font-black uppercase text-[#89726d]">${status.label}</span>
-              </div>
+              <span class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border ${status.color} text-[8px] sm:text-[10px] font-black uppercase tracking-wider shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-current ${b.status === 'in_progress' ? 'animate-pulse' : ''}"></span>
+                ${status.label}
+              </span>
             </div>
 
-            <div class="bg-[#fcf9f2] p-4 rounded-2xl border border-[#ddc0ba]/30 mb-4">
-              <p class="text-sm italic text-[#56423e]">"${b.service_desc}"</p>
+            <div class="bg-[#f1eee7]/40 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-[#ddc0ba]/10 mb-4 sm:mb-5 relative">
+              <p class="text-[11px] sm:text-xs font-semibold text-[#56423e] italic leading-relaxed pr-5 sm:pr-6">"${b.service_desc}"</p>
             </div>
 
-            <div class="flex justify-between items-center border-t border-[#f1eee7] pt-4">
-              <div class="text-sm font-black text-[#1c1c18]">
-                ${b.final_price ? `₹${b.final_price}` : '<span class="text-[#89726d] text-xs">Awaiting Calculation</span>'}
-              </div>
-              
-              <div class="flex gap-3">
-                ${b.status === 'pending' ? `
-                  <button onclick="cancelBooking(${b.id})" class="btn-base btn-cancel flex-1">
-                    Cancel
-                  </button>` : ''}
-                
-                ${(b.status === 'in_progress' || b.status === 'accepted') ? `
-                  <button onclick="closeBooking(${b.id})" class="btn-base btn-complete flex-1">
-                    Finalize Job
-                  </button>` : ''}
+            <div class="flex justify-between items-center border-t border-[#f1eee7] pt-3 sm:pt-4 mt-auto">
+              <div>
+                <span class="text-[8px] sm:text-[9px] font-black uppercase text-[#89726d] tracking-widest block">Settled Earnings</span>
+                <span class="text-sm sm:text-xl font-black text-[#1c1c18] tracking-tight">
+                  ${b.final_price ? `₹${b.final_price}` : '<span class="text-[#89726d] text-[10px] sm:text-xs font-bold bg-[#f1eee7]/70 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md">Pending Clock-Out</span>'}
+                </span>
               </div>
             </div>
           </div>
@@ -259,42 +346,45 @@
       }).join('');
     }
 
-    async function cancelBooking(id) {
-      if (!confirm("Are you sure?")) return;
-    }
-
-    async function completeJob(id) {
+    async function acceptBooking(id) {
       const res = await fetch(`${API}/bookings/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
-        body: JSON.stringify({ booking_id: id, status: 'completed' })
+        body: JSON.stringify({ booking_id: id, status: 'accepted' })
       });
       if ((await res.json()).status === 'success') {
-        alert("Receipt details sent to your notifications!");
+        loadBookings();
+      }
+    }
+
+    async function cancelBooking(id) {
+      if (!confirm("Are you sure you want to decline this job request entry?")) return;
+      const res = await fetch(`${API}/bookings/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
+        body: JSON.stringify({ booking_id: id, status: 'cancelled' })
+      });
+      if ((await res.json()).status === 'success') {
         loadBookings();
       }
     }
 
     function filterBookings(status) {
-      // 1. Remove 'active' from all, add to selected
       const tabs = ['all', 'pending', 'in_progress', 'completed'];
       tabs.forEach(tab => {
         const btn = document.getElementById(`tab-${tab}`);
         if (!btn) return;
-
-        if (tab === status) {
-          btn.classList.add('active', 'bg-primary', 'text-white');
-          btn.classList.remove('bg-white', 'text-[#56423e]');
-        } else {
-          btn.classList.remove('active', 'bg-primary', 'text-white');
-          btn.classList.add('bg-white', 'text-[#56423e]');
-        }
+        if (tab === status) btn.classList.add('active');
+        else btn.classList.remove('active');
       });
 
-      // 2. Filter logic... (your existing filter code remains the same)
+      // 🎯 TAB FILTERING SORT RETENTION: Re-applies the chronological timeline order rule 
+      // dynamically when sorting matching results on custom workspace category tabs.
       let filtered = status === 'all' ? allBookings :
         status === 'in_progress' ? allBookings.filter(b => b.status === 'accepted' || b.status === 'in_progress') :
           allBookings.filter(b => b.status === status);
+
+      filtered.sort((x, y) => new Date(y.created_at) - new Date(x.created_at));
 
       renderBookings(filtered);
     }

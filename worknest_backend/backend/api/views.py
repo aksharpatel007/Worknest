@@ -145,7 +145,7 @@ import math
 def user_bookings(request):
     user = get_authenticated_user_from_header(request)
     
-    # ------------------ GET: LISTING LEDGERS ------------------
+  # ------------------ GET: LISTING LEDGERS ------------------
     if request.method == 'GET':
         if not user:
             return Response({'status': 'success', 'data': []}, status=200)
@@ -156,8 +156,17 @@ def user_bookings(request):
             bookings = Booking.objects.filter(client=user).order_by('-id')
             
         serializer = BookingSerializer(bookings, many=True)
-        return Response({'status': 'success', 'data': serializer.data}, status=200)
-
+        
+        # 🎯 ADDITION: Inject formatted dates into the response list loop
+        custom_data = []
+        for b, serialized_item in zip(bookings, serializer.data):
+            item_dict = dict(serialized_item)
+            # Format and attach the real calendar assignment dates safely
+            item_dict['formatted_date'] = b.created_at.strftime('%d %b %Y') if b.created_at else 'Recent'
+            custom_data.append(item_dict)
+            
+        return Response({'status': 'success', 'data': custom_data}, status=200)
+    
     # ------------------ POST: DISPATCH INITIAL JOB ------------------
     elif request.method == 'POST':
         try:

@@ -7,8 +7,10 @@
   <title>Worknest — Client Requests</title>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script id="tailwind-config">
     tailwind.config = {
@@ -60,18 +62,22 @@
 <body class="bg-surface text-on-surface font-sans min-h-screen pb-32">
   <div class="fixed inset-0 grain z-0 pointer-events-none"></div>
 
-  <div id="verification-shield-screen" class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-surface">
+  <div id="verification-shield-screen"
+    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-surface">
     <div class="bg-surface-container-low max-w-md p-10 border border-outline-variant/40 shadow-xl space-y-6 rounded-lg">
-      <div class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
+      <div
+        class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
         <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
       </div>
       <h2 class="text-3xl font-black text-on-surface tracking-tight">Verification Pending</h2>
       <p class="text-outline text-sm leading-relaxed">
-        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves your profile details and identity credentials.
+        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
+        your profile details and identity credentials.
       </p>
 
       <div class="bg-white p-4 rounded-2xl border border-outline-variant text-left space-y-3 shadow-sm">
-        <label class="text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Message System Administration</label>
+        <label class="text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Message System
+          Administration</label>
         <textarea id="pending-msg-input"
           placeholder="Type a note or ask the admin for a status check on your registration documents..."
           class="w-full p-4 bg-surface-container-low border border-outline-variant/40 focus:border-primary rounded-xl text-xs outline-none resize-none font-medium text-on-surface focus:ring-2 focus:ring-primary/20"
@@ -89,26 +95,33 @@
     </div>
   </div>
 
-  <header class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-primary text-2xl fill-icon">potted_plant</span>
-      <span class="text-2xl font-black text-primary tracking-tight">Worknest</span>
+  <header
+    class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+        <span class="material-symbols-outlined text-white text-lg fill-icon">potted_plant</span>
+      </div>
+      <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
     </div>
 
-    <div class="flex items-center gap-4">
-      <a href="worker_messages.html" class="text-outline hover:text-primary transition-colors flex items-center">
+    <div class="flex items-center gap-2">
+      <a href="worker_messages.html"
+        class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
         <span class="material-symbols-outlined text-2xl">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
       </a>
-
-      <a href="worker_profile.html" class="w-9 h-9 rounded-full border-2 border-primary overflow-hidden hover:scale-105 transition-all block">
-        <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=713f12&color=fff" class="w-full h-full object-cover rounded-full" alt="My Profile">
+      <a href="worker_profile.html"
+        class="w-10 h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
+        <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
+          class="w-full h-full object-cover rounded-full">
       </a>
     </div>
   </header>
 
+
   <main class="relative z-10 pt-10 px-6 max-w-2xl mx-auto space-y-6">
     <h2 class="text-3xl font-black text-on-surface tracking-tight mb-2">Client Assignment Requests</h2>
-    
+
     <div id="requests-list-container" class="space-y-6">
       <div class="text-center py-12 bg-white rounded-3xl border-2 border-dashed border-outline-variant/40 shadow-sm">
         <p class="text-outline text-sm font-semibold">Scanning network for active client signals...</p>
@@ -116,7 +129,8 @@
     </div>
   </main>
 
-  <nav class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-outline-variant/30 rounded-2xl shadow-lg">
+  <nav
+    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-outline-variant/30 rounded-2xl shadow-lg">
     <style>
       .nav-item {
         color: #89726d;
@@ -136,12 +150,14 @@
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html" id="nav-requests">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+      id="nav-requests">
       <span class="material-symbols-outlined text-[20px]">hail</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html" id="nav-history">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+      id="nav-history">
       <span class="material-symbols-outlined text-[20px]">calendar_today</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
     </a>
@@ -159,18 +175,18 @@
     else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
-    
+
     const API_BASE = 'http://localhost:8000/api';
 
     // Universal Avatar Handler matching the user/search modules profile updates
     function getAvatarUrl(person, themeColor = '713f12') {
-        if (person.profile_pic) {
-            return person.profile_pic.startsWith('http') 
-                ? person.profile_pic 
-                : `http://localhost:8000${person.profile_pic}`;
-        }
-        const name = encodeURIComponent(person.fullname || person.username || 'User');
-        return `https://ui-avatars.com/api/?name=${name}&background=${themeColor}&color=fff`;
+      if (person.profile_pic) {
+        return person.profile_pic.startsWith('http')
+          ? person.profile_pic
+          : `http://localhost:8000${person.profile_pic}`;
+      }
+      const name = encodeURIComponent(person.fullname || person.username || 'User');
+      return `https://ui-avatars.com/api/?name=${name}&background=${themeColor}&color=fff`;
     }
 
     async function checkCurrentStatus() {
@@ -190,7 +206,7 @@
           // Sync custom profile image layout nodes
           const headerAvatar = document.getElementById('header-avatar');
           if (headerAvatar) {
-              headerAvatar.src = getAvatarUrl(worker);
+            headerAvatar.src = getAvatarUrl(worker);
           }
 
           // Identity status inspection guard 

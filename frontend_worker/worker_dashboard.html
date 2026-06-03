@@ -4,41 +4,41 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Worknest — Worker Dashboard</title>
+  <title>Worknest — Worker Dashboard Terminal</title>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
     tailwind.config = {
-      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "primary": "#0f766e",        // Deep Teal
-            "surface": "#ffffff",
-            "on-surface": "#1e293b",     // Slate 800
-            "on-surface-variant": "#64748b",
-            "surface-container-low": "#f8fafc",
-            "clay": "#3b82f6",           // Vibrant Blue accent
-            "sage": "#0ea5e9",           // Sky Blue accent
-            "stone": "#334155"
+            primary: '#9f402d',
+            'primary-light': '#e2725b',
+            'primary-container': '#ffdad3',
+            surface: '#fcf9f2',
+            'surface-container': '#f1eee7',
+            'on-surface': '#1c1c18',
+            secondary: '#56642b',
+            'secondary-container': '#d6e7a1',
           },
-          fontFamily: {
-            "headline": ["Plus Jakarta Sans"],
-            "body": ["Be Vietnam Pro"],
-            "label": ["Be Vietnam Pro"]
-          },
-          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+          fontFamily: { sans: ['Manrope', 'sans-serif'] },
+          borderRadius: { DEFAULT: '1rem', lg: '1.5rem', xl: '2rem', full: '9999px' },
         },
       },
     }
   </script>
   <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #fcf9f2;
+      color: #1c1c18;
+    }
+
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -49,182 +49,320 @@
 
     .paper-grain {
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      opacity: 0.03;
+      opacity: 0.025;
       pointer-events: none;
     }
 
-    :root {
-      --bg-soft: #fcf9f2;
-      --clay: #d6a495;
-      --sage: #a8b8a5;
-      --stone: #57534e;
+    /* Asymmetric Premium Organic Shapes scaled dynamically */
+    .pebble-card-1 {
+      border-radius: 2rem 1rem 2rem 1.5rem;
     }
 
-    body {
-      background-color: var(--bg-soft);
-      color: var(--stone);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+    @media (min-width: 640px) {
+      .pebble-card-1 {
+        border-radius: 2.5rem 1.25rem 2.5rem 1.75rem;
+      }
     }
 
-    /* Soft Glassmorphism Card */
+    .pebble-card-2 {
+      border-radius: 1rem 2rem 1.5rem 2rem;
+    }
+
+    @media (min-width: 640px) {
+      .pebble-card-2 {
+        border-radius: 1.25rem 2.5rem 1.75rem 2.5rem;
+      }
+    }
+
     .premium-card {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 2rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(159, 64, 45, 0.02);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Smooth Glow Button */
-    .btn-soft {
-      transition: all 0.4s ease;
-      background: #fdfaf5;
-      border: 1px solid #e5e2db;
+    .premium-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(159, 64, 45, 0.06);
+      background: rgba(255, 255, 255, 0.85);
     }
 
-    .btn-soft:hover {
-      background: #f0ede5;
-      border-color: #d6a495;
+    .nav-item {
+      color: #89726d;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-item.active {
+      color: #9f402d !important;
+      background: #ffdad3;
+    }
+
+    .hide-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
   </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
-  <div class="fixed inset-0 paper-grain z-0"></div>
+<body class="bg-surface text-on-surface min-h-screen pb-32 select-none overflow-y-auto">
+  <div class="fixed inset-0 paper-grain z-[60] pointer-events-none"></div>
 
+  <!-- ⏳ SCREEN 1: VERIFICATION SHIELD SCREEN -->
   <div id="verification-shield-screen"
-    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#fcf4ed]">
-    <div class="bg-[#f6f3ec] max-w-md p-10 border border-[#ddc0ba]/40 shadow-xl space-y-6 rounded-[2rem]">
+    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-4 text-center bg-[#fcf9f2]">
+    <div
+      class="bg-white w-full max-w-sm p-6 sm:p-8 border border-[#ddc0ba]/40 shadow-xl space-y-5 rounded-2xl pebble-card-1">
       <div
-        class="w-20 h-20 bg-amber-100 text-[#ea580c] rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
-        <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
+        class="w-14 h-14 bg-[#ffdad3] text-[#9f402d] rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
+        <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
       </div>
-      <h2 class="font-headline text-3xl font-extrabold text-[#0f172a]">Verification Pending</h2>
-      <p class="text-[#475569] text-sm leading-relaxed">
-        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
-        your profile details and identity credentials.
-      </p>
+      <div class="space-y-1.5">
+        <h2 class="text-xl sm:text-2xl font-black text-[#1c1c18] tracking-tight">Verification Pending</h2>
+        <p class="text-[#56423e] text-xs sm:text-sm font-semibold leading-relaxed px-2">
+          Welcome to Worknest! Your profile coordinates are secure. You cannot access task schedules until an admin
+          verifies your identity.
+        </p>
+      </div>
 
-      <div class="bg-white p-4 rounded-2xl border border-[#ddc0ba] text-left space-y-3">
-        <label class="text-[10px] font-bold uppercase tracking-widest text-[#475569] ml-1">Message System
+      <div class="bg-[#f1eee7]/50 p-4 rounded-xl border border-[#ddc0ba]/30 text-left space-y-2.5">
+        <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-0.5">Message
           Administration</label>
         <textarea id="pending-msg-input"
           placeholder="Type a note or ask the admin for a status check on your registration documents..."
-          class="w-full p-4 bg-[#fcf4ed]/50 border border-[#ddc0ba]/40 focus:border-[#ea580c] rounded-xl text-xs outline-none resize-none font-medium text-[#0f172a]"
+          class="w-full p-3 bg-white border border-[#ddc0ba]/40 focus:ring-2 focus:ring-[#9f402d]/20 rounded-lg text-xs outline-none resize-none font-medium text-on-surface"
           rows="3"></textarea>
         <button id="send-pending-btn" onclick="sendVerificationMessage()"
-          class="w-full py-3 bg-[#ea580c] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:opacity-90 transition-opacity">
+          class="w-full py-3 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition-all duration-300">
           Send Note to Admin
         </button>
       </div>
 
       <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
-        class="w-full py-4 bg-stone-200 hover:bg-stone-300 text-[#475569] font-bold rounded-2xl text-sm transition-colors">
+        class="w-full py-3 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-lg text-xs uppercase tracking-wider transition-colors duration-300">
         Sign Out Safely
       </button>
     </div>
   </div>
 
+  <!-- ⚖️ SCREEN 2: FRAUD RESTRICTION SCREEN -->
   <div id="screen-fraud"
-    class="hidden relative z-10 min-h-screen flex flex-col items-center justify-center px-6 text-center">
-    <div class="bg-surface-container-low max-w-md p-10 border-2 border-primary/30 shadow-2xl space-y-6 rounded-[2rem]">
-      <div class="w-20 h-20 bg-red-50 text-primary rounded-full flex items-center justify-center mx-auto shadow-inner">
-        <span class="material-symbols-outlined text-4xl">gavel</span>
+    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-4 text-center bg-[#fcf9f2]">
+    <div
+      class="bg-white w-full max-w-sm p-6 sm:p-8 border border-red-200 shadow-2xl space-y-5 rounded-2xl pebble-card-2">
+      <div class="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+        <span class="material-symbols-outlined text-2xl">gavel</span>
       </div>
-      <h2 class="font-headline text-3xl font-extrabold text-primary">Account Flagged</h2>
-      <p class="text-on-surface-variant text-sm leading-relaxed">Your account access has been restricted due to a
-        security compliance flag issued by our safety engine.</p>
-      <div class="bg-surface p-4 rounded-2xl border border-outline-variant text-left space-y-3">
-        <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-1">Submit Dispute
-          Request</label>
+      <div class="space-y-1.5">
+        <h2 class="text-xl sm:text-2xl font-black text-red-600 tracking-tight">Account Flagged</h2>
+        <p class="text-[#56423e] text-xs sm:text-sm font-semibold leading-relaxed px-2">Your professional terminal
+          accesses have been restricted due to a non-compliance safety flag.</p>
+      </div>
+
+      <div class="bg-red-50/50 p-4 rounded-xl border border-red-100 text-left space-y-2.5">
+        <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-red-700 ml-0.5">Submit Dispute
+          Appeal</label>
         <textarea id="appeal-text-input" placeholder="Explain your case to the system administration panel..."
-          class="w-full p-4 bg-surface border border-outline-variant/40 focus:border-primary rounded-xl text-xs outline-none resize-none font-medium text-on-surface"
+          class="w-full p-3 bg-white border border-red-100 focus:ring-2 focus:ring-red-200 rounded-lg text-xs outline-none resize-none font-medium text-on-surface"
           rows="3"></textarea>
         <button id="send-appeal-btn" onclick="submitFraudAppeal()"
-          class="w-full py-3.5 bg-primary text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider">Send
+          class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition-all duration-300">Send
           Appeal Message</button>
       </div>
       <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
-        class="text-xs font-bold text-on-surface-variant hover:text-primary">Disconnect Session</button>
+        class="text-[10px] font-black text-[#89726d] uppercase tracking-wider hover:text-[#9f402d] transition-colors">Disconnect
+        Session</button>
     </div>
   </div>
 
+  <!-- ✅ SCREEN 3: VERIFIED WORKER MAIN DASHBOARD TERMINAL -->
   <div id="screen-verified-dashboard" class="hidden">
+    <!-- Header Navbar Container -->
     <header
-      class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
-
-      <!-- Left Side: Logo and Title -->
-      <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
-
-        <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
+      class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-8 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <div
+          class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+          <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
+        </div>
+        <span class="text-lg sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
       </div>
 
-      <!-- Right Side: Icons -->
-      <div class="flex items-center gap-4">
-        <a href="worker_messages.html" class="text-slate-600 hover:text-teal-700 transition-colors">
-          <span class="material-symbols-outlined text-2xl">notifications</span>
+      <div class="flex items-center gap-3 sm:gap-4">
+        <a href="worker_messages.html"
+          class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
+          <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
+          <span
+            class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
         </a>
-
-        <!-- Profile (User Icon) -->
+        <div class="h-5 sm:h-6 w-[1px] bg-[#ddc0ba]/40 mx-0.5 sm:mx-1"></div>
         <a href="worker_profile.html"
-          class="w-9 h-9 rounded-full border-2 border-[9f402d] overflow-hidden hover:border-[9f402d] transition-all">
+          class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
           <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
             class="w-full h-full object-cover rounded-full">
         </a>
       </div>
     </header>
 
-    <main class="relative z-10 pt-24 px-6 max-w-5xl mx-auto space-y-10">
-      <section class="px-6 pt-4">
-        <div class="flex justify-between items-end">
-          <div>
-            <p id="time-greeting" class="text-sm font-bold text-teal-700 uppercase tracking-widest"></p>
-            <h2 class="text-4xl font-black text-slate-900 mt-1">Hello, <span id="worker-name-display">Mateo</span></h2>
+    <!-- Content Workspace Fluid Scaling Container -->
+    <main class="relative z-10 pt-4 sm:pt-8 px-4 sm:px-6 max-w-2xl mx-auto space-y-4 sm:space-y-6">
+
+      <!-- Greeting segment header block with inline custom toggle layout metrics -->
+      <section
+        class="bg-white p-4 sm:p-6 border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl shadow-sm pebble-card-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center justify-between sm:justify-start">
+            <p id="time-greeting" class="text-[9px] sm:text-[11px] font-black text-[#89726d] uppercase tracking-widest">
+              </p>
+            <!-- Visible on mobile inside header line -->
+            <div class="bg-[#d6e7a1]/50 px-2.5 py-0.5 rounded-full border border-[#d6e7a1] sm:hidden">
+              <span class="text-[#56642b] text-[8px] font-black uppercase tracking-wider flex items-center gap-1">
+                <span class="w-1 h-1 bg-[#56642b] rounded-full animate-pulse"></span> Terminal Active
+              </span>
+            </div>
           </div>
-          <div class="bg-teal-50 px-4 py-2 rounded-full border border-teal-100">
-            <span class="text-teal-800 text-xs font-bold flex items-center gap-1">
-              <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span> Status: Online
-            </span>
+
+          <div class="flex items-center gap-4 mt-0.5 sm:mt-1">
+            <h2 class="text-xl sm:text-3xl font-black text-[#1c1c18] tracking-tight">Hello, <span
+                id="worker-name-display">Mateo</span></h2>
+
+            <!-- ⚡ CUSTOM HIGH-END TACTILE SWITCH (NEXT TO THE NAME) -->
+            <div class="inline-flex items-center gap-2 cursor-pointer select-none mt-0.5"
+              onclick="handleToggleInteraction()">
+              <div id="custom-toggle-track"
+                class="w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56642b] rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center">
+                <div id="custom-toggle-thumb"
+                  class="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-md transform translate-x-3.5 sm:translate-x-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                </div>
+              </div>
+              <span id="toggle-status-text"
+                class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#56642b] transition-colors duration-200">Online</span>
+            </div>
           </div>
         </div>
-      </section>
 
-
-      <section class="px-6">
+        <!-- Visible on tablet / desktop screen profiles -->
         <div
-          class="bg-gradient-to-r from-teal-600 to-sky-600 rounded-3xl p-6 shadow-xl text-white flex justify-between items-center">
-          <div>
-            <p class="text-teal-100 text-xs font-bold uppercase tracking-widest">Next Priority</p>
-            <h4 class="text-xl font-bold mt-1">Repairing faucet at Sector 4</h4>
+          class="hidden sm:block bg-[#f1eee7]/60 px-4 py-2 rounded-2xl border border-[#ddc0ba]/30 text-right shrink-0">
+          <span class="text-[9px] font-black uppercase text-[#89726d] tracking-widest block">Account Grade</span>
+          <span class="text-xs font-extrabold text-[#9f402d] uppercase tracking-wider">Verified Expert</span>
+        </div>
+      </section>
+
+      <!-- Priority Pipeline Card Container -->
+      <section>
+        <div
+          class="bg-gradient-to-br from-[#9f402d] to-[#e2725b] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg sm:shadow-xl text-white flex justify-between items-center relative overflow-hidden group">
+          <div
+            class="absolute -right-10 -bottom-10 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-xl sm:blur-2xl">
           </div>
-          <button class="bg-white/20 backdrop-blur-sm p-3 rounded-full hover:bg-white/30 transition-all">
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
+          <div class="relative z-10 pr-4">
+            <p class="text-[#ffdad3] text-[9px] sm:text-[10px] font-black uppercase tracking-widest">Active Pipeline
+              Assignment</p>
+            <h4 id="priority-job-desc" class="text-sm sm:text-xl font-bold mt-0.5 sm:mt-1 tracking-tight leading-snug">
+              Repairing faucet at Sector 4</h4>
+          </div>
+          <a href="worker_booking_history.html"
+            class="bg-white/15 backdrop-blur-md p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl hover:bg-white/25 text-white shadow-inner transition-all shrink-0">
+            <span class="material-symbols-outlined text-base sm:text-lg">arrow_forward</span>
+          </a>
         </div>
       </section>
 
-
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
-        <!-- Earnings Card with subtle transition -->
-        <div class="premium-card border-t-4 border-blue-500 hover:scale-[1.02] transition-transform duration-300">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Balance</p>
-          <h3 id="worker-earnings-num" class="text-3xl font-black mt-2 text-blue-600">₹0</h3>
+      <!-- Numerical Bento Analytics Summary Shading Blocks Grid -->
+      <section class="grid grid-cols-3 gap-2 sm:gap-4">
+        <!-- Balance Earnings Card -->
+        <div class="premium-card p-3 sm:p-5 rounded-xl sm:pebble-card-1 border-t-2 sm:border-t-4 border-[#9f402d]">
+          <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Ledger
+            Balance</span>
+          <h3 id="worker-earnings-num" class="text-base sm:text-3xl font-black mt-0.5 sm:mt-1 text-[#9f402d]">₹0</h3>
         </div>
 
-        <!-- Jobs Card -->
-        <div class="premium-card border-t-4 border-sky-500 hover:scale-[1.02] transition-transform duration-300">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Jobs Done</p>
-          <h3 id="worker-jobs-num" class="text-3xl font-black mt-2 text-sky-600">0</h3>
+        <!-- Total Handled Jobs Card -->
+        <div class="premium-card p-3 sm:p-5 rounded-xl border-t-2 sm:border-t-4 border-[#56642b]">
+          <span
+            class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Completed</span>
+          <h3 id="worker-jobs-num" class="text-base sm:text-3xl font-black mt-0.5 sm:mt-1 text-[#56642b]">0
+          </h3>
         </div>
 
-        <!-- Rating Card -->
-        <div class="premium-card border-t-4 border-indigo-500 hover:scale-[1.02] transition-transform duration-300">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Rating</p>
-          <h3 id="worker-rating-num" class="text-3xl font-black mt-2 text-indigo-600">0.0</h3>
+        <!-- Reputation Metric Star Card -->
+        <div class="premium-card p-3 sm:p-5 rounded-xl sm:pebble-card-2 border-t-2 sm:border-t-4 border-[#e2725b]">
+          <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Rating
+            </span>
+          <div class="flex items-center sm:items-baseline gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+            <h3 id="worker-rating-num" class="text-base sm:text-3xl font-black text-[#1c1c18]">0.0</h3>
+            <span class="material-symbols-outlined text-[10px] sm:text-xs text-amber-500 fill-icon">star</span>
+          </div>
         </div>
       </section>
+
+      <!-- EXTENDED WORKER METRICS DATA GRID -->
+      <section class="grid grid-cols-2 gap-2 sm:gap-4">
+        <!-- Profile Parameters Overview box -->
+        <div class="premium-card p-3.5 sm:p-5 rounded-xl sm:rounded-2xl space-y-2 sm:space-y-3">
+          <span
+            class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Parameters</span>
+          <div class="space-y-1 sm:space-y-2">
+            <div
+              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+              <span class="font-bold text-[#89726d]">Craft</span>
+              <span id="worker-skill-display"
+                class="font-black text-[#1c1c18] truncate max-w-[65px] sm:max-w-none">--</span>
+            </div>
+            <div
+              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+              <span class="font-bold text-[#89726d]">Rate</span>
+              <span id="worker-rate-display" class="font-black text-[#9f402d]">--</span>
+            </div>
+            <div class="flex justify-between items-center text-[10px] sm:text-xs">
+              <span class="font-bold text-[#89726d]">Joined</span>
+              <span id="worker-joined-display" class="font-black text-[#1c1c18]">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operational Health status card -->
+        <div class="premium-card p-3.5 sm:p-5 rounded-xl sm:rounded-2xl space-y-2 sm:space-y-3">
+          <span
+            class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Performance</span>
+          <div class="space-y-1 sm:space-y-2">
+            <div
+              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+              <span class="font-bold text-[#89726d]">Accept</span>
+              <span class="font-black text-[#56642b]">96.4%</span>
+            </div>
+            <div
+              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+              <span class="font-bold text-[#89726d]">Cancel</span>
+              <span class="font-black text-red-600">1.2%</span>
+            </div>
+            <div class="flex justify-between items-center text-[10px] sm:text-xs">
+              <span class="font-bold text-[#89726d]">Score</span>
+              <span class="font-black text-[#56642b]">Good</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Interactive Work Log Stream Segment -->
+      <section class="premium-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4">
+        <div>
+          <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Recent
+            Completed Transactions</span>
+          <h3 class="text-sm sm:text-lg font-black text-[#1c1c18]">Historical Contracts Log</h3>
+        </div>
+
+        <div id="recent-jobs-scroller" class="space-y-2 max-h-48 sm:max-h-64 overflow-y-auto pr-0.5 hide-scroll">
+          <p class="text-[11px] sm:text-xs text-[#89726d] italic text-center py-4">Aggregating handled work records...
+          </p>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -275,8 +413,8 @@
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
-
     const API_BASE = 'http://localhost:8000/api';
+    let isWorkerOnline = true; // State tracker flag
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
@@ -291,51 +429,95 @@
 
         if (data.status === 'success' && data.data) {
           const worker = data.data;
-          const navElement = document.querySelector('nav'); // Select your navbar
+          const navElement = document.querySelector('nav');
 
-          // 🛡️ Guard Layer for Pending or Fraud
           if (worker.is_verified === false || worker.is_fraud === true) {
-            // Show the correct warning screen
             if (worker.is_fraud === true) {
               document.getElementById('screen-fraud').classList.remove('hidden');
             } else {
               document.getElementById('verification-shield-screen').classList.remove('hidden');
             }
 
-            // Hide dashboard and NAV
             document.getElementById('screen-verified-dashboard').classList.add('hidden');
-            if (navElement) navElement.classList.add('hidden'); // 🎯 Hide nav here
-
+            if (navElement) navElement.classList.add('hidden');
             return;
           }
 
-          // ✅ Verified: Show dashboard and ensure NAV is visible
           document.getElementById('screen-verified-dashboard').classList.remove('hidden');
-          if (navElement) navElement.classList.remove('hidden'); // 🎯 Show nav here
+          if (navElement) navElement.classList.remove('hidden');
+
+          document.getElementById('worker-name-display').textContent = worker.fullname;
+          document.getElementById('worker-earnings-num').textContent = `₹${worker.earnings || 0}`;
+          document.getElementById('worker-jobs-num').textContent = worker.total_jobs || 0;
+          document.getElementById('worker-rating-num').textContent = parseFloat(worker.rating || 0.0).toFixed(1);
+
+          document.getElementById('worker-skill-display').textContent = worker.skill || 'Artisan';
+          document.getElementById('worker-rate-display').textContent = `₹${worker.hourly_rate || 0}/hr`;
+          document.getElementById('worker-joined-display').textContent = worker.date_joined ? new Date(worker.date_joined).toLocaleDateString('en-IN') : 'Recent';
+
+          await loadHistoricalBookingsLogs(worker.id);
         }
-      } catch (e) { console.error("Identity status validation breakdown:", e); }
+      } catch (e) { console.error("Identity status processing error:", e); }
     }
 
-    async function initializeDashboard() {
-      const sessionKey = localStorage.getItem('session_key');
-      if (!sessionKey) { window.location.href = '../frontend_user/login.html'; return; }
-
+    async function loadHistoricalBookingsLogs(workerId) {
+      const scroller = document.getElementById('recent-jobs-scroller');
       try {
-        const res = await fetch(`${API_BASE}/profile/`, {
-          headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
-          credentials: 'include'
+        const res = await fetch(`${API_BASE}/bookings/`, {
+          headers: { 'X-Session-Key': localStorage.getItem('session_key') }
         });
+        const json = await res.json();
 
-        // Check if the response is actually OK
-        if (!res.ok) {
-          console.error("API call failed with status:", res.status);
-          return; // Stop here if the API is down or the URL is wrong
+        if (json.status === 'success' && json.data) {
+          const finishedJobs = json.data.filter(b => b.status === 'completed');
+
+          if (finishedJobs.length === 0) {
+            scroller.innerHTML = `<p class="text-[10px] sm:text-xs text-[#89726d] italic text-center py-4">No historical transactions found.</p>`;
+            return;
+          }
+
+          const activeJob = json.data.find(b => b.status === 'in_progress' || b.status === 'accepted');
+          if (activeJob) {
+            document.getElementById('priority-job-desc').textContent = `${activeJob.service_desc} — for ${activeJob.client_name}`;
+          } else {
+            document.getElementById('priority-job-desc').textContent = 'No active task assigned. Waiting for requests.';
+          }
+
+          scroller.innerHTML = finishedJobs.map(j => `
+            <div class="p-2.5 bg-[#f1eee7]/30 border border-[#ddc0ba]/20 rounded-lg flex justify-between items-center text-[11px] sm:text-xs">
+              <div class="truncate pr-2">
+                <span class="font-extrabold text-[#1c1c18] block truncate">${j.client_name || 'Client'}</span>
+                <span class="text-[9px] sm:text-[10px] text-[#89726d] font-medium block truncate mt-0.5">"${j.service_desc}"</span>
+              </div>
+              <div class="text-right font-black text-[#56642b] shrink-0 bg-[#d6e7a1]/30 border border-[#d6e7a1] px-2.5 py-0.5 rounded-md text-[10px] sm:text-xs">
+                +₹${j.final_price || 'Paid'}
+              </div>
+            </div>
+          `).join('');
         }
-
-        const data = await res.json();
-        // ... rest of your code ...
       } catch (e) {
-        console.error("Dashboard failed to initialize:", e);
+        scroller.innerHTML = `<p class="text-[10px] text-red-600 italic text-center py-2">Error loading items matrix.</p>`;
+      }
+    }
+
+    // 🎯 LIVE CUSTOM TACTILE TOGGLE ENGINE ACTIONS
+    function handleToggleInteraction() {
+      isWorkerOnline = !isWorkerOnline;
+
+      const track = document.getElementById('custom-toggle-track');
+      const thumb = document.getElementById('custom-toggle-thumb');
+      const textLabel = document.getElementById('toggle-status-text');
+
+      if (isWorkerOnline) {
+        track.className = "w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56642b] rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center";
+        thumb.className = "w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-md transform translate-x-3.5 sm:translate-x-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]";
+        textLabel.textContent = "Online";
+        textLabel.className = "text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#56642b] transition-colors duration-200";
+      } else {
+        track.className = "w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56423e]/20 rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center";
+        thumb.className = "w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-md transform translate-x-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]";
+        textLabel.textContent = "Offline";
+        textLabel.className = "text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#89726d] transition-colors duration-200";
       }
     }
 
@@ -344,9 +526,8 @@
       if (!note) { alert("Please input a message first."); return; }
 
       const btn = document.getElementById('send-pending-btn');
-      btn.textContent = "Transmitting message...";
+      btn.textContent = "Transmitting...";
       btn.disabled = true;
-
       const sessionKey = localStorage.getItem('session_key');
 
       try {
@@ -356,17 +537,14 @@
         });
         const profileData = await profileRes.json();
 
-        // 2. Prepare the new message with Date & Time
         let currentBio = (profileData.data && profileData.data.bio) ? profileData.data.bio : '';
         const timestamp = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
         const newMessage = `[${timestamp}] ${note}`;
 
-        // 3. Append safely using a |MSG| separator
         let newBio = currentBio
           ? `${currentBio} |MSG| VERIFICATION_NOTE: ${newMessage}`
           : `VERIFICATION_NOTE: ${newMessage}`;
 
-        // 4. Send updated data to the server
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
@@ -375,7 +553,7 @@
 
         const data = await res.json();
         if (data.status === 'success') {
-          alert("Your message note has been appended. The admin will review it immediately.");
+          alert("Your message note has been appended.");
           document.getElementById('pending-msg-input').value = "";
         }
       } catch (e) {
@@ -385,7 +563,6 @@
         btn.disabled = false;
       }
     }
-
 
     async function submitFraudAppeal() {
       const txt = document.getElementById('appeal-text-input').value.trim();
@@ -400,8 +577,6 @@
         window.location.reload();
       } catch (e) { console.error(e); }
     }
-
-    function toggleStatus(val) { console.log("Availability changed to:", val); }
 
     function updateGreeting() {
       const hour = new Date().getHours();
