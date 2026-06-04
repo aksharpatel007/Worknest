@@ -8,8 +8,10 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -40,14 +42,17 @@
       background: #fcf9f2;
       color: #1c1c18;
     }
+
     .grain {
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       opacity: 0.03;
       pointer-events: none;
     }
+
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
+
     .fill-icon {
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -58,20 +63,24 @@
   <div class="fixed inset-0 grain z-[60] pointer-events-none"></div>
 
   <!-- Responsive Header Deck -->
-  <header class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md border-b border-outline-variant/20 px-4 sm:px-6 py-4 flex items-center gap-2 sm:gap-4">
-    <button onclick="window.location.href='worker_dashboard.html'" class="p-2 rounded-full hover:bg-surface-container transition-colors flex items-center justify-center shrink-0">
+  <header
+    class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md border-b border-outline-variant/20 px-4 sm:px-6 py-4 flex items-center gap-2 sm:gap-4">
+    <button onclick="window.location.href='worker_dashboard.html'"
+      class="p-2 rounded-full hover:bg-surface-container transition-colors flex items-center justify-center shrink-0">
       <span class="material-symbols-outlined text-primary font-bold text-xl sm:text-2xl">arrow_back</span>
     </button>
     <div class="flex items-center gap-2 sm:gap-3 overflow-hidden">
       <span class="material-symbols-outlined text-primary text-xl sm:text-2xl fill-icon shrink-0">receipt_long</span>
-      <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-on-surface tracking-tight truncate">Payment Receipts</h2>
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-on-surface tracking-tight truncate">Payment Receipts
+      </h2>
     </div>
   </header>
 
   <!-- Responsive Scaled Main Viewport Layout -->
   <main class="pt-6 sm:pt-10 px-4 sm:px-6 max-w-3xl mx-auto">
-    <div id="receipt-container" class="space-y-4 p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-outline-variant/30 shadow-sm">
-      
+    <div id="receipt-container"
+      class="space-y-4 p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-outline-variant/30 shadow-sm">
+
       <!-- Dynamic Content Loader Frame -->
       <div id="loading-spinner" class="text-center py-12">
         <p class="text-sm font-semibold text-outline animate-pulse">Retrieving your financial records...</p>

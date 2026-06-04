@@ -11,6 +11,10 @@ import json
 from django.utils import timezone
 from .models import User, Booking, Notification
 from .serializers import UserSerializer, BookingSerializer, NotificationSerializer
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import authentication_classes, permission_classes
+from django.contrib.auth import get_user_model 
+
 
 # --- AUTHENTICATION & SIGNUP ---
 
@@ -79,6 +83,37 @@ def login_view(request):
         
     return Response({'status': 'error', 'message': 'Invalid login credentials.'}, status=401)
 
+# 🎯 CHANGE PASSWORD API
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def change_password_api(request):
+    """
+    Safely checks the current password and updates it with a new one 
+    using the custom X-Session-Key header validation.
+    """
+    if request.method == 'POST':
+        # તમારા સેશન કી ના હેડર લોજિકથી એક્ટિવ યુઝરને શોધો
+        user = get_authenticated_user_from_header(request)
+        
+        if not user:
+            return Response({'status': 'error', 'message': 'User session expired or invalid. Please log in again.'}, status=401)
+            
+        try:
+            current_password = request.data.get('current_password')
+            new_password = request.data.get('new_password')
+            
+            if not user.check_password(current_password):
+                return Response({'status': 'error', 'message': 'Current password is incorrect!'}, status=400)
+                
+            user.set_password(new_password)
+            user.save()
+            
+            return Response({'status': 'success', 'message': 'Password updated successfully!'})
+            
+        except Exception as e:
+            return Response({'status': 'error', 'message': f'Server Error: {str(e)}'}, status=500)
+
 
 # --- PROFILE & WORKER LISTS ---
 
@@ -108,34 +143,47 @@ def worker_list(request):
 @csrf_exempt
 @api_view(['GET', 'POST'])
 def profile_view(request):
-    # 🎯 FIXED: Pull the exact active user matching the login, instead of blindly using User.objects.last()
     user = get_authenticated_user_from_header(request)
-    
     if not user:
-        return Response({'status': 'error', 'message': 'Anonymous access denied'}, status=401)
-        
+        return Response({'status': 'error', 'message': 'Admin access required or invalid session'}, status=401)
+
     if request.method == 'GET':
-        serializer = UserSerializer(user)
-        return Response({'status': 'success', 'data': serializer.data})
-    
-    if request.method == 'POST':
-        user.fullname = request.data.get('fullname', user.fullname)
-        user.phone = request.data.get('phone', user.phone)
-        
-        incoming_bio = request.data.get('bio')
-        if incoming_bio:
-            user.bio = incoming_bio
-            user.trust_score = 10 
+        return Response({
+            'status': 'success',
+            'data': {
+                'id': user.id,
+                'username': user.username,
+                'fullname': user.fullname,
+                'email': user.email,
+                'phone': user.phone,
+                'role_id': user.role_id,
+                'skill': user.skill,
+                'bio': user.bio,
+                'hourly_rate': user.hourly_rate,
+                'is_verified': user.is_verified,
+                'is_fraud': user.is_fraud,
+                'profile_pic': user.profile_pic.url if user.profile_pic else None,
+                # 🎯 FIX 1: Add created_at field mapped from user.date_joined
+                'created_at': user.date_joined.isoformat() if user.date_joined else None
+            }
+        })
+
+    elif request.method == 'POST':
+        # 🎯 FIX 2: Correct multi-part form data validation handling
+        data = request.POST  
+        if 'fullname' in data: 
+            user.fullname = data['fullname']
+        if 'phone' in data: 
+            user.phone = data['phone']
+        if 'bio' in data: 
+            user.bio = data['bio']
             
-        # --- UPDATE THIS BLOCK ---
-        # DRF often puts files in request.data instead of request.FILES
-        pic = request.data.get('profile_pic') or request.FILES.get('profile_pic')
-        if pic:
-            user.profile_pic = pic
-        # -------------------------
+        if 'profile_pic' in request.FILES: 
+            user.profile_pic = request.FILES['profile_pic']
             
         user.save()
-        return Response({'status': 'success', 'message': 'Profile state updated successfully!'})
+        return Response({'status': 'success', 'message': 'Profile updated successfully'})
+    
 
 from django.utils import timezone
 import math
@@ -292,14 +340,16 @@ def submit_rating(request):
 @csrf_exempt
 @api_view(['GET'])
 def get_user_notifications(request):
-    """Fetches user-specific notification logs for message feeds."""
+    """Fetches user-specific notification logs explicitly pre-sorted by newest date and time."""
     user = get_authenticated_user_from_header(request)
     if not user:
         return Response({'status': 'error', 'message': 'Session authentication invalid'}, status=401)
     
-    notifications = Notification.objects.filter(user=user).order_by('-id')
+    # 🎯 FIX: Order explicitly by '-created_at' and '-id' so the database forces newest items to the top
+    notifications = Notification.objects.filter(user=user).order_by('-created_at', '-id')
     serializer = NotificationSerializer(notifications, many=True)
     return Response({'status': 'success', 'data': serializer.data}, status=200)
+
 
 # ================== ADMIN PANEL QUERIES UPDATES ==================
 @csrf_exempt
@@ -497,3 +547,35 @@ def get_authenticated_user_from_header(request):
             pass
             
     return None
+
+User = get_user_model()
+
+
+# 🎯 FORGOT PASSWORD API
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def forgot_password_api(request):
+    """
+    Safely resets a user's password from outside (Login page) 
+    if their registered email exists in the system.
+    """
+    if request.method == 'POST':
+        try:
+            email = request.data.get('email')
+            new_password = request.data.get('new_password')
+            
+            User_Model = get_user_model()
+            
+            try:
+                user = User_Model.objects.get(email=email)
+            except User_Model.DoesNotExist:
+                return Response({'status': 'error', 'message': 'This email address is not registered!'}, status=400)
+            
+            user.set_password(new_password)
+            user.save()
+            
+            return Response({'status': 'success', 'message': 'Password reset successfully!'})
+            
+        except Exception as e:
+            return Response({'status': 'error', 'message': f'Server Error: {str(e)}'}, status=500)

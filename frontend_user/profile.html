@@ -114,6 +114,10 @@
           class="w-full py-3 bg-[#9f402d] text-white font-bold rounded-full hover:bg-[#e2725b] transition-all active:scale-95">
           Save Changes
         </button>
+        <a href="change_password.html"
+          class="w-full py-4 bg-white border-2 border-[#9f402d] text-[#9f402d] font-bold rounded-full text-center uppercase tracking-wider text-sm shadow-sm hover:bg-orange-50/50 transition-all active:scale-95 block mt-3">
+          Change Password
+        </a>
       </div>
     </div>
 
@@ -164,8 +168,7 @@
   </main>
 
   <!-- Bottom Nav -->
-  <nav
-    class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)]">
+  <nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-2 sm:px-4 pb-6 sm:pb-8 pt-3 sm:pt-4 bg-[#fcf9f2]/95 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border-t border-outline/20">
     <a href="dashboard.html"
       class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
       <span class="material-symbols-outlined text-xl">home</span>
@@ -226,9 +229,8 @@
         document.getElementById('edit-name').value = u.fullname || '';
         document.getElementById('edit-phone').value = u.phone || '';
 
-
-        if (u.date_joined) {
-          document.getElementById('member-since').textContent = new Date(u.date_joined).toLocaleDateString('en-IN', {
+        if (u.created_at) {
+          document.getElementById('member-since').textContent = new Date(u.created_at).toLocaleDateString('en-IN', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
@@ -289,24 +291,33 @@
       const formData = new FormData();
       if (name) formData.append('fullname', name);
       if (phone) formData.append('phone', phone);
-      const picFile = document.getElementById('pic-input').files[0];
-      if (picFile) formData.append('profile_pic', picFile);
+
+      // 🎯 FIX: Select the exact single file index item instead of passing the raw FileList array reference
+      const picFileInput = document.getElementById('pic-input');
+      if (picFileInput.files.length > 0) {
+        formData.append('profile_pic', picFileInput.files[0]);
+      }
 
       try {
         const res = await fetch(`${API}/profile/`, {
           method: 'POST',
           headers: {
-            'X-Session-Key': sessionKey || '' // 🎯 FIXED: Attach session authorization header for updates
+            'X-Session-Key': sessionKey || '' // Attach validation header
           },
           credentials: 'include',
-          body: formData
+          body: formData // Body contains updated content safely
         });
         const data = await res.json();
-        msg.textContent = data.status === 'success' ? '✓ Profile saved!' : (data.message || 'Error saving.');
+
+        msg.textContent = data.status === 'success' ? '✓ Profile saved successfully!' : (data.message || 'Error saving data.');
         msg.className = `text-sm font-bold text-center p-3 rounded-xl mb-4 ${data.status === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`;
         msg.classList.remove('hidden');
-        if (data.status === 'success') loadProfile();
+
+        if (data.status === 'success') {
+          loadProfile(); // Reload with fresh information from server
+        }
       } catch (e) {
+        console.error(e);
         msg.textContent = 'Cannot connect to server.';
         msg.className = 'text-sm font-bold text-center p-3 rounded-xl mb-4 bg-red-50 text-red-700';
         msg.classList.remove('hidden');
@@ -315,9 +326,7 @@
 
     // Photo live file input preview change hook
     document.getElementById('pic-input').addEventListener('change', function (e) {
-      // Add [0] here to get the actual file from the FileList
       const file = e.target.files[0];
-
       if (file) {
         const reader = new FileReader();
         reader.onload = ev => {
@@ -325,7 +334,7 @@
           document.getElementById('avatar-img').classList.remove('hidden');
           document.getElementById('avatar-initials').classList.add('hidden');
         };
-        reader.readAsDataURL(file); // This now has a valid File to read
+        reader.readAsDataURL(file);
       }
     });
 

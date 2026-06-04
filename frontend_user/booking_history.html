@@ -6,10 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Worknest — My Bookings</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script id="tailwind-config">
     tailwind.config = {
       theme: {
@@ -47,98 +45,90 @@
     .hide-scrollbar::-webkit-scrollbar {
       display: none;
     }
+    
+    .grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
   </style>
 </head>
 
-<body class="text-on-background pb-32">
+<body class="text-on-background pb-32 relative">
+  <div class="fixed inset-0 grain z-[60] pointer-events-none"></div>
 
-  <!-- Header -->
-  <header
-    class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-outline/30 px-6 py-5 flex items-center justify-between shadow-sm">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl"
-        data-icon="potted_plant">potted_plant</span>
-      <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
+  <!-- Responsive Brand Header Deck -->
+  <header class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-outline/30 px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <span class="material-symbols-outlined text-primary text-2xl sm:text-3xl fill-icon">potted_plant</span>
+      <!-- Header text adapts size dynamically according to laptop vs mobile frames -->
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-primary">Worknest</h1>
     </div>
-    <span class="material-symbols-outlined text-primary text-3xl">history</span>
+    <span class="material-symbols-outlined text-primary text-2xl sm:text-3xl">history</span>
   </header>
 
-  <main class="max-w-3xl mx-auto px-6 py-8 space-y-6">
-    <!-- Status Filter Tabs -->
-    <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+  <!-- Fluid Container Layout -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <!-- Status Filter Tab Row -->
+    <div class="flex gap-2.5 sm:gap-3 overflow-x-auto hide-scrollbar pb-2">
       <button onclick="filterBookings('all')" id="tab-all"
-        class="px-5 py-2 rounded-full text-sm font-bold bg-primary text-white shadow-md transition-all">All</button>
+        class="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold bg-primary text-white shadow-md transition-all shrink-0">All</button>
       <button onclick="filterBookings('pending')" id="tab-pending"
-        class="px-5 py-2 rounded-full text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all">Pending</button>
+        class="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all shrink-0">Pending</button>
       <button onclick="filterBookings('in_progress')" id="tab-in_progress"
-        class="px-5 py-2 rounded-full text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all">Active</button>
+        class="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all shrink-0">Active</button>
       <button onclick="filterBookings('completed')" id="tab-completed"
-        class="px-5 py-2 rounded-full text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all">Completed</button>
+        class="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all shrink-0">Completed</button>
     </div>
 
-    <!-- Bookings Container -->
-    <div id="bookings-container" class="space-y-5">
-      <p class="text-center text-[#89726d] italic mt-10">Loading your history...</p>
+    <!-- Active Records Content Grid -->
+    <div id="bookings-container" class="space-y-4 sm:space-y-5">
+      <p class="text-center text-[#89726d] font-medium text-xs sm:text-sm italic mt-10 animate-pulse">Loading your history...</p>
     </div>
   </main>
 
-  <!-- Rating Modal -->
-  <div id="rate-modal"
-    class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-6 space-y-4 shadow-2xl transition-all">
-      <h3 class="text-xl font-black text-center text-[#1c1c18]">Rate the Service</h3>
-      <p class="text-xs font-bold text-center text-[#89726d] uppercase tracking-wider">How was your experience?</p>
+  <!-- Rating Feedback Overlay Modal Framework -->
+  <div id="rate-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl transition-all border border-outline/20">
+      <h3 class="text-xl font-black text-center text-[#1c1c18] tracking-tight">Rate the Service</h3>
+      <p class="text-[10px] sm:text-xs font-bold text-center text-[#89726d] uppercase tracking-wider">How was your experience?</p>
 
-      <div class="flex items-center justify-center gap-2 py-2" id="star-row">
-        <span
-          class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors"
-          onclick="setStar(1)">star</span>
-        <span
-          class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors"
-          onclick="setStar(2)">star</span>
-        <span
-          class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors"
-          onclick="setStar(3)">star</span>
-        <span
-          class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors"
-          onclick="setStar(4)">star</span>
-        <span
-          class="material-symbols-outlined text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors"
-          onclick="setStar(5)">star</span>
+      <div class="flex items-center justify-center gap-1.5 sm:gap-2 py-1" id="star-row">
+        <span class="material-symbols-outlined text-2xl sm:text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(1)">star</span>
+        <span class="material-symbols-outlined text-2xl sm:text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(2)">star</span>
+        <span class="material-symbols-outlined text-2xl sm:text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(3)">star</span>
+        <span class="material-symbols-outlined text-2xl sm:text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(4)">star</span>
+        <span class="material-symbols-outlined text-2xl sm:text-3xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors" onclick="setStar(5)">star</span>
       </div>
 
       <textarea id="rate-review" placeholder="Write a short review... (optional)"
-        class="w-full p-3 text-sm bg-[#f6f3ec] border border-[#ddc0ba]/40 rounded-xl focus:outline-none resize-none"
+        class="w-full p-3 text-xs sm:text-sm bg-[#f6f3ec] border border-[#ddc0ba]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none text-on-background font-medium"
         rows="3"></textarea>
 
       <div class="flex gap-3 mt-2">
-        <button onclick="closeRateModal()"
-          class="w-1/3 py-3 bg-gray-100 text-gray-600 font-bold rounded-full text-sm">Cancel</button>
-        <button onclick="submitRating()"
-          class="w-2/3 py-3 bg-primary text-white font-extrabold rounded-full text-sm shadow-md hover:bg-primary-container transition-all">Submit
-          Feedback</button>
+        <button onclick="closeRateModal()" class="w-1/3 py-3 bg-surface-variant text-[#56423e] font-bold rounded-full text-xs sm:text-sm transition-colors hover:bg-outline/30">Cancel</button>
+        <button onclick="submitRating()" class="w-2/3 py-3 bg-primary text-white font-extrabold rounded-full text-xs sm:text-sm shadow-md hover:bg-primary-light transition-all active:scale-95">Submit Feedback</button>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Navigation -->
-  <nav
-    class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-8 pt-4 bg-[#fcf9f2]/95 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)] font-manrope text-[11px] font-semibold tracking-wide uppercase border-t border-outline/20">
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 transition-all active:scale-90"
-      href="dashboard.html">
-      <span class="material-symbols-outlined text-xl mb-0.5">home</span><span>Home</span>
+  <!-- Synchronized Bottom Global Menu Navigation Deck -->
+  <nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-2 sm:px-4 pb-6 sm:pb-8 pt-3 sm:pt-4 bg-[#fcf9f2]/95 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border-t border-outline/20">
+    <a href="dashboard.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
+      <span class="material-symbols-outlined text-lg sm:text-xl">home</span>
+      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide">Home</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 transition-all active:scale-90"
-      href="services.html">
-      <span class="material-symbols-outlined text-xl mb-0.5">grid_view</span><span>Services</span>
+    <a href="services.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
+      <span class="material-symbols-outlined text-lg sm:text-xl">grid_view</span>
+      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide">Services</span>
     </a>
-    <a class="flex flex-col items-center justify-center bg-[#d6e7a1] text-[#56642b] rounded-full px-6 py-2 transition-all active:scale-90 shadow-sm"
-      href="booking_history.html">
-      <span class="material-symbols-outlined fill-icon text-xl mb-0.5">event_note</span><span>Bookings</span>
+    <a href="booking_history.html" class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-4 sm:px-5 py-1.5 sm:py-2 active:scale-90 shadow-sm">
+      <span class="material-symbols-outlined text-lg sm:text-xl fill-icon">event_note</span>
+      <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wide">Bookings</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-6 py-2 hover:opacity-100 transition-all active:scale-90"
-      href="profile.html">
-      <span class="material-symbols-outlined text-xl mb-0.5">person</span><span>Profile</span>
+    <a href="profile.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
+      <span class="material-symbols-outlined text-lg sm:text-xl">person</span>
+      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide">Profile</span>
     </a>
   </nav>
 
@@ -153,45 +143,50 @@
       if (!sessionKey) { window.location.href = 'login.html'; return; }
 
       try {
-        // Fetch logged-in user ID
         const profileRes = await fetch(`${API}/profile/`, { headers: { 'X-Session-Key': sessionKey } });
         const profileData = await profileRes.json();
         if (profileData.status !== 'success') return;
         const clientId = profileData.data.id;
 
-        // Fetch all bookings and filter
         const bookingsRes = await fetch(`${API}/bookings/`, { headers: { 'X-Session-Key': sessionKey } });
         const bookingsData = await bookingsRes.json();
 
         if (bookingsData.status === 'success') {
-          // Store user's bookings, newest first
-          allBookings = bookingsData.data.filter(b => b.client == clientId || b.client_id == clientId).reverse();
+          // Store user bookings raw data array safely
+          const rawDataList = bookingsData.data.filter(b => b.client == clientId || b.client_id == clientId);
+          
+          // 🎯 CRITICAL SORTING FIX: Compiles sorting rules using explicit timestamp strings so that the newest additions appear first
+          rawDataList.sort((a, b) => {
+            const timeStampA = new Date(a.created_at || a.completed_at || a.started_at || 0);
+            const timeStampB = new Date(b.created_at || b.completed_at || b.started_at || 0);
+            return timeStampB - timeStampA;
+          });
+
+          allBookings = rawDataList;
           renderBookings(allBookings);
         }
       } catch (e) {
-        document.getElementById('bookings-container').innerHTML = `<p class="text-center text-red-500 font-bold mt-10">Error loading data.</p>`;
+        document.getElementById('bookings-container').innerHTML = `
+          <p class="text-center text-primary font-bold text-sm mt-10">An exception occurred while retrieving active booking trails.</p>`;
       }
     }
 
     function filterBookings(status) {
-      // Update UI Tabs
       ['all', 'pending', 'in_progress', 'completed'].forEach(tab => {
         const btn = document.getElementById(`tab-${tab}`);
         if (btn) {
           if (tab === status) {
-            btn.className = "px-5 py-2 rounded-full text-sm font-bold bg-primary text-white shadow-md transition-all";
+            btn.className = "px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold bg-primary text-white shadow-md transition-all shrink-0";
           } else {
-            btn.className = "px-5 py-2 rounded-full text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all";
+            btn.className = "px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold bg-surface-variant text-[#56423e] hover:bg-outline/40 transition-all shrink-0";
           }
         }
       });
 
-      // Filter Data
       let filtered = [];
       if (status === 'all') {
         filtered = allBookings;
       } else if (status === 'in_progress') {
-        // Combine accepted and in_progress into the Active tab
         filtered = allBookings.filter(b => b.status === 'accepted' || b.status === 'in_progress');
       } else {
         filtered = allBookings.filter(b => b.status === status);
@@ -200,21 +195,19 @@
       renderBookings(filtered);
     }
 
-    
     function renderBookings(bookings) {
       const container = document.getElementById('bookings-container');
       if (bookings.length === 0) {
         container.innerHTML = `
-          <div class="bg-surface-lowest p-10 rounded-3xl text-center border border-outline/30 shadow-sm mt-8">
-            <span class="material-symbols-outlined text-outline text-6xl mb-3">assignment_late</span>
-            <h3 class="font-bold text-xl mb-1">No Bookings Found</h3>
-            <p class="text-sm text-[#89726d]">You haven't made any requests in this category yet.</p>
+          <div class="bg-surface-lowest p-8 sm:p-10 rounded-3xl text-center border border-outline/30 shadow-sm mt-6">
+            <span class="material-symbols-outlined text-outline text-5xl sm:text-6xl mb-3">assignment_late</span>
+            <h3 class="font-extrabold text-lg sm:text-xl mb-1">No Bookings Found</h3>
+            <p class="text-xs sm:text-sm text-[#89726d]">You haven't made any requests in this category yet.</p>
           </div>`;
         return;
       }
 
       container.innerHTML = bookings.map(b => {
-        // Dynamic Badge Styling
         let badgeConfig = { color: 'bg-orange-100 text-orange-700', text: 'Pending Response', icon: 'schedule' };
         if (b.status === 'accepted') badgeConfig = { color: 'bg-purple-100 text-purple-700', text: 'Accepted', icon: 'thumb_up' };
         if (b.status === 'in_progress') badgeConfig = { color: 'bg-blue-100 text-blue-700', text: 'Active & In Progress', icon: 'handshake' };
@@ -224,48 +217,58 @@
         let actionHtml = '';
         if (b.status === 'pending') {
           actionHtml = `
-            <button onclick="cancelBooking(${b.id})" class="w-full mt-4 py-3 bg-red-50 text-red-600 border border-red-100 font-bold rounded-xl text-sm hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-lg">close</span> Cancel Request
+            <button onclick="cancelBooking(${b.id})" class="w-full mt-4 py-3 bg-red-50 text-red-600 border border-red-100 font-bold rounded-xl text-xs sm:text-sm hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-base sm:text-lg">close</span> Cancel Request
             </button>`;
         }
-        // 🎯 FIX: Make the button appear for 'accepted' bookings!
         else if (b.status === 'accepted' || b.status === 'in_progress') {
           actionHtml = `
-            <button onclick="closeBooking(${b.id})" class="w-full mt-4 py-3 bg-green-600 text-white font-extrabold rounded-xl text-sm shadow-md hover:bg-green-700 transition-all">
+            <button onclick="closeBooking(${b.id})" class="w-full mt-4 py-3 sm:py-3.5 bg-green-600 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-green-700 transition-all active:scale-95">
               Mark as Completed & Calculate Pay
             </button>`;
         }
         else if (b.status === 'completed') {
           if (!b.rating_given) {
             actionHtml = `
-               <button onclick="openRateModal(${b.id})" class="w-full mt-4 py-3 bg-white border-2 border-primary text-primary font-extrabold rounded-xl text-sm hover:bg-primary/10 transition-all">
+               <button onclick="openRateModal(${b.id})" class="w-full mt-4 py-3 bg-white border-2 border-primary text-primary font-extrabold rounded-xl text-xs sm:text-sm hover:bg-primary/10 transition-all active:scale-95">
                  Rate Worker
                </button>`;
           } else {
             actionHtml = `
-               <p class="text-sm font-extrabold text-yellow-600 mt-4 flex items-center gap-1">
-                 <span class="material-symbols-outlined fill-icon text-lg text-yellow-500">star</span> Rated ${b.rating_given}/5 Stars
+               <p class="text-xs sm:text-sm font-extrabold text-yellow-600 mt-4 flex items-center gap-1">
+                 <span class="material-symbols-outlined fill-icon text-base sm:text-lg text-yellow-500">star</span> Rated ${b.rating_given}/5 Stars
                </p>`;
           }
         }
+
+        // 🎯 FIXED: Dynamic extraction of native timestamp properties
+        const assignmentTime = new Date(b.created_at || b.completed_at || b.started_at || new Date());
+        const dateStr = assignmentTime.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = assignmentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
         return `
-          <div class="bg-surface-lowest rounded-3xl p-6 shadow-[0_4px_20px_rgba(28,28,24,0.03)] border border-outline/20">
-            <div class="flex justify-between items-start mb-4 border-b border-surface-variant pb-4">
-              <div>
-                <div class="flex items-center gap-2 mb-1.5">
-                  <span class="material-symbols-outlined text-sm ${badgeConfig.color.split(' ')[1]}">${badgeConfig.icon}</span>
-                  <span class="text-[10px] font-black uppercase tracking-widest ${badgeConfig.color} px-2.5 py-0.5 rounded-full">${badgeConfig.text}</span>
+          <div class="bg-surface-lowest rounded-3xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(28,28,24,0.03)] border border-outline/20 hover:shadow-md transition-shadow duration-300">
+            <div class="flex justify-between items-start mb-4 border-b border-surface-variant pb-4 gap-4">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
+                  <span class="material-symbols-outlined text-xs sm:text-sm ${badgeConfig.color.split(' ')[1]}">${badgeConfig.icon}</span>
+                  <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${badgeConfig.color} px-2.5 py-0.5 rounded-full">${badgeConfig.text}</span>
                 </div>
-                <h3 class="font-extrabold text-lg text-on-background">${b.worker_name || 'Worker Assignment'}</h3>
-                <p class="text-xs font-bold text-primary">${b.worker_skill || 'Professional'}</p>
+                <!-- Card titles scale flexibly dynamically based on laptop vs mobile sizing layout metrics -->
+                <h3 class="font-black text-base sm:text-lg text-on-background truncate leading-tight">${b.worker_name || 'Worker Assignment'}</h3>
+                <p class="text-[11px] sm:text-xs font-bold text-primary mt-0.5">${b.worker_skill || 'Professional'}</p>
+                
+                <!-- 🎯 ATTACHED PERMANENT DATE & TIME ROW -->
+                <p class="text-[10px] sm:text-xs font-semibold text-[#89726d] flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-xs sm:text-sm">calendar_month</span> ${dateStr} • ${timeStr}
+                </p>
               </div>
-              <div class="text-right">
-                <p class="text-[10px] font-bold text-[#89726d] uppercase mb-1">Req. ID #${b.id}</p>
-                <p class="text-sm font-black text-[#1c1c18]">${b.final_price ? '₹' + b.final_price : 'Hourly Calc'}</p>
+              <div class="text-right shrink-0">
+                <p class="text-base sm:text-lg md:text-xl font-black text-on-background tracking-tight">${b.final_price ? '₹' + b.final_price : ''}</p>
               </div>
             </div>
             
-            <p class="text-sm text-[#56423e] bg-surface-variant/50 p-4 rounded-2xl italic border border-outline/10">"${b.service_desc}"</p>
+            <p class="text-xs sm:text-sm text-[#56423e] bg-surface-variant/50 p-3 sm:p-4 rounded-2xl italic border border-outline/10 font-medium">"${b.service_desc}"</p>
             
             ${actionHtml}
           </div>
@@ -280,29 +283,20 @@
       try {
         const res = await fetch(`${API}/bookings/`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Session-Key': sessionKey
-          },
-          body: JSON.stringify({
-            booking_id: bookingId,
-            status: 'completed' // This triggers the backend math!
-          })
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          body: JSON.stringify({ booking_id: bookingId, status: 'completed' })
         });
 
         const data = await res.json();
         if (data.status === 'success') {
           alert("Job completed! The receipt has been sent to your notifications.");
-          loadBookings(); // Refresh the history list
+          loadBookings();
         } else {
           alert("Error: " + data.message);
         }
-      } catch (e) {
-        alert("Failed to connect to the server.");
-      }
+      } catch (e) { alert("Failed to connect to the server."); }
     }
 
-    // API Actions
     async function cancelBooking(id) {
       if (!confirm("Are you sure you want to cancel this pending request?")) return;
       try {
@@ -333,17 +327,14 @@
         const data = await res.json();
         if (data.status === 'success') {
           alert("Job completed! The receipt has been sent to both you and the worker.");
-          openRateModal(id); // Opens the rating popup
-          loadBookings();    // Refreshes the screen
+          openRateModal(id);
+          loadBookings();
         } else {
           alert(data.message);
         }
-      } catch (e) {
-        alert("Failed to connect to the server.");
-      }
+      } catch (e) { alert("Failed to connect to the server."); }
     }
 
-    // Rating Modal Logic
     function openRateModal(id) {
       selectedBookingId = id;
       setStar(5);
@@ -384,7 +375,7 @@
         const data = await res.json();
         if (data.status === 'success') {
           closeRateModal();
-          loadBookings(); // Refresh UI to show the stars
+          loadBookings();
         }
       } catch (e) { alert("Communication exception processing user evaluation parameters."); }
     }

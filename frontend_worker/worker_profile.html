@@ -7,137 +7,234 @@
   <title>Worknest — Profile Settings</title>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
     tailwind.config = {
-      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "primary": "#ea580c",
-            "surface": "#ffffff",
-            "on-surface": "#0f172a",
-            "on-surface-variant": "#475569",
-            "surface-container-low": "#f6f3ec",
-            "surface-container-highest": "#e5e2db",
-            "background": "#fcf4ed",
-            "outline-variant": "#ddc0ba"
+            primary: '#9f402d',
+            'primary-light': '#e2725b',
+            'primary-container': '#ffdad3',
+            surface: '#fcf9f2',
+            'surface-container': '#f1eee7',
+            'on-surface': '#1c1c18',
+            secondary: '#56642b',
+            'secondary-container': '#d6e7a1',
           },
-          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Be Vietnam Pro"] },
+          fontFamily: { sans: ['Manrope', 'sans-serif'] },
+          borderRadius: { DEFAULT: '1rem', lg: '1.5rem', xl: '2rem', full: '9999px' },
         },
       },
     }
   </script>
   <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #fcf9f2;
+      color: #1c1c18;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
     .paper-grain {
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      opacity: 0.03;
+      opacity: 0.025;
       pointer-events: none;
+    }
+
+    /* Asymmetric Premium Organic Shapes scaled dynamically */
+    .pebble-card-1 {
+      border-radius: 2rem 1rem 2rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .pebble-card-1 {
+        border-radius: 2.5rem 1.25rem 2.5rem 1.75rem;
+      }
+    }
+
+    .nav-item {
+      color: #89726d;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-item.active {
+      color: #9f402d !important;
+      background: #ffdad3;
     }
   </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
-  <div class="fixed inset-0 paper-grain z-0"></div>
+<body class="bg-surface text-on-surface min-h-screen pb-32 select-none overflow-y-auto">
+  <div class="fixed inset-0 paper-grain z- pointer-events-none"></div>
 
-  <div id="verification-shield-screen"
-    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#fcf4ed]">
-    <div class="bg-[#f6f3ec] max-w-md p-10 border border-[#ddc0ba]/40 shadow-xl space-y-6 rounded-[2rem]">
-      <div
-        class="w-20 h-20 bg-amber-100 text-[#ea580c] rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
-        <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
+  <div id="verification-shield-screen" class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-4 text-center bg-[#fcf9f2]">
+    <div class="bg-white w-full max-w-sm p-6 sm:p-8 border border-[#ddc0ba]/40 shadow-xl space-y-5 rounded-2xl pebble-card-1">
+      <div class="w-14 h-14 bg-[#ffdad3] text-[#9f402d] rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
+        <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
       </div>
-      <h2 class="font-headline text-3xl font-extrabold text-[#0f172a]">Verification Pending</h2>
-      <p class="text-[#475569] text-sm leading-relaxed">
-        Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
-        your profile details and identity credentials.
-      </p>
+      <div class="space-y-1.5">
+        <h2 class="text-xl sm:text-2xl font-black text-[#1c1c18] tracking-tight">Verification Pending</h2>
+        <p class="text-[#56423e] text-xs sm:text-sm font-semibold leading-relaxed px-2">
+          Welcome to Worknest! Your profile coordinates are secure. You cannot access task schedules until an admin verifies your identity.
+        </p>
+      </div>
 
-      <div class="bg-white p-4 rounded-2xl border border-[#ddc0ba] text-left space-y-3">
-        <label class="text-[10px] font-bold uppercase tracking-widest text-[#475569] ml-1">Message System
-          Administration</label>
-        <textarea id="pending-msg-input"
-          placeholder="Type a note or ask the admin for a status check on your registration documents..."
-          class="w-full p-4 bg-[#fcf4ed]/50 border border-[#ddc0ba]/40 focus:border-[#ea580c] rounded-xl text-xs outline-none resize-none font-medium text-[#0f172a]"
-          rows="3"></textarea>
-        <button id="send-pending-btn" onclick="sendVerificationMessage()"
-          class="w-full py-3 bg-[#ea580c] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider hover:opacity-90 transition-opacity">
+      <div class="bg-[#f1eee7]/50 p-4 rounded-xl border border-[#ddc0ba]/30 text-left space-y-2.5">
+        <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-0.5">Message Administration</label>
+        <textarea id="pending-msg-input" placeholder="Type a note or ask the admin for a status check on your registration documents..." class="w-full p-3 bg-white border border-[#ddc0ba]/40 focus:ring-2 focus:ring-[#9f402d]/20 rounded-lg text-xs outline-none resize-none font-medium text-on-surface" rows="3"></textarea>
+        <button id="send-pending-btn" onclick="sendVerificationMessage()" class="w-full py-3 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition-all duration-300">
           Send Note to Admin
         </button>
       </div>
 
-      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
-        class="w-full py-4 bg-stone-200 hover:bg-stone-300 text-[#475569] font-bold rounded-2xl text-sm transition-colors">
+      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'" class="w-full py-3 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-lg text-xs uppercase tracking-wider transition-colors duration-300">
         Sign Out Safely
       </button>
     </div>
   </div>
 
-
-  <header
-    class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
-    <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
-        <span class="material-symbols-outlined text-white text-lg fill-icon">potted_plant</span>
-      </div>
-      <span class="text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <a href="worker_messages.html"
-        class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
-        <span class="material-symbols-outlined text-2xl">notifications</span>
-        <span class="absolute top-2 right-2 w-2 h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
-      </a>
-      <div
-        class="w-10 h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
-        <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
-          class="w-full h-full object-cover rounded-full">
-    </div>
-    </div>
-  </header>
-
-
-  <main class="relative z-10 pt-24 px-6 max-w-2xl mx-auto space-y-6">
-    <form id="owner-profile-form"
-      class="bg-surface-container-low p-6 rounded-[2rem] border border-outline-variant/20 space-y-4"
-      enctype="multipart/form-data">
-      <div class="flex flex-col items-center space-y-3">
-        <div class="relative group w-20 h-20 rounded-full overflow-hidden border-2 border-[9f402d]">
-          <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
-            class="w-full h-full object-cover rounded-full">
-          <input type="file" name="profile_pic" id="file-selector" class="hidden" accept="image/*">
-          <label for="file-selector"
-            class="absolute inset-0 bg-black/50 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer">Edit</label>
+  <div id="profile-dashboard-content">
+    <header class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-8 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+          <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
         </div>
-        <h3 id="my-name-title" class="font-headline font-bold text-base">Artisan</h3>
+        <span class="text-lg sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
       </div>
-      <div class="space-y-3">
-        <input type="text" name="fullname" id="my-fullname-input" required
-          class="w-full p-3.5 bg-white border border-outline-variant/40 rounded-xl text-sm" placeholder="Full Name" />
-        <input type="tel" name="phone" id="my-phone-input" required
-          class="w-full p-3.5 bg-white border border-outline-variant/40 rounded-xl text-sm" placeholder="Phone" />
-        <textarea name="bio" id="my-bio-input"
-          class="w-full p-3.5 bg-white border border-outline-variant/40 rounded-xl text-sm resize-none" rows="2"
-          placeholder="Experience details..."></textarea>
+
+      <div class="flex items-center gap-3 sm:gap-4">
+        <a href="worker_messages.html" class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
+          <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
+          <span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
+        </a>
+        <div class="h-5 sm:h-6 w-[1px] bg-[#ddc0ba]/40 mx-0.5 sm:mx-1"></div>
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden p-0.5 bg-white shadow-sm">
+          <img id="nav-avatar-preview" src="https://ui-avatars.com/api/?background=ffdad3&color=9f402d&bold=true" class="w-full h-full object-cover rounded-full">
+        </div>
       </div>
-      <button type="submit"
-        class="w-full py-3 bg-[#9f402d] text-white font-bold text-xs rounded-full uppercase tracking-wider">Save
-        Changes</button>
-    </form>
+    </header>
 
-  </main>
+    <main class="relative z-10 pt-6 sm:pt-10 px-4 sm:px-6 max-w-2xl mx-auto space-y-6">
+      
+      <div class="mb-4">
+        <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-[#1c1c18]">Profile Configuration</h2>
+        <p class="text-xs sm:text-sm text-[#56423e] font-medium mt-1">Manage your professional credentials and identity metrics.</p>
+      </div>
 
+      <form id="owner-profile-form" class="bg-white p-5 sm:p-8 border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl shadow-sm pebble-card-1 space-y-6">
+        
+        <div class="flex flex-col items-center space-y-3 border-b border-[#f1eee7] pb-5">
+          <div class="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-[#9f402d] p-1 bg-surface shadow-inner">
+            <img id="my-profile-avatar" src="https://ui-avatars.com/api/?background=ffdad3&color=9f402d&bold=true" class="w-full h-full object-cover rounded-full">
+            <input type="file" name="profile_pic" id="file-selector" class="hidden" accept="image/*" onchange="previewAvatarImage(this)">
+            <label for="file-selector" class="absolute inset-0 bg-black/60 text-white text-[10px] font-black uppercase tracking-wider flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
+              <span class="material-symbols-outlined text-sm mb-0.5">photo_camera</span>Change
+            </label>
+          </div>
+          <div class="text-center">
+            <h3 id="my-name-title" class="font-black text-base sm:text-lg text-[#1c1c18]">Loading Profile...</h3>
+            <p id="my-skill-badge" class="text-[10px] uppercase font-black text-[#56642b] tracking-widest mt-0.5">--</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Full Name</label>
+            <input type="text" name="fullname" id="my-fullname-input" required class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface" placeholder="Your Full Legal Name" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Phone Connection</label>
+              <input type="tel" name="phone" id="my-phone-input" required class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface" placeholder="Phone Number" />
+            </div>
+
+            <div>
+              <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Hourly Billing Rate (₹)</label>
+              <input type="number" name="hourly_rate" id="my-rate-input" required class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface" placeholder="Hourly Rate in ₹" />
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Artisan Trade Category</label>
+            <select name="skill" id="my-skill-input" class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface">
+              <option value="Plumber">Plumber</option>
+              <option value="Electrician">Electrician</option>
+              <option value="House Maid">House Maid</option>
+              <option value="Home Cook">Home Cook</option>
+              <option value="Carpenter">Carpenter</option>
+              <option value="Baby Sitter">Baby Sitter</option>
+              <option value="Painter">Painter</option>
+              <option value="Gardener">Gardener</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Professional Summary / Bio</label>
+            <textarea name="bio" id="my-bio-input" class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-medium transition-all text-on-surface resize-none" rows="4" placeholder="Detail your years of expertise, specialized tools, and job fields..."></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="window.location.href='worker_dashboard.html'" class="flex-1 py-3.5 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-xl text-xs uppercase tracking-wider transition-colors duration-200">
+            Cancel
+          </button>
+          <button type="submit" id="save-profile-btn" class="flex-1 py-3.5 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider transition-all duration-300">
+            Save Modifications
+          </button>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+  <nav class="fixed bottom-4 left-4 right-4 z-50 bg-[#fcf9f2]/85 backdrop-blur-2xl border border-[#ddc0ba]/40 rounded-xl sm:rounded-2xl shadow-xl max-w-sm mx-auto p-1 flex justify-between items-center">
+    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl" href="worker_dashboard.html" id="nav-home">
+      <span class="material-symbols-outlined text-lg sm:text-[22px]">home_work</span>
+      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">Home</span>
+    </a>
+    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#f1eee7]/50" href="worker_requests.html" id="nav-requests">
+      <span class="material-symbols-outlined text-lg sm:text-[22px]">hail</span>
+      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">Requests</span>
+    </a>
+    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#f1eee7]/50" href="worker_booking_history.html" id="nav-history">
+      <span class="material-symbols-outlined text-lg sm:text-[22px]">calendar_today</span>
+      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">History</span>
+    </a>
+    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#f1eee7]/50" href="worker_search.html" id="nav-search">
+      <span class="material-symbols-outlined text-lg sm:text-[22px]">search</span>
+      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">Search</span>
+    </a>
+  </nav>
 
   <script>
+    const path = window.location.pathname;
+    if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
+    else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
+    else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
+    else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
     const API_BASE = 'http://localhost:8000/api';
-    let globalWorkersList = [];
+
+    // Image preview helper function
+    function previewAvatarImage(input) {
+      if (input.files && input.files) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('my-profile-avatar').src = e.target.result;
+        }
+        reader.readAsDataURL(input.files);
+      }
+    }
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
@@ -155,25 +252,69 @@
 
           // 🛡️ THE ABSOLUTE VERIFICATION GUARD LAYER
           if (worker.is_verified === false) {
-            // Force display the message screen and keep all real components completely hidden!
             document.getElementById('verification-shield-screen').classList.remove('hidden');
-
-            // Hide your active headers, bento grids, navigation decks, and main lists
-            const mainElements = document.querySelectorAll('header, main, nav');
-            mainElements.forEach(el => {
-              if (el.id !== 'verification-shield-screen' && !el.contains(document.getElementById('verification-shield-screen'))) {
-                el.classList.add('hidden');
-              }
-            });
+            document.getElementById('profile-dashboard-content').classList.add('hidden');
+            document.querySelector('nav').classList.add('hidden');
             return;
           }
 
-          // If verified, proceed with your page rendering logic normally as written...
+          // ✅ Verified User: Hydrate complete data metrics into fields
+          document.getElementById('my-name-title').textContent = worker.fullname;
+          document.getElementById('my-skill-badge').textContent = worker.skill || 'General Artisan';
+          
+          document.getElementById('my-fullname-input').value = worker.fullname || '';
+          document.getElementById('my-phone-input').value = worker.phone || '';
+          document.getElementById('my-rate-input').value = worker.hourly_rate || 0;
+          document.getElementById('my-skill-input').value = worker.skill || 'Plumber';
+          document.getElementById('my-bio-input').value = worker.bio || '';
+
+          const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+          const avatarPic = worker.profile_pic ? `http://localhost:8000${worker.profile_pic}` : fallbackUrl;
+          
+          document.getElementById('my-profile-avatar').src = avatarPic;
+          document.getElementById('nav-avatar-preview').src = avatarPic;
         }
       } catch (e) { console.error("Identity status validation breakdown:", e); }
     }
 
-    // 📩 Transmit the message straight into the worker's bio field model row
+    // 📩 Submit form via multi-part FormData payload to backend model view endpoints
+    document.getElementById('owner-profile-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const saveBtn = document.getElementById('save-profile-btn');
+      saveBtn.textContent = "SAVING CHANGES...";
+      saveBtn.disabled = true;
+
+      const sessionKey = localStorage.getItem('session_key');
+      const formData = new FormData(this);
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          method: 'POST',
+          headers: {
+            'X-Session-Key': sessionKey
+            // NOTE: Do NOT set Content-Type header when using FormData; the browser handles boundaries dynamically
+          },
+          body: formData,
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          alert("Profile configurations saved successfully!");
+          window.location.reload();
+        } else {
+          alert("Error: " + (data.message || "Failed to update profile parameters."));
+        }
+      } catch (err) {
+        console.error("Form handling execution interruption:", err);
+        alert("Failed to connect to database server.");
+      } finally {
+        saveBtn.textContent = "SAVE MODIFICATIONS";
+        saveBtn.disabled = false;
+      }
+    });
+
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
       if (!note) { alert("Please input a message first."); return; }
@@ -186,7 +327,7 @@
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
-          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` }) // Store note cleanly inside the bio string block
+          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` })
         });
         const data = await res.json();
         if (data.status === 'success') {
@@ -197,9 +338,6 @@
       } catch (e) { console.error(e); btn.textContent = "Send Note to Admin"; btn.disabled = false; }
     }
 
-
-
-    initializeProfileExplorer();
     checkCurrentStatus();
   </script>
 </body>

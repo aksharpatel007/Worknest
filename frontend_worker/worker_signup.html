@@ -6,11 +6,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Worknest — Join the Expert Network</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Be+Vietnam+Pro:wght@400;600&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Be+Vietnam+Pro:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <style>
         body {
             font-family: 'Be Vietnam Pro', sans-serif;
@@ -34,13 +31,43 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
+
+        /* 🎯 iPhone જેવી ધ્રૂજવા (Shake) માટેની એનિમેશન સીએસએસ */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake-input {
+            animation: shake 0.4s ease-in-out;
+            border: 1.5px solid #ba1a1a !important;
+        }
     </style>
 </head>
 
 <body class="text-[#3D405B] min-h-screen pb-10">
 
-    <header
-        class="sticky top-0 z-50 bg-[#fcf9f4]/80 backdrop-blur-md px-6 py-5 flex items-center justify-between border-b border-[#ddc0ba]/30">
+    <div id="toast-notification" class="fixed top-24 left-1/2 transform -translate-x-1/2 translate-y-[-100px] opacity-0 transition-all duration-500 max-w-sm w-full px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 z-[9999] pointer-events-none border border-white/10" style="background-color: #31302d;">
+        <span class="material-symbols-outlined" style="color: #ffb4a5;">error</span>
+        <span id="toast-text" class="text-sm font-bold tracking-wide flex-1" style="color: #ffb4a5;">Error message here</span>
+    </div>
+
+    <!-- Success Popup -->
+    <div id="success-popup" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:2rem; padding:2.5rem 2rem; max-width:360px; width:90%; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.2); animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);">
+            <div style="width:72px;height:72px;background:linear-gradient(135deg,#22c55e,#10b981);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
+                <span class="material-symbols-outlined" style="color:white;font-size:2.2rem;font-variation-settings:'FILL' 1;">verified_user</span>
+            </div>
+            <h3 style="font-size:1.3rem;font-weight:800;color:#1c1c19;margin-bottom:0.5rem;">Application Submitted!</h3>
+            <p style="color:#635f40;font-size:0.9rem;margin-bottom:1.5rem;">Your worker profile has been created. You will be visible on the map once an admin verifies your ID.</p>
+            <button onclick="closeSuccessAndRedirect()" style="background:linear-gradient(135deg,#22c55e,#10b981);color:white;border:none;padding:0.85rem 2.5rem;border-radius:9999px;font-weight:700;font-size:1rem;cursor:pointer;width:100%;">Go to Dashboard</button>
+        </div>
+    </div>
+    <style>
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+
+    <header class="sticky top-0 z-50 bg-[#fcf9f4]/80 backdrop-blur-md px-6 py-5 flex items-center justify-between border-b border-[#ddc0ba]/30">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#E07A5F] flex items-center justify-center shadow-lg">
                 <span class="material-symbols-outlined text-white">shield_person</span>
@@ -52,46 +79,45 @@
 
     <main class="max-w-2xl mx-auto px-6 py-12">
         <form id="worker-form" class="space-y-8" enctype="multipart/form-data">
-            <div id="error-msg"
-                class="hidden p-4 bg-red-50 text-red-700 text-sm font-bold rounded-2xl border border-red-100"></div>
 
             <div id="step-1" class="space-y-6">
                 <div class="space-y-2">
-                    <h2 class="headline text-4xl font-extrabold text-[#3D405B]">Start your <span
-                            class="text-[#E07A5F]">journey.</span></h2>
+                    <h2 class="headline text-4xl font-extrabold text-[#3D405B]">Start your <span class="text-[#E07A5F]">journey.</span></h2>
                     <p class="text-[#89726d]">Create your professional identity to join our trusted network.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Full
-                            Name</label>
-                        <input type="text" name="fullname" required placeholder="Enter legal name"
-                            class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Full Name</label>
+                        <input type="text" name="fullname" id="worker-fullname" required placeholder="Enter legal name"
+                            class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm text-[#3D405B]">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Phone
-                            Number</label>
-                        <input type="tel" name="phone" required placeholder="+91 00000 00000"
-                            class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Phone Number</label>
+                        <input type="tel" name="phone" id="worker-phone" required placeholder="+91 00000 00000"
+                            class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm text-[#3D405B]">
                     </div>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Email
-                        Address</label>
-                    <input type="email" name="email" required placeholder="name@example.com"
-                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Email Address</label>
+                    <input type="email" name="email" id="worker-email" required placeholder="name@example.com"
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm text-[#3D405B]">
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Create
-                        Password</label>
-                    <input type="password" name="password" required placeholder="••••••••"
-                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Create Password</label>
+                    <div id="password-wrapper" class="relative flex items-center rounded-2xl border border-transparent transition-all duration-300">
+                        <input type="password" name="password" id="worker-password-field" required placeholder="••••••••"
+                            class="w-full p-4 pr-12 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm text-[#3D405B]">
+                        
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-4 text-[#89726d] hover:text-[#E07A5F] focus:outline-none flex items-center justify-center">
+                            <span class="material-symbols-outlined" id="eye-icon">visibility_off</span>
+                        </button>
+                    </div>
                 </div>
 
-                <button type="button" onclick="nextStep()"
+                <button type="button" onclick="validateStep1AndNext()"
                     class="w-full py-5 bg-[#E07A5F] text-white font-bold rounded-2xl shadow-xl shadow-[#E07A5F]/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-3">
                     Continue to Verification <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
@@ -104,10 +130,8 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Choose
-                        Profession</label>
-                    <select name="skill"
-                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Choose Profession</label>
+                    <select name="skill" class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm text-[#3D405B]">
                         <optgroup label="Home Maintenance">
                             <option value="Plumber">Plumber</option>
                             <option value="Electrician">Electrician</option>
@@ -133,39 +157,37 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Hourly Rate
-                        (₹)</label>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Hourly Rate (₹)</label>
                     <input type="number" name="hourly_rate" placeholder="300"
-                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm">
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm text-[#3D405B]">
                 </div>
 
                 <div class="space-y-2">
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Brief Bio</label>
                     <textarea name="bio" placeholder="Tell us about your experience..."
-                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm resize-none"
-                        rows="3"></textarea>
+                        class="w-full p-4 glass rounded-2xl focus:ring-2 focus:ring-[#E07A5F]/20 outline-none border-none shadow-sm resize-none text-[#3D405B]" rows="3"></textarea>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Government ID
-                        Proof (License/ID)</label>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#89726d] ml-1">Government ID Proof (License/ID)</label>
                     <div class="relative group">
                         <input type="file" name="id_proof_image" id="id_proof" accept="image/*" class="hidden">
-                        <label for="id_proof"
-                            class="flex flex-col items-center justify-center p-10 border-2 border-dashed border-[#ddc0ba] rounded-3xl bg-white/50 cursor-pointer hover:border-[#E07A5F] transition-colors">
-                            <span class="material-symbols-outlined text-4xl text-[#E07A5F] mb-2">upload_file</span>
-                            <span class="text-sm font-bold text-[#3D405B]" id="file-name">Click to upload ID
-                                photo</span>
-                            <span class="text-xs text-[#89726d] mt-1">PNG, JPG up to 5MB</span>
+                        <label for="id_proof" class="flex flex-col items-center justify-center p-10 border-2 border-dashed border-[#ddc0ba] rounded-3xl bg-white/50 cursor-pointer hover:border-[#E07A5F] transition-colors overflow-hidden" id="id-upload-label" style="min-height: 160px;">
+                            <!-- Default state -->
+                            <div id="upload-placeholder">
+                                <span class="material-symbols-outlined text-4xl text-[#E07A5F] mb-2 block text-center">upload_file</span>
+                                <span class="text-sm font-bold text-[#3D405B] block text-center">Click to upload ID photo</span>
+                                <span class="text-xs text-[#89726d] mt-1 block text-center">PNG, JPG up to 5MB</span>
+                            </div>
+                            <!-- Image preview (hidden by default) -->
+                            <img id="id-preview-img" src="" alt="ID Preview" style="display:none; width:100%; max-height:280px; object-fit:contain; border-radius:1.25rem; padding: 8px;">
                         </label>
                     </div>
                 </div>
 
                 <div class="flex gap-4">
-                    <button type="button" onclick="prevStep()"
-                        class="flex-1 py-3 bg-stone-200 text-stone-600 font-bold rounded-2xl hover:bg-stone-300 transition-colors">Back</button>
-                    <button type="submit" id="submit-btn"
-                        class="w-full py-4 bg-[#81B29A] text-white font-bold rounded-2xl shadow-xl shadow-[#81B29A]/20 hover:scale-[1.02] transition-transform">
+                    <button type="button" onclick="prevStep()" class="flex-1 py-3 bg-stone-200 text-stone-600 font-bold rounded-2xl hover:bg-stone-300 transition-colors">Back</button>
+                    <button type="submit" id="submit-btn" class="w-full py-4 bg-[#81B29A] text-white font-bold rounded-2xl shadow-xl shadow-[#81B29A]/20 hover:scale-[1.02] transition-transform">
                         Register
                     </button>
                 </div>
@@ -173,8 +195,120 @@
         </form>
     </main>
 
+    <div class="fixed -top-20 -left-20 w-64 h-64 bg-secondary-container/20 rounded-full blur-3xl -z-10"></div>
+    <div class="fixed -bottom-32 -right-32 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl -z-10"></div>
+
     <script>
-        function nextStep() {
+        function showSuccessPopup() {
+            document.getElementById('success-popup').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('success-popup').style.display = 'none';
+                window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
+            }, 3000);
+        }
+
+        function closeSuccessAndRedirect() {
+            document.getElementById('success-popup').style.display = 'none';
+            window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
+        }
+
+        // ૧. પ્રીમિયમ ટોસ્ટ પોપ-અપ ટ્રિગર કરવાનું ફંક્શન (લાલ અક્ષરો સાથે)
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            const toastText = document.getElementById('toast-text');
+            
+            toastText.textContent = message;
+            
+            // એનિમેશન સાથે ટોસ્ટ બતાવો
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            // ૩.૫ સેકન્ડ પછી ઓટોમેટિક છુપાવી દો
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+            }, 3500);
+        }
+
+        // ૨. પાસવર્ડ ઇનપુટ બોક્સ ધ્રૂજાવવા (Shake) માટેનું ફંક્શન
+        function triggerPasswordShake() {
+            const wrapper = document.getElementById('password-wrapper');
+            wrapper.classList.add('shake-input');
+            
+            // એનિમેશન પૂરું થતાં જ ક્લાસ હટાવી દો
+            setTimeout(() => {
+                wrapper.classList.remove('shake-input');
+            }, 400);
+        }
+
+        // ૩. આંખવાળું શો/હાઈડ બટન કંટ્રોલ કરવાનું ફંક્શન
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('worker-password-field');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.textContent = 'visibility';
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.textContent = 'visibility_off';
+            }
+        }
+
+        // ૪. પાસવર્ડ ચેક કરીને Step 2 ઓપન કરવાનું નવું એનિમેટેડ ફંક્શન
+        function validateStep1AndNext() {
+            const passwordField = document.getElementById('worker-password-field');
+            const password = passwordField.value;
+
+            // ઇનપુટ વેલ્યુ ચેક
+            const fullname = document.getElementById('worker-fullname').value.trim();
+            const phone = document.getElementById('worker-phone').value.trim();
+            const email = document.getElementById('worker-email').value.trim();
+
+            if (!fullname || !phone || !email || !password) {
+                triggerPasswordShake();
+                showToast("All fields are required to continue!");
+                return;
+            }
+
+            // Phone validation: 10 digits, starts with 9, 8, or 7
+            if (!/^[789]\d{9}$/.test(phone)) {
+                showToast("Enter a valid 10-digit mobile number starting with 9, 8, or 7!");
+                return;
+            }
+
+            // નિયમ ૩: સ્પેસબાર રોકવી
+            if (password.trim().length === 0) {
+                triggerPasswordShake();
+                showToast("Password cannot be empty or just spaces!");
+                return;
+            }
+
+            // નિયમ ૧: લંબાઈ (ઓછામાં ઓછા 6 અક્ષર)
+            if (password.length < 6) {
+                triggerPasswordShake();
+                showToast("Password must be at least 6 characters long!");
+                return;
+            }
+
+            // નિયમ ૫: નંબર અને અક્ષર મિક્સર
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            if (!hasLetter || !hasNumber) {
+                triggerPasswordShake();
+                showToast("Password must include both letters and numbers!");
+                return;
+            }
+
+            // નિયમ ૬: સ્પેશિયલ કેરેક્ટર
+            const hasSpecialChar = /[@#$%&*=!?]/.test(password);
+            if (!hasSpecialChar) {
+                triggerPasswordShake();
+                showToast("Password must include at least one special character (e.g., @, #, $)");
+                return;
+            }
+
+            // જો પાસવર્ડ સાચો હોય તો આગળ જવા દો
             document.getElementById('step-1').classList.add('step-hidden');
             document.getElementById('step-2').classList.remove('step-hidden');
             document.getElementById('step-indicator').textContent = "Step 2 of 2";
@@ -187,26 +321,38 @@
             document.getElementById('step-indicator').textContent = "Step 1 of 2";
         }
 
-        // 🎯 FIXED: Correctly tracking the name property from the array index signature
+        // ૫. ફાઇળ અપલોડ કરવા વાળો બગ ફિક્સ
         document.getElementById('id_proof').addEventListener('change', function () {
             if (this.files && this.files.length > 0) {
-                const fileName = this.files.name; // 🎯 Added index accessor here
-                document.getElementById('file-name').textContent = fileName;
-                document.getElementById('file-name').classList.add('text-[#81B29A]');
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Hide placeholder, show image
+                    document.getElementById('upload-placeholder').style.display = 'none';
+                    const img = document.getElementById('id-preview-img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    // Remove padding from label so image fills it
+                    document.getElementById('id-upload-label').style.padding = '0';
+                    document.getElementById('id-upload-label').style.border = '2px solid #E07A5F';
+                };
+                reader.readAsDataURL(this.files[0]);
             } else {
-                document.getElementById('file-name').textContent = "Click to upload ID photo";
-                document.getElementById('file-name').classList.remove('text-[#81B29A]');
+                // Reset back to placeholder
+                document.getElementById('upload-placeholder').style.display = 'block';
+                document.getElementById('id-preview-img').style.display = 'none';
+                document.getElementById('id-preview-img').src = '';
+                document.getElementById('id-upload-label').style.padding = '';
+                document.getElementById('id-upload-label').style.border = '';
             }
         });
 
+        // ૬. ફાઇનલ બેકએન્ડ સબમિશન લોજિક
         document.getElementById('worker-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
-            const errorEl = document.getElementById('error-msg');
 
             submitBtn.disabled = true;
             submitBtn.textContent = "Registering...";
-            errorEl.classList.add('hidden');
 
             const formData = new FormData(e.target);
             formData.append('role_id', '2');
@@ -220,21 +366,17 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    alert("Application Submitted! You will be visible on the map once an admin verifies your ID.");
+                    showSuccessPopup();
                     if (data.session_key) {
                         localStorage.setItem('session_key', data.session_key);
                     }
-                    // Fallback-safe path routing string
-                    window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
                 } else {
-                    errorEl.textContent = data.message || "Registration failed.";
-                    errorEl.classList.remove('hidden');
+                    showToast(data.message || "Registration failed.");
                     submitBtn.disabled = false;
                     submitBtn.textContent = "Register";
                 }
             } catch (err) {
-                errorEl.textContent = "Cannot connect to server. Check if Django is running.";
-                errorEl.classList.remove('hidden');
+                showToast("Cannot connect to server. Check if Django is running.");
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Register";
             }

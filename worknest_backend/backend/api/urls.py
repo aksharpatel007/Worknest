@@ -7,6 +7,9 @@ urlpatterns = [
     # Auth & Signup
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
+    path('change-password/', views.change_password_api, name='change_password_api'),
+    path('forgot-password/', views.forgot_password_api, name='forgot_password_api'),
+    
     
     # Profile & Worker Listing
     path('profile/', views.profile_view, name='profile'),
