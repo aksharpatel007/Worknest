@@ -32,7 +32,7 @@ def signup_view(request):
         
         # Create user with all professional fields integrated
         user = User.objects.create_user(
-            username=data['email'],
+            username=data['fullname'],
             email=data['email'],
             password=data['password'],
             fullname=data['fullname'],
@@ -143,9 +143,9 @@ def worker_list(request):
 @csrf_exempt
 @api_view(['GET', 'POST'])
 def profile_view(request):
-    user = get_authenticated_user_from_header(request)
+    user = get_authenticated_user_from_header(request) 
     if not user:
-        return Response({'status': 'error', 'message': 'Admin access required or invalid session'}, status=401)
+        return Response({'status': 'error', 'message': 'Invalid session'}, status=401) 
 
     if request.method == 'GET':
         return Response({
@@ -158,31 +158,36 @@ def profile_view(request):
                 'phone': user.phone,
                 'role_id': user.role_id,
                 'skill': user.skill,
-                'bio': user.bio,
+                'bio': user.bio, 
+                'admin_messages': user.admin_messages, 
                 'hourly_rate': user.hourly_rate,
                 'is_verified': user.is_verified,
                 'is_fraud': user.is_fraud,
-                'profile_pic': user.profile_pic.url if user.profile_pic else None,
-                # 🎯 FIX 1: Add created_at field mapped from user.date_joined
-                'created_at': user.date_joined.isoformat() if user.date_joined else None
+                'profile_pic': user.profile_pic.url if user.profile_pic else None
             }
         })
 
     elif request.method == 'POST':
-        # 🎯 FIX 2: Correct multi-part form data validation handling
-        data = request.POST  
-        if 'fullname' in data: 
-            user.fullname = data['fullname']
-        if 'phone' in data: 
-            user.phone = data['phone']
-        if 'bio' in data: 
-            user.bio = data['bio']
+        is_json = request.content_type == 'application/json' 
+        data = request.data if is_json else request.POST 
+        
+        if 'fullname' in data: user.fullname = data['fullname'] 
+        if 'phone' in data: user.phone = data['phone'] 
+        if 'hourly_rate' in data: user.hourly_rate = data['hourly_rate'][cite: 50]
+        if 'skill' in data: user.skill = data['skill'][cite: 50]
+        
+        # 🎯 CHANNELS MODULAR ROUTING: Separates verification streams from clean text bios instantly
+        if 'bio' in data:
+            incoming_text = data['bio'] 
+            if "VERIFICATION_NOTE:" in incoming_text or "APPEAL_REQUEST:" in incoming_text:
+                user.admin_messages = f"{user.admin_messages or ''}\n{incoming_text}".strip()
+            else:
+                user.bio = incoming_text 
+                
+        if 'profile_pic' in request.FILES: user.profile_pic = request.FILES['profile_pic']
             
-        if 'profile_pic' in request.FILES: 
-            user.profile_pic = request.FILES['profile_pic']
-            
-        user.save()
-        return Response({'status': 'success', 'message': 'Profile updated successfully'})
+        user.save() 
+        return Response({'status': 'success', 'message': 'Profile updated successfully.'})
     
 
 from django.utils import timezone
@@ -389,37 +394,24 @@ def dashboard_stats(request):
 @csrf_exempt
 @api_view(['GET'])
 def get_unverified_workers(request):
-    """
-    Fetches all workers awaiting admin verification approval.
-    Extracts verification notes out of the bio text stream to keep 
-    the inspector panel and notification bell clean.
-    """
-    unverified_workers = User.objects.filter(role_id=2, is_verified=False).order_by('-id')
+    """Fetches unverified workers using native, un-manipulated database properties."""
+    unverified_workers = User.objects.filter(role_id=2, is_verified=False).order_by('-id') 
     
     data_list = []
     for worker in unverified_workers:
-        raw_bio = getattr(worker, 'bio', '') or ''
-        admin_note = ""
-        clean_bio = raw_bio
-        
-        # Extract administrative notes if they exist
-        if raw_bio.startswith("VERIFICATION_NOTE:"):
-            admin_note = raw_bio.replace("VERIFICATION_NOTE:", "").strip()
-            clean_bio = "" # Clear from professional profile overview if it was just a message
-            
         data_list.append({
             'id': worker.id,
             'fullname': worker.fullname,
             'email': worker.email,
             'skill': worker.skill or 'Artisan',
             'hourly_rate': worker.hourly_rate,
-            'bio': clean_bio,
-            'admin_note': admin_note, # Explicit variable payload targeting admin panels
+            'bio': worker.bio or "No bio provided.",
+            'admin_messages': worker.admin_messages or "",
+            'admin_note': worker.admin_messages or "No messages sent to administration yet.",
             'submitted_at': worker.date_joined.strftime('%d %b %Y, %I:%M %p') if worker.date_joined else 'N/A'
         })
         
-    return Response({'status': 'success', 'data': data_list}, status=200)
-
+    return Response({'status': 'success', 'data': data_list}, status=200) 
 
 @api_view(['POST'])
 def verify_worker(request, worker_id):
@@ -501,6 +493,53 @@ def get_fraud_reports(request):
     serializer = UserSerializer(low_trust_workers, many=True)
     return Response({'status': 'success', 'data': serializer.data})
 
+@csrf_exempt
+@api_view(['GET'])
+def worker_detail_api(request, worker_id):
+    """Fetches details of a specific worker along with all user ratings/reviews."""
+    try:
+        worker = User.objects.get(id=worker_id, role_id=2)
+    except User.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Worker not found'}, status=404)
+        
+    # Get all bookings for this worker that have reviews
+    bookings = Booking.objects.filter(worker=worker, rating_given__isnull=False).order_by('-completed_at', '-id')
+    
+    reviews = []
+    for b in bookings:
+        reviews.append({
+            'id': b.id,
+            'client_name': b.client.fullname or b.client.username,
+            'client_avatar': b.client.profile_pic.url if b.client.profile_pic else None,
+            'rating': b.rating_given,
+            'review': b.review_given or '',
+            'date': b.completed_at.strftime('%d %b %Y') if b.completed_at else b.created_at.strftime('%d %b %Y'),
+            'service_desc': b.service_desc
+        })
+        
+    worker_data = {
+        'id': worker.id,
+        'fullname': worker.fullname,
+        'email': worker.email,
+        'phone': worker.phone,
+        'skill': worker.skill or 'Artisan',
+        'hourly_rate': worker.hourly_rate,
+        'bio': worker.bio or "This expert hasn't written a biography yet.",
+        'rating': float(worker.rating),
+        'total_jobs': worker.total_jobs,
+        'is_verified': worker.is_verified,
+        'trust_score': worker.trust_score,
+        'profile_pic': worker.profile_pic.url if worker.profile_pic else None,
+        'date_joined': worker.date_joined.strftime('%d %b %Y') if worker.date_joined else 'N/A'
+    }
+    
+    return Response({
+        'status': 'success',
+        'data': {
+            'worker': worker_data,
+            'reviews': reviews
+        }
+    }, status=200)
 
 
 @csrf_exempt
@@ -579,3 +618,5 @@ def forgot_password_api(request):
             
         except Exception as e:
             return Response({'status': 'error', 'message': f'Server Error: {str(e)}'}, status=500)
+        
+

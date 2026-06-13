@@ -14,6 +14,8 @@ urlpatterns = [
     # Profile & Worker Listing
     path('profile/', views.profile_view, name='profile'),
     path('workers/', views.worker_list, name='worker-list'),
+    path('workers/<int:worker_id>/', views.worker_detail_api, name='worker-detail'),
+    
     
     # Bookings
     path('bookings/', views.user_bookings, name='user-bookings'),

@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'fullname', 'email', 'role_id', 'is_verified', 'is_fraud', 
             'profile_pic', 'skill', 'hourly_rate', 'rating', 'total_jobs', 
-            'date_joined', 'id_proof_image', 'phone', 'bio'
+            'date_joined', 'id_proof_image', 'phone', 'bio', 'admin_messages', 'worker_status', 'latitude', 'longitude', 'trust_score'
         ]
         
 class BookingSerializer(serializers.ModelSerializer):

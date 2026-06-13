@@ -9,11 +9,12 @@ class User(AbstractUser):
     role_id = models.IntegerField(default=3) # 1:Admin, 2:Worker, 3:User
     profile_pic = models.ImageField(upload_to='profiles/', null=True, blank=True)
     session_key = models.CharField(max_length=255, null=True, blank=True)
-    date_joined = models.DateTimeField(default=timezone.now())
+    date_joined = models.DateTimeField(default=timezone.now)
     
     # Worker Specific Fields
     skill = models.CharField(max_length=100, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
+    admin_messages = models.TextField(null=True, blank=True)
     # Changed to Integer for easier calculation in views
     hourly_rate = models.IntegerField(default=0)
     worker_status = models.CharField(max_length=20, default='newbie')
