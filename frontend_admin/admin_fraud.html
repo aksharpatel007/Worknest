@@ -165,9 +165,49 @@
     </div>
   </div>
 
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal" class="hidden fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl transition-all border border-outline/20 text-center">
+      <div class="w-12 h-12 rounded-full bg-orange-50 text-[#9f402d] flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-2xl font-bold">help_outline</span>
+      </div>
+      <h3 id="confirm-title" class="text-lg font-black text-[#1c1c18] tracking-tight">Confirm Action</h3>
+      <p id="confirm-message" class="text-xs sm:text-sm text-[#56423e] leading-relaxed font-medium"></p>
+      <div class="flex gap-3 pt-2">
+        <button id="confirm-cancel-btn" class="w-1/2 py-3 bg-[#f1eee7] text-[#56423e] font-bold rounded-full text-xs sm:text-sm transition-colors hover:bg-[#ddc0ba]/50">Cancel</button>
+        <button id="confirm-ok-btn" class="w-1/2 py-3 bg-[#9f402d] text-white font-extrabold rounded-full text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-container" class="fixed bottom-6 right-6 z- pointer-events-none space-y-3"></div>
 
   <script>
+    function showConfirm(message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+        msgEl.textContent = message;
+        modal.classList.remove('hidden');
+
+        function cleanup(result) {
+          modal.classList.add('hidden');
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        }
+
+        function onOk() { cleanup(true); }
+        function onCancel() { cleanup(false); }
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
     const API = 'http://localhost:8000/api';
     //
     let rawFraudData = [];
@@ -270,7 +310,7 @@
          <div>
           <label class="text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1">Professional Bio</label>
           <p class="mt-2 text-sm text-[#56423e] leading-relaxed italic bg-white p-4 rounded-2xl border border-[#f1eee7]">
-            "${cleanBio(w.bio)}"
+            "${w.bio || 'This worker has not provided a bio yet.'}"
           </p>
         </div>
 
@@ -298,21 +338,6 @@
       modal.classList.remove('hidden');
 
       loadTrailMessages(w);
-    }
-
-    function cleanBio(bio) {
-      if (!bio) return 'This worker has not provided a bio yet.';
-
-      // Split by our separator
-      let parts = bio.split('|MSG|');
-
-      // Check the first part. If it's NOT a system message, it's the real bio.
-      let firstPart = parts[0].trim();
-      if (firstPart.includes('VERIFICATION_NOTE:') || firstPart.includes('APPEAL_REQUEST:')) {
-        return 'This worker has not provided a bio yet.';
-      }
-
-      return firstPart;
     }
 
     function closeModal(id) {
@@ -430,42 +455,98 @@
       const messagesTrailBox = document.getElementById('popup-messages-trail');
       const messageSectionWrapper = document.getElementById('worker-message-container');
 
-      let allParsedMessages = [];
-      if (worker.bio) {
-        const rawMessages = worker.bio.split('|MSG|');
-        rawMessages.forEach(msgBlock => {
-          if (msgBlock.includes('VERIFICATION_NOTE:') || msgBlock.includes('APPEAL_REQUEST:')) {
-            let cleanText = msgBlock.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
+      if (!messagesTrailBox || !messageSectionWrapper) return;
 
-            let dateStr = 'Recent';
-            const timeMatch = cleanText.match(/^\[(.*?)\]\s*(.*)/);
+      let allParsedMessages = [];
+
+      // 🎯 Gathers all potential text sources to scan for admin communications cleanly
+      const sources = [worker.admin_messages];
+
+      sources.forEach(source => {
+        if (!source || source === "No messages sent to administration yet.") return;
+
+        // 🎯 Splits text blocks by lines, pipes, or native |MSG| operators to capture all variations
+        const segments = source.split(/[\n|]|\|MSG\|/);
+
+        segments.forEach(segment => {
+          let trimmed = segment.trim();
+          if (!trimmed) return;
+
+          // Identify if the segment is a valid communication entry
+          const hasPrefix = trimmed.includes('VERIFICATION_NOTE:') || trimmed.includes('APPEAL_REQUEST:');
+          const hasTimestamp = /^\[[^\]]+\]/.test(trimmed);
+
+          if (hasPrefix || hasTimestamp) {
+            // Strip out system communication code prefixes
+            trimmed = trimmed.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
+            if (!trimmed) return;
+
+            let dateStr = 'Recent Update';
+            let finalMessage = trimmed;
+
+            // 🎯 FIXED REGEX: Captures the whole text inside brackets [...] together as one date/time string
+            const timeMatch = trimmed.match(/^\[([^\]]+)\]\s*(.*)/);
             if (timeMatch) {
-              dateStr = timeMatch[1];
-              cleanText = timeMatch[2];
+              dateStr = timeMatch[1];      // Captures full unified string: "6 Jun 2026, 11:53 am"
+              finalMessage = timeMatch[2];  // Captures full message text string content
             }
 
-            allParsedMessages.push({ text: cleanText, date: dateStr });
+            if (finalMessage && finalMessage !== 'undefined') {
+              let safeDateInstance;
+              if (timeMatch) {
+                // Try parsing the full datetime string first to preserve time and date
+                safeDateInstance = new Date(timeMatch[1]);
+                if (isNaN(safeDateInstance.getTime())) {
+                  // Fallback to only the date part if full datetime fails to parse
+                  safeDateInstance = new Date(timeMatch[1].split(',')[0]);
+                }
+              }
+              if (!safeDateInstance || isNaN(safeDateInstance.getTime())) {
+                safeDateInstance = new Date(worker.date_joined || Date.now());
+              }
+
+              allParsedMessages.push({
+                text: finalMessage,
+                date: dateStr,
+                timestamp: safeDateInstance
+              });
+            }
           }
         });
-      }
+      });
 
+      // Chronological Sort: Highest timestamp records sit at the absolute top
+      allParsedMessages.sort((a, b) => b.timestamp - a.timestamp);
+
+      // 🎯 CONDITIONAL UI GUARD: Only unhide the container box if genuine messages exist
       if (allParsedMessages.length > 0) {
-        messageSectionWrapper.classList.remove('hidden');
-        messagesTrailBox.innerHTML = allParsedMessages.reverse().map(msg => `
-            <div class="relative p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2 mb-3">
-              <div class="absolute top-6 right-4 text-[11px] font-bold text-amber-700 bg-amber-200/50 px-2.5 py-0.5 rounded-md tracking-wide">
-                <span>${msg.date}</span>
-              </div>
-              <div class="flex items-center gap-2 text-[#ea580c] font-bold text-xs uppercase tracking-wider pr-24">
-                <span class="material-symbols-outlined text-sm">chat_bubble</span> Message Note
-              </div>
-              <p class="text-xs text-[#374b43] font-medium italic bg-white p-3 rounded-xl border border-[#ddc0ba]/30 leading-relaxed">
-                "${msg.text}"
-              </p>
-            </div>
-        `).join('');
+        messageSectionWrapper.classList.remove('hidden'); // Reveal message container wrapper layout
+
+        // Configures the single housing box with rigid max-height boundaries and internal scrolling utilities
+        messagesTrailBox.className = "space-y-3 max-h-60 overflow-y-auto pr-1 custom-scrollbar bg-[#f6f3ec]/50 p-3 rounded-2xl border border-[#ddc0ba]/30 shadow-inner";
+
+        messagesTrailBox.innerHTML = allParsedMessages.map((msg, index) => `
+      <!-- 🎯 STANDALONE CARD BOX: Each unique message gets its own clear separate box container -->
+      <div class="p-4 bg-white border-l-4 border-l-[#9f402d] border border-[#ddc0ba]/30 rounded-r-xl rounded-l-sm space-y-2 shadow-sm transition-all hover:shadow-md">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f1eee7] pb-2">
+          <div class="flex items-center gap-1.5 text-[#9f402d] font-black text-[11px] sm:text-xs uppercase tracking-wider">
+            <span class="material-symbols-outlined text-sm sm:text-base font-bold">mail</span> 
+          </div>
+          <!-- Unified Timestamp printed cleanly inside a premium badge -->
+          <div class="text-[10px] sm:text-xs font-bold text-[#89726d] bg-[#f1eee7]/80 px-2.5 py-1 rounded-md tracking-wide shadow-sm self-start sm:self-auto">
+            ${msg.date}
+          </div>
+        </div>
+        <!-- Typography scales fluidly between mobile smartphones and laptop viewport sizes -->
+        <p class="text-xs sm:text-sm text-[#56423e] font-semibold leading-relaxed break-words pt-1 pl-0.5">
+          "${msg.text}"
+        </p>
+      </div>
+    `).join('');
       } else {
+        // 🎯 Completely hide the element section out of sight if the worker has only standard bio text
         messageSectionWrapper.classList.add('hidden');
+        messagesTrailBox.innerHTML = '';
       }
     }
 
@@ -482,7 +563,8 @@
 
         // Map your working verify route endpoint workaround to execute clear actions
         reinstateBtn.onclick = async () => {
-          if (!confirm("Approve this statement and restore this artisan's complete working dashboard logs?")) return;
+          const confirmed = await showConfirm("Approve this statement and restore this artisan's complete working dashboard logs?");
+          if (!confirmed) return;
 
           try {
             const res = await fetch(`http://localhost:8000/api/admin/verify/${workerObject.id}/`, {
@@ -491,8 +573,10 @@
             });
             const data = await res.json();
             if (data.status === 'success') {
-              alert("Worker profile successfully reinstated. Security flags dropped.");
-              window.location.reload(); // Refresh state views cleanly
+              showToast("Reinstated", "Worker profile successfully reinstated. Security flags dropped.", "success");
+              setTimeout(() => {
+                window.location.reload(); // Refresh state views cleanly
+              }, 1500);
             }
           } catch (e) { console.error("Reinstatement request error:", e); }
         };
@@ -501,7 +585,8 @@
       }
     }
     async function suspendWorker(id) {
-      if (!confirm("Suspend this worker instantly? They will be hidden from all user maps.")) return;
+      const confirmed = await showConfirm("Suspend this worker instantly? They will be hidden from all user maps.");
+      if (!confirmed) return;
       const res = await fetch(`${API}/admin/verify/${id}/`, { method: 'POST', headers: { 'X-Session-Key': localStorage.getItem('session_key') } });
       if ((await res.json()).status === 'success') loadFraudQueue();
     }

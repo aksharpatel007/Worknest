@@ -17,12 +17,14 @@ class BookingSerializer(serializers.ModelSerializer):
     worker_skill = serializers.CharField(source='worker.skill', read_only=True)
     client_email = serializers.CharField(source='client.email', read_only=True)
     worker_email = serializers.CharField(source='worker.email', read_only=True)
+    client_avatar = serializers.ImageField(source='client.profile_pic', read_only=True)
+    worker_avatar = serializers.ImageField(source='worker.profile_pic', read_only=True)
 
     class Meta:
         model = Booking
         fields = [
             'id', 'client', 'worker', 'client_name', 'worker_name', 'worker_skill',
-            'client_email', 'worker_email', 'service_desc', 'status', 
+            'client_email', 'worker_email', 'client_avatar', 'worker_avatar', 'service_desc', 'status', 
             'created_at', 'started_at', 'completed_at', 
             'hourly_rate_snapshot', 'final_price', 'rating_given', 'review_given'
         ]

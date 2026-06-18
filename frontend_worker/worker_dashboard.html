@@ -202,14 +202,14 @@
         <div class="h-5 sm:h-6 w-[1px] bg-[#ddc0ba]/40 mx-0.5 sm:mx-1"></div>
         <a href="worker_profile.html"
           class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
-          <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
+          <img id="header-avatar-preview" src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
             class="w-full h-full object-cover rounded-full">
         </a>
       </div>
     </header>
 
     <!-- Content Workspace Fluid Scaling Container -->
-    <main class="relative z-10 pt-4 sm:pt-8 px-4 sm:px-6 max-w-2xl mx-auto space-y-4 sm:space-y-6">
+    <main class="relative z-10 pt-4 sm:pt-8 px-4 sm:px-6 max-w-2xl lg:max-w-5xl mx-auto space-y-4 sm:space-y-6">
 
       <!-- Greeting segment header block with inline custom toggle layout metrics -->
       <section
@@ -273,101 +273,109 @@
         </div>
       </section>
 
-      <!-- Numerical Bento Analytics Summary Shading Blocks Grid -->
-      <section class="grid grid-cols-3 gap-2 sm:gap-4">
-        <!-- Balance Earnings Card -->
-        <div class="premium-card p-3 sm:p-5 rounded-xl sm:pebble-card-1 border-t-2 sm:border-t-4 border-[#9f402d]">
-          <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Ledger
-            Balance</span>
-          <h3 id="worker-earnings-num" class="text-base sm:text-3xl font-black mt-0.5 sm:mt-1 text-[#9f402d]">₹0</h3>
+      <!-- Bento grids and history wrapped in responsive container -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+        <!-- Left Side: Bento Analytics grids -->
+        <div class="lg:col-span-7 space-y-4 sm:space-y-6">
+          <!-- Numerical Bento Analytics Summary Shading Blocks Grid -->
+          <section class="grid grid-cols-3 gap-2 sm:gap-4">
+            <!-- Balance Earnings Card -->
+            <div class="premium-card p-3 sm:p-5 rounded-xl sm:pebble-card-1 border-t-2 sm:border-t-4 border-[#9f402d]">
+              <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Ledger
+                Balance</span>
+              <h3 id="worker-earnings-num" class="text-base sm:text-3xl font-black mt-0.5 sm:mt-1 text-[#9f402d]">₹0</h3>
+            </div>
+
+            <!-- Total Handled Jobs Card -->
+            <div class="premium-card p-3 sm:p-5 rounded-xl border-t-2 sm:border-t-4 border-[#56642b]">
+              <span
+                class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Completed</span>
+              <h3 id="worker-jobs-num" class="text-base sm:text-3xl font-black mt-0.5 sm:mt-1 text-[#56642b]">0
+              </h3>
+            </div>
+
+            <!-- Reputation Metric Star Card -->
+            <div class="premium-card p-3 sm:p-5 rounded-xl sm:pebble-card-2 border-t-2 sm:border-t-4 border-[#e2725b]">
+              <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Rating
+                </span>
+              <div class="flex items-center sm:items-baseline gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+                <h3 id="worker-rating-num" class="text-base sm:text-3xl font-black text-[#1c1c18]">0.0</h3>
+                <span class="material-symbols-outlined text-[10px] sm:text-xs text-amber-500 fill-icon">star</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- EXTENDED WORKER METRICS DATA GRID -->
+          <section class="grid grid-cols-2 gap-2 sm:gap-4">
+            <!-- Profile Parameters Overview box -->
+            <div class="premium-card p-3.5 sm:p-5 rounded-xl sm:rounded-2xl space-y-2 sm:space-y-3">
+              <span
+                class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Parameters</span>
+              <div class="space-y-1 sm:space-y-2">
+                <div
+                  class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+                  <span class="font-bold text-[#89726d]">Craft</span>
+                  <span id="worker-skill-display"
+                    class="font-black text-[#1c1c18] truncate max-w-[65px] sm:max-w-none">--</span>
+                </div>
+                <div
+                  class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+                  <span class="font-bold text-[#89726d]">Rate</span>
+                  <span id="worker-rate-display" class="font-black text-[#9f402d]">--</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px] sm:text-xs">
+                  <span class="font-bold text-[#89726d]">Joined</span>
+                  <span id="worker-joined-display" class="font-black text-[#1c1c18]">--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Operational Health status card -->
+            <div class="premium-card p-3.5 sm:p-5 rounded-xl sm:rounded-2xl space-y-2 sm:space-y-3">
+              <span
+                class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Performance</span>
+              <div class="space-y-1 sm:space-y-2">
+                <div
+                  class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+                  <span class="font-bold text-[#89726d]">Accept</span>
+                  <span class="font-black text-[#56642b]">96.4%</span>
+                </div>
+                <div
+                  class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
+                  <span class="font-bold text-[#89726d]">Cancel</span>
+                  <span class="font-black text-red-600">1.2%</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px] sm:text-xs">
+                  <span class="font-bold text-[#89726d]">Score</span>
+                  <span class="font-black text-[#56642b]">Good</span>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
-        <!-- Total Handled Jobs Card -->
-        <div class="premium-card p-3 sm:p-5 rounded-xl border-t-2 sm:border-t-4 border-[#56642b]">
-          <span
-            class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Completed</span>
-          <h3 id="worker-jobs-num" class="text-base sm:text-3xl font-black mt-0.5 sm:mt-1 text-[#56642b]">0
-          </h3>
-        </div>
+        <!-- Right Side: Historical Contracts Log -->
+        <div class="lg:col-span-5 h-full">
+          <section class="premium-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 h-full flex flex-col justify-between">
+            <div>
+              <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Recent
+                Completed Transactions</span>
+              <h3 class="text-sm sm:text-lg font-black text-[#1c1c18]">Historical Contracts Log</h3>
+            </div>
 
-        <!-- Reputation Metric Star Card -->
-        <div class="premium-card p-3 sm:p-5 rounded-xl sm:pebble-card-2 border-t-2 sm:border-t-4 border-[#e2725b]">
-          <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Rating
-            </span>
-          <div class="flex items-center sm:items-baseline gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-            <h3 id="worker-rating-num" class="text-base sm:text-3xl font-black text-[#1c1c18]">0.0</h3>
-            <span class="material-symbols-outlined text-[10px] sm:text-xs text-amber-500 fill-icon">star</span>
-          </div>
+            <div id="recent-jobs-scroller" class="space-y-2 max-h-48 sm:max-h-64 lg:max-h-[300px] overflow-y-auto pr-0.5 hide-scroll">
+              <p class="text-[11px] sm:text-xs text-[#89726d] italic text-center py-4">Aggregating handled work records...
+              </p>
+            </div>
+          </section>
         </div>
-      </section>
-
-      <!-- EXTENDED WORKER METRICS DATA GRID -->
-      <section class="grid grid-cols-2 gap-2 sm:gap-4">
-        <!-- Profile Parameters Overview box -->
-        <div class="premium-card p-3.5 sm:p-5 rounded-xl sm:rounded-2xl space-y-2 sm:space-y-3">
-          <span
-            class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Parameters</span>
-          <div class="space-y-1 sm:space-y-2">
-            <div
-              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
-              <span class="font-bold text-[#89726d]">Craft</span>
-              <span id="worker-skill-display"
-                class="font-black text-[#1c1c18] truncate max-w-[65px] sm:max-w-none">--</span>
-            </div>
-            <div
-              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
-              <span class="font-bold text-[#89726d]">Rate</span>
-              <span id="worker-rate-display" class="font-black text-[#9f402d]">--</span>
-            </div>
-            <div class="flex justify-between items-center text-[10px] sm:text-xs">
-              <span class="font-bold text-[#89726d]">Joined</span>
-              <span id="worker-joined-display" class="font-black text-[#1c1c18]">--</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Operational Health status card -->
-        <div class="premium-card p-3.5 sm:p-5 rounded-xl sm:rounded-2xl space-y-2 sm:space-y-3">
-          <span
-            class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Performance</span>
-          <div class="space-y-1 sm:space-y-2">
-            <div
-              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
-              <span class="font-bold text-[#89726d]">Accept</span>
-              <span class="font-black text-[#56642b]">96.4%</span>
-            </div>
-            <div
-              class="flex justify-between items-center border-b border-[#f1eee7] pb-1 sm:pb-1.5 text-[10px] sm:text-xs">
-              <span class="font-bold text-[#89726d]">Cancel</span>
-              <span class="font-black text-red-600">1.2%</span>
-            </div>
-            <div class="flex justify-between items-center text-[10px] sm:text-xs">
-              <span class="font-bold text-[#89726d]">Score</span>
-              <span class="font-black text-[#56642b]">Good</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Live Interactive Work Log Stream Segment -->
-      <section class="premium-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4">
-        <div>
-          <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Recent
-            Completed Transactions</span>
-          <h3 class="text-sm sm:text-lg font-black text-[#1c1c18]">Historical Contracts Log</h3>
-        </div>
-
-        <div id="recent-jobs-scroller" class="space-y-2 max-h-48 sm:max-h-64 overflow-y-auto pr-0.5 hide-scroll">
-          <p class="text-[11px] sm:text-xs text-[#89726d] italic text-center py-4">Aggregating handled work records...
-          </p>
-        </div>
-      </section>
+      </div>
 
     </main>
   </div>
 
   <nav
-    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg">
+    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg max-w-sm mx-auto">
     <style>
       .nav-item {
         color: #89726d;
@@ -406,6 +414,59 @@
   </nav>
 
   <script>
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      let toast = document.getElementById('custom-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'custom-toast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[100] transform transition-all duration-300 ease-out translate-y-[-100px] opacity-0 pointer-events-none max-w-sm w-full px-4';
+        toast.innerHTML = `
+          <div id="toast-content" class="bg-white border border-[#ddc0ba]/40 shadow-xl rounded-xl p-4 flex items-center gap-3">
+            <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+              <span id="toast-icon" class="material-symbols-outlined text-lg"></span>
+            </div>
+            <div>
+              <p id="toast-message" class="text-xs sm:text-sm font-bold text-on-surface leading-tight"></p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toast);
+      }
+
+      const content = document.getElementById('toast-content');
+      const iconContainer = document.getElementById('toast-icon-container');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-message');
+
+      clearTimeout(toastTimeout);
+
+      if (type === 'success') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-[#d6e7a1]/40 text-[#56642b] flex items-center justify-center shrink-0";
+        icon.textContent = "check_circle";
+        content.className = "bg-white border border-[#d6e7a1]/50 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else if (type === 'error') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0";
+        icon.textContent = "error";
+        content.className = "bg-white border border-red-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else {
+        iconContainer.className = "w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0";
+        icon.textContent = "info";
+        content.className = "bg-white border border-blue-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      }
+
+      text.textContent = message;
+
+      toast.offsetHeight; // force reflow
+
+      toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
 
     const path = window.location.pathname;
     if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
@@ -454,6 +515,13 @@
           document.getElementById('worker-skill-display').textContent = worker.skill || 'Artisan';
           document.getElementById('worker-rate-display').textContent = `₹${worker.hourly_rate || 0}/hr`;
           document.getElementById('worker-joined-display').textContent = worker.date_joined ? new Date(worker.date_joined).toLocaleDateString('en-IN') : 'Recent';
+
+          const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+          const avatarPic = worker.profile_pic ? (worker.profile_pic.startsWith('http') ? worker.profile_pic : `http://localhost:8000${worker.profile_pic}`) : fallbackUrl;
+          const headerAvatar = document.getElementById('header-avatar-preview');
+          if (headerAvatar) {
+            headerAvatar.src = avatarPic;
+          }
 
           await loadHistoricalBookingsLogs(worker.id);
         }
@@ -523,7 +591,7 @@
 
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
-      if (!note) { alert("Please input a message first."); return; }
+      if (!note) { showToast("Please input a message first.", "error"); return; }
 
       const btn = document.getElementById('send-pending-btn');
       btn.textContent = "Transmitting...";
@@ -553,7 +621,7 @@
 
         const data = await res.json();
         if (data.status === 'success') {
-          alert("Your message note has been appended.");
+          showToast("Your message note has been appended.", "success");
           document.getElementById('pending-msg-input').value = "";
         }
       } catch (e) {
@@ -573,8 +641,10 @@
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
           body: JSON.stringify({ bio: `APPEAL_REQUEST: ${txt}` })
         });
-        alert("Appeal transmitted successfully.");
-        window.location.reload();
+        showToast("Appeal transmitted successfully.", "success");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (e) { console.error(e); }
     }
 

@@ -7,8 +7,10 @@
   <title>Worknest — Profile Settings</title>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
     tailwind.config = {
@@ -55,6 +57,7 @@
     .pebble-card-1 {
       border-radius: 2rem 1rem 2rem 1.5rem;
     }
+
     @media (min-width: 640px) {
       .pebble-card-1 {
         border-radius: 2.5rem 1.25rem 2.5rem 1.75rem;
@@ -74,69 +77,103 @@
 </head>
 
 <body class="bg-surface text-on-surface min-h-screen pb-32 select-none overflow-y-auto">
-  <div class="fixed inset-0 paper-grain z- pointer-events-none"></div>
+  <div class="fixed inset-0 paper-grain z-[60] pointer-events-none"></div>
 
-  <div id="verification-shield-screen" class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-4 text-center bg-[#fcf9f2]">
-    <div class="bg-white w-full max-w-sm p-6 sm:p-8 border border-[#ddc0ba]/40 shadow-xl space-y-5 rounded-2xl pebble-card-1">
-      <div class="w-14 h-14 bg-[#ffdad3] text-[#9f402d] rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
+  <!-- 🔔 CUSTOM PREMIUM TOAST NOTIFICATION POPUP -->
+  <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] transform transition-all duration-300 ease-out translate-y-[-100px] opacity-0 pointer-events-none max-w-sm w-full px-4">
+    <div id="toast-content" class="bg-white border border-[#ddc0ba]/40 shadow-xl rounded-xl p-4 flex items-center gap-3">
+      <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+        <span id="toast-icon" class="material-symbols-outlined text-lg"></span>
+      </div>
+      <div>
+        <p id="toast-message" class="text-xs sm:text-sm font-bold text-on-surface leading-tight"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="verification-shield-screen"
+    class="hidden relative z-50 min-h-screen flex flex-col items-center justify-center px-4 text-center bg-[#fcf9f2]">
+    <div
+      class="bg-white w-full max-w-sm p-6 sm:p-8 border border-[#ddc0ba]/40 shadow-xl space-y-5 rounded-2xl pebble-card-1">
+      <div
+        class="w-14 h-14 bg-[#ffdad3] text-[#9f402d] rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
         <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
       </div>
       <div class="space-y-1.5">
         <h2 class="text-xl sm:text-2xl font-black text-[#1c1c18] tracking-tight">Verification Pending</h2>
         <p class="text-[#56423e] text-xs sm:text-sm font-semibold leading-relaxed px-2">
-          Welcome to Worknest! Your profile coordinates are secure. You cannot access task schedules until an admin verifies your identity.
+          Welcome to Worknest! Your profile coordinates are secure. You cannot access task schedules until an admin
+          verifies your identity.
         </p>
       </div>
 
       <div class="bg-[#f1eee7]/50 p-4 rounded-xl border border-[#ddc0ba]/30 text-left space-y-2.5">
-        <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-0.5">Message Administration</label>
-        <textarea id="pending-msg-input" placeholder="Type a note or ask the admin for a status check on your registration documents..." class="w-full p-3 bg-white border border-[#ddc0ba]/40 focus:ring-2 focus:ring-[#9f402d]/20 rounded-lg text-xs outline-none resize-none font-medium text-on-surface" rows="3"></textarea>
-        <button id="send-pending-btn" onclick="sendVerificationMessage()" class="w-full py-3 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition-all duration-300">
+        <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-0.5">Message
+          Administration</label>
+        <textarea id="pending-msg-input"
+          placeholder="Type a note or ask the admin for a status check on your registration documents..."
+          class="w-full p-3 bg-white border border-[#ddc0ba]/40 focus:ring-2 focus:ring-[#9f402d]/20 rounded-lg text-xs outline-none resize-none font-medium text-on-surface"
+          rows="3"></textarea>
+        <button id="send-pending-btn" onclick="sendVerificationMessage()"
+          class="w-full py-3 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition-all duration-300">
           Send Note to Admin
         </button>
       </div>
 
-      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'" class="w-full py-3 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-lg text-xs uppercase tracking-wider transition-colors duration-300">
+      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+        class="w-full py-3 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-lg text-xs uppercase tracking-wider transition-colors duration-300">
         Sign Out Safely
       </button>
     </div>
   </div>
 
   <div id="profile-dashboard-content">
-    <header class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-8 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
+    <header
+      class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-8 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
       <div class="flex items-center gap-2 sm:gap-2.5">
-        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+        <div
+          class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
           <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
         </div>
         <span class="text-lg sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
       </div>
 
       <div class="flex items-center gap-3 sm:gap-4">
-        <a href="worker_messages.html" class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
+        <a href="worker_messages.html"
+          class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
           <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
-          <span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
+          <span
+            class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
         </a>
         <div class="h-5 sm:h-6 w-[1px] bg-[#ddc0ba]/40 mx-0.5 sm:mx-1"></div>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden p-0.5 bg-white shadow-sm">
-          <img id="nav-avatar-preview" src="https://ui-avatars.com/api/?background=ffdad3&color=9f402d&bold=true" class="w-full h-full object-cover rounded-full">
+        <div
+          class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden p-0.5 bg-white shadow-sm">
+          <img id="nav-avatar-preview" src="https://ui-avatars.com/api/?background=ffdad3&color=9f402d&bold=true"
+            class="w-full h-full object-cover rounded-full">
         </div>
       </div>
     </header>
 
     <main class="relative z-10 pt-6 sm:pt-10 px-4 sm:px-6 max-w-2xl mx-auto space-y-6">
-      
+
       <div class="mb-4">
         <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-[#1c1c18]">Profile Configuration</h2>
-        <p class="text-xs sm:text-sm text-[#56423e] font-medium mt-1">Manage your professional credentials and identity metrics.</p>
+        <p class="text-xs sm:text-sm text-[#56423e] font-medium mt-1">Manage your professional credentials and identity
+          metrics.</p>
       </div>
 
-      <form id="owner-profile-form" class="bg-white p-5 sm:p-8 border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl shadow-sm pebble-card-1 space-y-6">
-        
+      <form id="owner-profile-form"
+        class="bg-white p-5 sm:p-8 border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl shadow-sm pebble-card-1 space-y-6">
+
         <div class="flex flex-col items-center space-y-3 border-b border-[#f1eee7] pb-5">
-          <div class="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-[#9f402d] p-1 bg-surface shadow-inner">
-            <img id="my-profile-avatar" src="https://ui-avatars.com/api/?background=ffdad3&color=9f402d&bold=true" class="w-full h-full object-cover rounded-full">
-            <input type="file" name="profile_pic" id="file-selector" class="hidden" accept="image/*" onchange="previewAvatarImage(this)">
-            <label for="file-selector" class="absolute inset-0 bg-black/60 text-white text-[10px] font-black uppercase tracking-wider flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
+          <div
+            class="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-[#9f402d] p-1 bg-surface shadow-inner">
+            <img id="my-profile-avatar" src="https://ui-avatars.com/api/?background=ffdad3&color=9f402d&bold=true"
+              class="w-full h-full object-cover rounded-full">
+            <input type="file" name="profile_pic" id="file-selector" class="hidden" accept="image/*"
+              onchange="previewAvatarImage(this)">
+            <label for="file-selector"
+              class="absolute inset-0 bg-black/60 text-white text-[10px] font-black uppercase tracking-wider flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
               <span class="material-symbols-outlined text-sm mb-0.5">photo_camera</span>Change
             </label>
           </div>
@@ -148,25 +185,43 @@
 
         <div class="space-y-4">
           <div>
-            <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Full Name</label>
-            <input type="text" name="fullname" id="my-fullname-input" required class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface" placeholder="Your Full Legal Name" />
+            <label
+              class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Full
+              Name</label>
+            <input type="text" name="fullname" id="my-fullname-input" required
+              class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface"
+              placeholder="Your Full Legal Name" />
+            <p id="fullname-error" class="text-red-600 text-[10px] font-bold mt-1 ml-1 hidden"></p>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Phone Connection</label>
-              <input type="tel" name="phone" id="my-phone-input" required class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface" placeholder="Phone Number" />
+              <label
+                class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Phone
+                Connection</label>
+              <input type="tel" name="phone" id="my-phone-input" required
+                class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface"
+                placeholder="Phone Number" />
+              <p id="phone-error" class="text-red-600 text-[10px] font-bold mt-1 ml-1 hidden"></p>
             </div>
 
             <div>
-              <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Hourly Billing Rate (₹)</label>
-              <input type="number" name="hourly_rate" id="my-rate-input" required class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface" placeholder="Hourly Rate in ₹" />
+              <label
+                class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Hourly
+                Billing Rate (₹)</label>
+              <input type="number" name="hourly_rate" id="my-rate-input" required
+                class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface"
+                placeholder="Hourly Rate in ₹" />
+              <p id="rate-error" class="text-red-600 text-[10px] font-bold mt-1 ml-1 hidden"></p>
             </div>
           </div>
 
           <div>
-            <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Artisan Trade Category</label>
-            <select name="skill" id="my-skill-input" class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface">
+            <label
+              class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Artisan
+              Trade Category</label>
+            <select name="skill" id="my-skill-input"
+              class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-semibold transition-all text-on-surface">
               <option value="Plumber">Plumber</option>
               <option value="Electrician">Electrician</option>
               <option value="House Maid">House Maid</option>
@@ -179,16 +234,22 @@
           </div>
 
           <div>
-            <label class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Professional Summary / Bio</label>
-            <textarea name="bio" id="my-bio-input" class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-medium transition-all text-on-surface resize-none" rows="4" placeholder="Detail your years of expertise, specialized tools, and job fields..."></textarea>
+            <label
+              class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#89726d] ml-1 block mb-1.5">Professional
+              Summary / Bio</label>
+            <textarea name="bio" id="my-bio-input"
+              class="w-full p-3.5 bg-[#fcf9f2]/50 focus:bg-white border border-[#ddc0ba]/40 focus:border-[#9f402d] focus:ring-2 focus:ring-[#9f402d]/10 outline-none rounded-xl text-xs sm:text-sm font-medium transition-all text-on-surface resize-none"
+              rows="4" placeholder="Detail your years of expertise, specialized tools, and job fields..."></textarea>
           </div>
         </div>
 
         <div class="flex gap-3 pt-2">
-          <button type="button" onclick="window.location.href='worker_dashboard.html'" class="flex-1 py-3.5 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-xl text-xs uppercase tracking-wider transition-colors duration-200">
+          <button type="button" onclick="window.location.href='worker_dashboard.html'"
+            class="flex-1 py-3.5 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-xl text-xs uppercase tracking-wider transition-colors duration-200">
             Cancel
           </button>
-          <button type="submit" id="save-profile-btn" class="flex-1 py-3.5 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider transition-all duration-300">
+          <button type="submit" id="save-profile-btn"
+            class="flex-1 py-3.5 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold text-xs rounded-xl shadow-md uppercase tracking-wider transition-all duration-300">
             Save Modifications
           </button>
         </div>
@@ -197,42 +258,159 @@
     </main>
   </div>
 
-  <nav class="fixed bottom-4 left-4 right-4 z-50 bg-[#fcf9f2]/85 backdrop-blur-2xl border border-[#ddc0ba]/40 rounded-xl sm:rounded-2xl shadow-xl max-w-sm mx-auto p-1 flex justify-between items-center">
-    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl" href="worker_dashboard.html" id="nav-home">
-      <span class="material-symbols-outlined text-lg sm:text-[22px]">home_work</span>
-      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">Home</span>
-    </a>
-    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#f1eee7]/50" href="worker_requests.html" id="nav-requests">
-      <span class="material-symbols-outlined text-lg sm:text-[22px]">hail</span>
-      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">Requests</span>
-    </a>
-    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#f1eee7]/50" href="worker_booking_history.html" id="nav-history">
-      <span class="material-symbols-outlined text-lg sm:text-[22px]">calendar_today</span>
-      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">History</span>
-    </a>
-    <a class="nav-item flex flex-col items-center justify-center flex-1 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#f1eee7]/50" href="worker_search.html" id="nav-search">
-      <span class="material-symbols-outlined text-lg sm:text-[22px]">search</span>
-      <span class="text-[8px] sm:text-[9px] font-extrabold tracking-wide mt-0.5 sm:mt-1">Search</span>
-    </a>
-  </nav>
-
   <script>
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('custom-toast');
+      const content = document.getElementById('toast-content');
+      const iconContainer = document.getElementById('toast-icon-container');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-message');
+
+      clearTimeout(toastTimeout);
+
+      if (type === 'success') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-[#d6e7a1]/40 text-[#56642b] flex items-center justify-center shrink-0";
+        icon.textContent = "check_circle";
+        content.className = "bg-white border border-[#d6e7a1]/50 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else if (type === 'error') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0";
+        icon.textContent = "error";
+        content.className = "bg-white border border-red-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else {
+        iconContainer.className = "w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0";
+        icon.textContent = "info";
+        content.className = "bg-white border border-blue-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      }
+
+      text.textContent = message;
+
+      toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
     const path = window.location.pathname;
-    if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
-    else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
-    else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
-    else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
+    const navHome = document.getElementById('nav-home');
+    const navRequests = document.getElementById('nav-requests');
+    const navHistory = document.getElementById('nav-history');
+    const navSearch = document.getElementById('nav-search');
+
+    if (path.includes('dashboard') && navHome) navHome.classList.add('active');
+    else if (path.includes('requests') && navRequests) navRequests.classList.add('active');
+    else if (path.includes('booking_history') && navHistory) navHistory.classList.add('active');
+    else if (path.includes('search') && navSearch) navSearch.classList.add('active');
 
     const API_BASE = 'http://localhost:8000/api';
 
+    // Validation function
+    function validateForm() {
+      let isValid = true;
+
+      // Full Name Validation (3 to 50 chars, letters and spaces only)
+      const fullnameInput = document.getElementById('my-fullname-input');
+      const fullnameError = document.getElementById('fullname-error');
+      const fullnameVal = fullnameInput.value.trim();
+      const nameRegex = /^[a-zA-Z\s]{3,50}$/;
+
+      if (!nameRegex.test(fullnameVal)) {
+        fullnameError.textContent = "Full name must be between 3 and 50 characters, and contain only letters and spaces.";
+        fullnameError.classList.remove('hidden');
+        fullnameInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+        fullnameInput.classList.remove('border-[#ddc0ba]/40');
+        isValid = false;
+      } else {
+        fullnameError.classList.add('hidden');
+        fullnameInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+        fullnameInput.classList.add('border-[#ddc0ba]/40');
+      }
+
+      // Phone Validation (exactly 10 digits)
+      const phoneInput = document.getElementById('my-phone-input');
+      const phoneError = document.getElementById('phone-error');
+      const phoneVal = phoneInput.value.trim();
+      const phoneRegex = /^[0-9]{10}$/;
+
+      if (!phoneRegex.test(phoneVal)) {
+        phoneError.textContent = "Phone connection must be exactly 10 digits.";
+        phoneError.classList.remove('hidden');
+        phoneInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+        phoneInput.classList.remove('border-[#ddc0ba]/40');
+        isValid = false;
+      } else {
+        phoneError.classList.add('hidden');
+        phoneInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+        phoneInput.classList.add('border-[#ddc0ba]/40');
+      }
+
+      // Hourly Rate Validation (positive integer, not exceeding 100,000)
+      const rateInput = document.getElementById('my-rate-input');
+      const rateError = document.getElementById('rate-error');
+      const rateVal = parseInt(rateInput.value, 10);
+
+      if (isNaN(rateVal) || rateVal <= 0) {
+        rateError.textContent = "Hourly rate must be a positive number greater than 0.";
+        rateError.classList.remove('hidden');
+        rateInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+        rateInput.classList.remove('border-[#ddc0ba]/40');
+        isValid = false;
+      } else if (rateVal > 100000) {
+        rateError.textContent = "Hourly rate cannot exceed ₹100,000.";
+        rateError.classList.remove('hidden');
+        rateInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+        rateInput.classList.remove('border-[#ddc0ba]/40');
+        isValid = false;
+      } else {
+        rateError.classList.add('hidden');
+        rateInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+        rateInput.classList.add('border-[#ddc0ba]/40');
+      }      // Toggle save button
+      const saveBtn = document.getElementById('save-profile-btn');
+      if (isValid) {
+        saveBtn.removeAttribute('disabled');
+        saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        saveBtn.setAttribute('disabled', 'true');
+        saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      return isValid;
+    }
+
+    // Register real-time validation input event listeners
+    document.getElementById('my-fullname-input').addEventListener('input', validateForm);
+    document.getElementById('my-phone-input').addEventListener('input', validateForm);
+    document.getElementById('my-rate-input').addEventListener('input', validateForm);
+
     // Image preview helper function
     function previewAvatarImage(input) {
-      if (input.files && input.files) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        
+        // Validate image file type
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+          showToast("Invalid file format. Please select an image (JPEG, PNG, WEBP, or GIF).", "error");
+          input.value = '';
+          return;
+        }
+        
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          showToast("Image file size must be less than 2MB.", "error");
+          input.value = '';
+          return;
+        }
+
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           document.getElementById('my-profile-avatar').src = e.target.result;
         }
-        reader.readAsDataURL(input.files);
+        reader.readAsDataURL(file);
       }
     }
 
@@ -254,14 +432,15 @@
           if (worker.is_verified === false) {
             document.getElementById('verification-shield-screen').classList.remove('hidden');
             document.getElementById('profile-dashboard-content').classList.add('hidden');
-            document.querySelector('nav').classList.add('hidden');
+            const nav = document.querySelector('nav');
+            if (nav) nav.classList.add('hidden');
             return;
           }
 
           // ✅ Verified User: Hydrate complete data metrics into fields
           document.getElementById('my-name-title').textContent = worker.fullname;
           document.getElementById('my-skill-badge').textContent = worker.skill || 'General Artisan';
-          
+
           document.getElementById('my-fullname-input').value = worker.fullname || '';
           document.getElementById('my-phone-input').value = worker.phone || '';
           document.getElementById('my-rate-input').value = worker.hourly_rate || 0;
@@ -270,17 +449,25 @@
 
           const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname)}&background=ffdad3&color=9f402d&bold=true`;
           const avatarPic = worker.profile_pic ? `http://localhost:8000${worker.profile_pic}` : fallbackUrl;
-          
+
           document.getElementById('my-profile-avatar').src = avatarPic;
           document.getElementById('nav-avatar-preview').src = avatarPic;
+
+          // Trigger form validation to ensure the save button is in the correct initial state
+          validateForm();
         }
       } catch (e) { console.error("Identity status validation breakdown:", e); }
     }
 
     // 📩 Submit form via multi-part FormData payload to backend model view endpoints
-    document.getElementById('owner-profile-form').addEventListener('submit', async function(e) {
+    document.getElementById('owner-profile-form').addEventListener('submit', async function (e) {
       e.preventDefault();
-      
+
+      if (!validateForm()) {
+        showToast("Please correct the validation errors in the form before saving.", "error");
+        return;
+      }
+
       const saveBtn = document.getElementById('save-profile-btn');
       saveBtn.textContent = "SAVING CHANGES...";
       saveBtn.disabled = true;
@@ -301,14 +488,16 @@
 
         const data = await res.json();
         if (data.status === 'success') {
-          alert("Profile configurations saved successfully!");
-          window.location.reload();
+          showToast("Profile configurations saved successfully!", "success");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         } else {
-          alert("Error: " + (data.message || "Failed to update profile parameters."));
+          showToast(data.message || "Failed to update profile parameters.", "error");
         }
       } catch (err) {
         console.error("Form handling execution interruption:", err);
-        alert("Failed to connect to database server.");
+        showToast("Failed to connect to database server.", "error");
       } finally {
         saveBtn.textContent = "SAVE MODIFICATIONS";
         saveBtn.disabled = false;
@@ -317,25 +506,64 @@
 
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
-      if (!note) { alert("Please input a message first."); return; }
+      if (!note) { showToast("Please input a message first.", "error"); return; }
 
       const btn = document.getElementById('send-pending-btn');
+      const originalText = btn.textContent;
       btn.textContent = "Transmitting message...";
       btn.disabled = true;
 
+      const sessionKey = localStorage.getItem('session_key');
+
       try {
+        // 1. Fetch the profile first so we don't accidentally wipe out their current bio text
+        const profileRes = await fetch(`${API_BASE}/profile/`, {
+          headers: { 'X-Session-Key': sessionKey, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+        const profileData = await profileRes.json();
+
+        let currentBio = "";
+        if (profileData.status === 'success' && profileData.data && profileData.data.bio) {
+          currentBio = profileData.data.bio;
+        }
+
+        // 2. Format the message exactly how views.py expects to find it
+        // We append a timestamp so multiple messages can be tracked clearly
+        const timestamp = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        const formattedNote = `VERIFICATION_NOTE: [${timestamp}] ${note}`;
+
+        // Combine safely if they already have an existing bio
+        let updatedBio = currentBio && !currentBio.includes("VERIFICATION_NOTE:")
+          ? `${currentBio} | ${formattedNote}`
+          : formattedNote;
+
+        // 3. Post the updated bio text block back to the database row
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
-          body: JSON.stringify({ bio: `VERIFICATION_NOTE: ${note}` })
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-Key': sessionKey
+          },
+          body: JSON.stringify({ bio: updatedBio })
         });
+
         const data = await res.json();
         if (data.status === 'success') {
-          alert("Your message note has been appended to your validation files. The admin will review it immediately.");
+          showToast("Your message note has been delivered! The admin panel can see it now.", "success");
           document.getElementById('pending-msg-input').value = "";
           btn.textContent = "Note Sent ✓";
+        } else {
+          showToast(data.message || "Unknown error", "error");
+          btn.textContent = originalText;
+          btn.disabled = false;
         }
-      } catch (e) { console.error(e); btn.textContent = "Send Note to Admin"; btn.disabled = false; }
+      } catch (e) {
+        console.error(e);
+        showToast("Connection error: could not connect to server database.", "error");
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     }
 
     checkCurrentStatus();

@@ -148,6 +148,8 @@ def profile_view(request):
         return Response({'status': 'error', 'message': 'Invalid session'}, status=401) 
 
     if request.method == 'GET':
+        completed_bookings = Booking.objects.filter(worker=user, status='completed')
+        earnings = sum(b.final_price for b in completed_bookings)
         return Response({
             'status': 'success',
             'data': {
@@ -163,7 +165,12 @@ def profile_view(request):
                 'hourly_rate': user.hourly_rate,
                 'is_verified': user.is_verified,
                 'is_fraud': user.is_fraud,
-                'profile_pic': user.profile_pic.url if user.profile_pic else None
+                'profile_pic': user.profile_pic.url if user.profile_pic else None,
+                'created_at': user.date_joined.isoformat() if user.date_joined else None,
+                'date_joined': user.date_joined.isoformat() if user.date_joined else None,
+                'rating': float(user.rating) if user.rating else 0.0,
+                'total_jobs': user.total_jobs,
+                'earnings': earnings
             }
         })
 
@@ -173,8 +180,8 @@ def profile_view(request):
         
         if 'fullname' in data: user.fullname = data['fullname'] 
         if 'phone' in data: user.phone = data['phone'] 
-        if 'hourly_rate' in data: user.hourly_rate = data['hourly_rate'][cite: 50]
-        if 'skill' in data: user.skill = data['skill'][cite: 50]
+        if 'hourly_rate' in data: user.hourly_rate = data['hourly_rate']
+        if 'skill' in data: user.skill = data['skill']
         
         # 🎯 CHANNELS MODULAR ROUTING: Separates verification streams from clean text bios instantly
         if 'bio' in data:

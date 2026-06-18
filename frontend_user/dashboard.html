@@ -156,21 +156,23 @@
   <div class="fixed inset-0 bg-grain z-[60]"></div>
   <!-- TopAppBar -->
   <header
-    class="flex items-center justify-between px-6 py-4 w-full sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl dark:bg-[#1c1c18]/80 shadow-[0_4px_20px_rgba(28,28,24,0.04)] font-manrope antialiased leading-[1.6]">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl"
-        data-icon="potted_plant">potted_plant</span>
-      <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
-    </div>
-    <div class="flex items-center gap-4">
-      <a href="user_messages.html"
-        class="bell-container relative p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors">
-        <span class="material-symbols-outlined swing-bell text-2xl" style="display: inline-block;">notifications</span>
-      </a>
-      <div onclick="window.location.href='profile.html'"
-        class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 cursor-pointer hover:border-primary transition-all hover:scale-105 active:scale-95 group">
-        <img id="header-profile-img" alt="User Profile" class="w-full h-full object-cover"
-          src="https://ui-avatars.com/api/?name=User&background=ffdad3&color=9f402d" />
+    class="sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl dark:bg-[#1c1c18]/80 shadow-[0_4px_20px_rgba(28,28,24,0.04)] font-manrope antialiased leading-[1.6] border-b border-[#ddc0ba]/20 px-6 py-4">
+    <div class="max-w-4xl mx-auto flex items-center justify-between w-full">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl"
+          data-icon="potted_plant">potted_plant</span>
+        <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="user_messages.html"
+          class="bell-container relative p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors">
+          <span class="material-symbols-outlined swing-bell text-2xl" style="display: inline-block;">notifications</span>
+        </a>
+        <div onclick="window.location.href='profile.html'"
+          class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 cursor-pointer hover:border-primary transition-all hover:scale-105 active:scale-95 group">
+          <img id="header-profile-img" alt="User Profile" class="w-full h-full object-cover"
+            src="https://ui-avatars.com/api/?name=User&background=ffdad3&color=9f402d" />
+        </div>
       </div>
     </div>
   </header>
@@ -420,7 +422,7 @@
   <!-- BottomNavBar -->
   <!-- Bottom Nav -->
   <nav
-    class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-2 sm:px-4 pb-6 sm:pb-8 pt-3 sm:pt-4 bg-[#fcf9f2]/95 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border-t border-outline/20">
+    class="fixed bottom-2 left-4 right-4 z-40 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
     <a href="dashboard.html"
       class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2">
       <span class="material-symbols-outlined text-xl fill-icon">home</span>
@@ -486,19 +488,6 @@
       }
     }
 
-    function cleanBio(bio) {
-      if (!bio) return 'Skilled and experienced professional ready to help you with your tasks.';
-
-      // Split by our message separator
-      let firstPart = bio.split('|MSG|')[0].trim();
-
-      // If the first part is a system message, they never wrote a real bio
-      if (firstPart.includes('VERIFICATION_NOTE:') || firstPart.includes('APPEAL_REQUEST:')) {
-        return 'Skilled and experienced professional ready to help you with your tasks.';
-      }
-
-      return firstPart;
-    }
 
     // Instantly hides/shows category shapes as the user types
     function liveCategorySearch() {
@@ -553,7 +542,7 @@
               const skillMatch = (w.skill || "").toLowerCase().includes(q);
 
               // USE CLEAN BIO FOR SEARCH: Don't search through admin messages!
-              const bioMatch = cleanBio(w.bio).toLowerCase().includes(q);
+              const bioMatch = w.bio.toLowerCase().includes(q);
 
               return nameMatch || skillMatch || bioMatch;
             });
@@ -589,7 +578,7 @@
                 </div>
                 
                 <!-- USE CLEAN BIO HERE -->
-                <p class="text-on-surface-variant leading-relaxed text-sm mb-6 flex-1 line-clamp-3">${cleanBio(w.bio)}</p>
+                <p class="text-on-surface-variant leading-relaxed text-sm mb-6 flex-1 line-clamp-3">"${w.bio || 'This worker has not provided a bio yet.'}"</p>
                 
                 <button 
                   class="w-full py-4 mt-auto rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" 

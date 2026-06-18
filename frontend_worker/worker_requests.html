@@ -69,8 +69,8 @@
         class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto shadow-inner animate-pulse">
         <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
       </div>
-      <h2 class="text-3xl font-black text-on-surface tracking-tight">Verification Pending</h2>
-      <p class="text-outline text-sm leading-relaxed">
+      <h2 class="text-2xl sm:text-3xl font-black text-on-surface tracking-tight">Verification Pending</h2>
+      <p class="text-outline text-xs sm:text-sm leading-relaxed">
         Welcome to Worknest! You cannot access your professional worker panel utilities until an administrator approves
         your profile details and identity credentials.
       </p>
@@ -119,18 +119,31 @@
   </header>
 
 
-  <main class="relative z-10 pt-10 px-6 max-w-2xl mx-auto space-y-6">
-    <h2 class="text-3xl font-black text-on-surface tracking-tight mb-2">Client Assignment Requests</h2>
+  <main class="relative z-10 pt-10 px-6 max-w-2xl lg:max-w-4xl mx-auto space-y-6">
+    <h2 class="text-2xl sm:text-3xl font-black text-on-surface tracking-tight mb-2">Client Assignment Requests</h2>
 
-    <div id="requests-list-container" class="space-y-6">
-      <div class="text-center py-12 bg-white rounded-3xl border-2 border-dashed border-outline-variant/40 shadow-sm">
-        <p class="text-outline text-sm font-semibold">Scanning network for active client signals...</p>
+    <div id="requests-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="text-center py-12 bg-white rounded-3xl border-2 border-dashed border-outline-variant/40 shadow-sm md:col-span-2">
+        <p class="text-outline text-xs sm:text-sm font-semibold">Scanning network for active client signals...</p>
       </div>
     </div>
-  </main>
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl transition-all border border-outline/20 text-center">
+      <div class="w-12 h-12 rounded-full bg-orange-50 text-[#9f402d] flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-2xl font-bold">help_outline</span>
+      </div>
+      <h3 id="confirm-title" class="text-lg font-black text-[#1c1c18] tracking-tight">Confirm Action</h3>
+      <p id="confirm-message" class="text-xs sm:text-sm text-[#56423e] leading-relaxed font-medium"></p>
+      <div class="flex gap-3 pt-2">
+        <button id="confirm-cancel-btn" class="w-1/2 py-3 bg-surface-variant text-[#56423e] font-bold rounded-full text-xs sm:text-sm transition-colors hover:bg-outline/30">Cancel</button>
+        <button id="confirm-ok-btn" class="w-1/2 py-3 bg-primary text-white font-extrabold rounded-full text-xs sm:text-sm shadow-md hover:bg-primary-light transition-all active:scale-95">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
 
   <nav
-    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-outline-variant/30 rounded-2xl shadow-lg">
+    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-outline-variant/30 rounded-2xl shadow-lg max-w-sm mx-auto">
     <style>
       .nav-item {
         color: #89726d;
@@ -169,6 +182,85 @@
   </nav>
 
   <script>
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      let toast = document.getElementById('custom-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'custom-toast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[100] transform transition-all duration-300 ease-out translate-y-[-100px] opacity-0 pointer-events-none max-w-sm w-full px-4';
+        toast.innerHTML = `
+          <div id="toast-content" class="bg-white border border-[#ddc0ba]/40 shadow-xl rounded-xl p-4 flex items-center gap-3">
+            <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+              <span id="toast-icon" class="material-symbols-outlined text-lg"></span>
+            </div>
+            <div>
+              <p id="toast-message" class="text-xs sm:text-sm font-bold text-on-surface leading-tight"></p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toast);
+      }
+
+      const content = document.getElementById('toast-content');
+      const iconContainer = document.getElementById('toast-icon-container');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-message');
+
+      clearTimeout(toastTimeout);
+
+      if (type === 'success') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-[#d6e7a1]/40 text-[#56642b] flex items-center justify-center shrink-0";
+        icon.textContent = "check_circle";
+        content.className = "bg-white border border-[#d6e7a1]/50 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else if (type === 'error') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0";
+        icon.textContent = "error";
+        content.className = "bg-white border border-red-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else {
+        iconContainer.className = "w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0";
+        icon.textContent = "info";
+        content.className = "bg-white border border-blue-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      }
+
+      text.textContent = message;
+
+      toast.offsetHeight; // force reflow
+
+      toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
+    function showConfirm(message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+        msgEl.textContent = message;
+        modal.classList.remove('hidden');
+
+        function cleanup(result) {
+          modal.classList.add('hidden');
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        }
+
+        function onOk() { cleanup(true); }
+        function onCancel() { cleanup(false); }
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
     // Navigation highlighting configurations
     const path = window.location.pathname;
     if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
@@ -226,7 +318,7 @@
 
     async function sendVerificationMessage() {
       const note = document.getElementById('pending-msg-input').value.trim();
-      if (!note) { alert("Please input a message first."); return; }
+      if (!note) { showToast("Please input a message first.", "error"); return; }
 
       const btn = document.getElementById('send-pending-btn');
       btn.textContent = "Transmitting message...";
@@ -240,7 +332,7 @@
         });
         const data = await res.json();
         if (data.status === 'success') {
-          alert("Your message note has been appended to your validation files. The admin will review it immediately.");
+          showToast("Your message note has been appended to your validation files. The admin will review it immediately.", "success");
           document.getElementById('pending-msg-input').value = "";
           btn.textContent = "Note Sent ✓";
         }
@@ -264,37 +356,37 @@
 
           if (pending.length === 0) {
             container.innerHTML = `
-              <div class="text-center py-12 bg-white rounded-3xl border border-outline-variant/30 shadow-sm">
-                <p class="text-outline text-sm font-semibold">No pending job requests found nearby.</p>
+              <div class="text-center py-12 bg-white rounded-3xl border border-outline-variant/30 shadow-sm md:col-span-2">
+                <p class="text-outline text-xs sm:text-sm font-semibold">No pending job requests found nearby.</p>
               </div>`;
             return;
           }
 
           container.innerHTML = pending.map(r => `
-            <div class="bg-white p-6 rounded-3xl border border-outline-variant/30 space-y-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div class="bg-white p-4 sm:p-6 rounded-3xl border border-outline-variant/30 space-y-3.5 sm:space-y-4 shadow-sm hover:shadow-md transition-shadow duration-300">
               <div class="flex flex-col sm:flex-row justify-between items-start gap-3">
                 <div class="flex items-center gap-3">
-                  <img class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm shrink-0" 
+                  <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm shrink-0" 
                        src="https://ui-avatars.com/api/?name=${encodeURIComponent(r.client_name || 'User')}&background=56642b&color=fff" 
                        alt="Client Avatar">
                   <div>
-                    <h3 class="font-sans font-black text-lg text-on-surface">${r.client_name || 'System Client'}</h3>
-                    <p class="text-xs text-secondary font-extrabold mt-0.5 flex items-center gap-1 uppercase tracking-wider">
-                      <span class="material-symbols-outlined text-sm">distance</span> Ahmedabad Area
+                    <h3 class="font-sans font-black text-base sm:text-lg text-on-surface">${r.client_name || 'System Client'}</h3>
+                    <p class="text-[10px] sm:text-xs text-secondary font-extrabold mt-0.5 flex items-center gap-1 uppercase tracking-wider">
+                      <span class="material-symbols-outlined text-xs sm:text-sm">distance</span> Ahmedabad Area
                     </p>
                   </div>
                 </div>
                 <div class="sm:text-right w-full sm:w-auto bg-surface-container-low sm:bg-transparent p-3 sm:p-0 rounded-2xl border border-outline-variant/20 sm:border-none">
-                  <span class="text-[10px] text-outline font-extrabold uppercase tracking-widest block">Contact Details</span>
-                  <a href="tel:${r.client_phone || ''}" class="text-base font-black text-primary hover:text-primary-light transition-colors underline decoration-2">${r.client_phone || '+91 98765 43210'}</a>
+                  <span class="text-[9px] sm:text-[10px] text-outline font-extrabold uppercase tracking-widest block">Contact Details</span>
+                  <a href="tel:${r.client_phone || ''}" class="text-sm sm:text-base font-black text-primary hover:text-primary-light transition-colors underline decoration-2">${r.client_phone || '+91 98765 43210'}</a>
                 </div>
               </div>
-              <div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/20 text-sm font-semibold text-outline leading-relaxed">
+              <div class="bg-surface-container-low p-3 sm:p-4 rounded-2xl border border-outline-variant/20 text-xs sm:text-sm font-semibold text-outline leading-relaxed">
                 ${r.service_desc}
               </div>
               <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                <button onclick="respondToRequest(${r.id}, 'accepted')" class="flex-1 py-3.5 bg-primary text-white font-bold text-sm rounded-full transition-all hover:bg-primary-light active:scale-95 shadow-md shadow-primary/10">Accept Job</button>
-                <button onclick="respondToRequest(${r.id}, 'cancelled')" class="flex-1 py-3.5 bg-surface-container text-outline hover:text-on-surface font-bold text-sm rounded-full transition-all hover:bg-outline-variant/30 active:scale-95 border border-outline-variant/40">Decline</button>
+                <button onclick="respondToRequest(${r.id}, 'accepted')" class="flex-1 py-2.5 sm:py-3.5 bg-primary text-white font-bold text-xs sm:text-sm rounded-full transition-all hover:bg-primary-light active:scale-95 shadow-md shadow-primary/10">Accept Job</button>
+                <button onclick="respondToRequest(${r.id}, 'cancelled')" class="flex-1 py-2.5 sm:py-3.5 bg-surface-container text-outline hover:text-on-surface font-bold text-xs sm:text-sm rounded-full transition-all hover:bg-outline-variant/30 active:scale-95 border border-outline-variant/40">Decline</button>
               </div>
             </div>
           `).join('');
@@ -304,7 +396,8 @@
 
     async function respondToRequest(bookingId, statusString) {
       const sessionKey = localStorage.getItem('session_key');
-      if (!confirm(`Are you sure you want to mark this request as ${statusString}?`)) return;
+      const confirmed = await showConfirm(`Are you sure you want to mark this request as ${statusString}?`);
+      if (!confirmed) return;
 
       try {
         const res = await fetch(`${API_BASE}/bookings/`, {
@@ -321,14 +414,14 @@
 
         const data = await res.json();
         if (data.status === 'success') {
-          alert(`Job has been successfully marked as ${statusString}!`);
+          showToast(`Job has been successfully marked as ${statusString}!`, "success");
           loadIncomingRequests();
         } else {
-          alert("Refusal error: " + data.message);
+          showToast("Refusal error: " + data.message, "error");
         }
       } catch (e) {
         console.error("Error patching booking index code arrays:", e);
-        alert("Could not update transaction state values.");
+        showToast("Could not update transaction state values.", "error");
       }
     }
 

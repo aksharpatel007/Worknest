@@ -228,6 +228,60 @@
   </main>
 
   <script>
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      let toast = document.getElementById('custom-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'custom-toast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[100] transform transition-all duration-300 ease-out translate-y-[-100px] opacity-0 pointer-events-none max-w-sm w-full px-4';
+        toast.innerHTML = `
+          <div id="toast-content" class="bg-white border border-[#ddc0ba]/40 shadow-xl rounded-xl p-4 flex items-center gap-3">
+            <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+              <span id="toast-icon" class="material-symbols-outlined text-lg"></span>
+            </div>
+            <div>
+              <p id="toast-message" class="text-xs sm:text-sm font-bold text-on-surface leading-tight"></p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toast);
+      }
+
+      const content = document.getElementById('toast-content');
+      const iconContainer = document.getElementById('toast-icon-container');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-message');
+
+      clearTimeout(toastTimeout);
+
+      if (type === 'success') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-[#d6e7a1]/40 text-[#56642b] flex items-center justify-center shrink-0";
+        icon.textContent = "check_circle";
+        content.className = "bg-white border border-[#d6e7a1]/50 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else if (type === 'error') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0";
+        icon.textContent = "error";
+        content.className = "bg-white border border-red-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else {
+        iconContainer.className = "w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0";
+        icon.textContent = "info";
+        content.className = "bg-white border border-blue-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      }
+
+      text.textContent = message;
+
+      toast.offsetHeight; // force reflow
+
+      toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
     const API = 'http://localhost:8000/api';
     let allData = { users: [], workers: [], bookings: [] };
     let dataLoaded = false;
@@ -244,28 +298,38 @@
           credentials: 'include',
           headers: headers
         });
+        
+        if (!res.ok) throw new Error(`HTTP ${res.status} when fetching stats`);
         const data = await res.json();
 
-        if (data.status === 'error' && data.message.includes('Admin access required')) {
-          alert('Session expired or not logged in. Redirecting to login...');
+        if (data.status === 'error' && data.message && data.message.includes('Admin access required')) {
+          showToast('Session expired or not logged in. Redirecting to login...', 'error');
           localStorage.removeItem('session_key');
           window.location.href = '../frontend_user/login.html';
           return;
         }
 
-        if (data.status === 'success') {
-          document.getElementById('stat-users').textContent = data.data.total_users;
-          document.getElementById('stat-workers').textContent = data.data.total_workers;
-          document.getElementById('stat-bookings').textContent = data.data.total_bookings;
-          // Removed old mapping line to let the fraud worker calculator handle this card accurately
+        if (data.status === 'success' && data.data) {
+          const uElem = document.getElementById('stat-users');
+          const wElem = document.getElementById('stat-workers');
+          const bElem = document.getElementById('stat-bookings');
+          
+          if (uElem) uElem.textContent = data.data.total_users !== undefined ? data.data.total_users : '0';
+          if (wElem) wElem.textContent = data.data.total_workers !== undefined ? data.data.total_workers : '0';
+          if (bElem) bElem.textContent = data.data.total_bookings !== undefined ? data.data.total_bookings : '0';
         }
       } catch (e) {
         console.error('Error loading stats:', e);
+        ['stat-users', 'stat-workers', 'stat-bookings'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = 'Err';
+        });
       }
     }
 
     async function loadUsers() {
       const tbody = document.getElementById('users-table');
+      if (!tbody) return;
       tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
 
       try {
@@ -279,98 +343,177 @@
           credentials: 'include',
           headers: headers
         });
+
+        if (!res.ok) {
+          throw new Error(`Server responded with HTTP status ${res.status}`);
+        }
+
         const data = await res.json();
 
         if (data.status === 'error') {
-          if (data.message.includes('Admin access required')) {
-            alert('You are not logged in as admin. Redirecting to login page...');
+          if (data.message && data.message.includes('Admin access required')) {
+            showToast('You are not logged in as admin. Redirecting to login page...', 'error');
             localStorage.removeItem('session_key');
             window.location.href = '../frontend_user/login.html';
             return;
           }
-          alert('API Error: ' + data.message);
+          showToast('API Error: ' + data.message, 'error');
           tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Error: ' + data.message + '</td></tr>';
           return;
         }
 
         if (data.status === 'success') {
-          allData.users = data.data.filter(u => u.role_id == 3);
-          allData.workers = data.data.filter(u => u.role_id == 2);
-          allData.admins = data.data.filter(u => u.role_id == 1);
-          allData.rawUsers = data.data;
+          // 🎯 Fallback protection if API returns data key or users key differently
+          const userData = Array.isArray(data.data) ? data.data : (Array.isArray(data.users) ? data.users : []);
+          
+          allData.users = userData.filter(u => u && u.role_id == 3);
+          allData.workers = userData.filter(u => u && u.role_id == 2);
+          allData.admins = userData.filter(u => u && u.role_id == 1);
+          allData.rawUsers = userData;
 
-          // 🚀 FIXED: DYNAMICALLY CALCULATION & INJECTION FOR FRAUD ACCOUNT METRICS
-          const activeFraudCount = data.data.filter(u => u.is_fraud === true || u.trust_score < 40).length;
-          document.getElementById('stat-reports').textContent = activeFraudCount;
+          const activeFraudCount = userData.filter(u => u && u.is_fraud === true).length;
+          const reportsElem = document.getElementById('stat-reports');
+          if (reportsElem) {
+            reportsElem.textContent = activeFraudCount;
+          }
 
           dataLoaded = true;
 
-          const allUsers = data.data.slice(0, 10);
+          // Safe message block compilation execution wrapper
+          try {
+            populateAdminMessages();
+          } catch (msgErr) {
+            console.error('Error parsing admin notifications panel:', msgErr);
+          }
+
+          // Render all admins, workers, and users sorted by registration date (newest first)
+          const allUsers = [...userData].sort((a, b) => new Date(b.date_joined || 0) - new Date(a.date_joined || 0));
 
           if (allUsers.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">No users yet</td></tr>';
           } else {
-            tbody.innerHTML = allUsers.map(u => `
-      <tr class="hover:bg-[#f6f3ec] transition-colors">
-        <td class="px-8 py-4 font-semibold text-[#1c1c18]">${u.fullname || u.username}</td>
-        <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${u.role_id == 2 ? 'bg-[#ffdad3] text-[#9f402d]' : u.role_id == 1 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}">${u.role_id == 1 ? 'Admin' : u.role_id == 2 ? 'Worker' : 'User'}</span></td>
-        <td class="px-8 py-4 text-[#89726d]">${u.date_joined ? new Date(u.date_joined).toLocaleDateString('en-IN') : new Date(u.created_at).toLocaleDateString('en-IN')}</td>
-        <td class="px-8 py-4"><span class="w-2 h-2 rounded-full ${u.is_fraud ? 'bg-red-500' : 'bg-green-400'} inline-block mr-2"></span>${u.is_fraud ? 'Suspended' : 'Active'}</td>
-      </tr>`).join('');
+            tbody.innerHTML = allUsers.map(u => {
+              if (!u) return '';
+              const name = u.fullname || u.username || 'Unknown Profile';
+              const roleLabel = u.role_id == 1 ? 'Admin' : u.role_id == 2 ? 'Worker' : 'User';
+              const roleClass = u.role_id == 2 ? 'bg-[#ffdad3] text-[#9f402d]' : u.role_id == 1 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700';
+              
+              let dateStr = '—';
+              if (u.date_joined) {
+                dateStr = new Date(u.date_joined).toLocaleDateString('en-IN');
+              } else if (u.created_at) {
+                dateStr = new Date(u.created_at).toLocaleDateString('en-IN');
+              }
+
+              const statusLabel = u.is_fraud ? 'Suspended' : 'Active';
+              const statusClass = u.is_fraud ? 'bg-red-500' : 'bg-green-400';
+
+              const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
+              const profileImg = u.profile_pic ? `http://localhost:8000${u.profile_pic}` : fallback;
+
+              return `
+                <tr class="hover:bg-[#f6f3ec] transition-colors">
+                  <td class="px-8 py-4 font-semibold text-[#1c1c18]">
+                    <div class="flex items-center gap-3">
+                      <img src="${profileImg}" class="w-8 h-8 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                      <span>${name}</span>
+                    </div>
+                  </td>
+                  <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${roleClass}">${roleLabel}</span></td>
+                  <td class="px-8 py-4 text-[#89726d]">${dateStr}</td>
+                  <td class="px-8 py-4"><span class="w-2 h-2 rounded-full ${statusClass} inline-block mr-2"></span>${statusLabel}</td>
+                </tr>`;
+            }).join('');
           }
         }
       } catch (e) {
-        console.error('Error loading users:', e);
-        tbody.innerHTML = '<tr><td colspan="4" class="px-8 py-6 text-[#89726d] text-center">Error loading data</td></tr>';
+        console.error('Error loading users detailed log:', e);
+        // 🎯 PRINTS DIAGNOSTIC ERROR DETAILS DIRECTLY ON YOUR PAGE WINDOW:
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="px-8 py-8 text-center bg-red-50/50 rounded-2xl border border-red-200">
+              <div class="text-red-700 font-extrabold text-sm mb-1">⚠️ Connection / Request Interrupted</div>
+              <div class="text-xs text-stone-600 max-w-md mx-auto mb-2 font-mono bg-white p-2.5 rounded-lg shadow-sm border border-stone-200/60 break-all">
+                ${e.message}
+              </div>
+              <p class="text-[11px] text-stone-500 font-medium">Verify your local backend script server is up and operating at port <code class="bg-stone-200 px-1 py-0.5 rounded text-stone-800 font-bold">8000</code>.</p>
+            </td>
+          </tr>`;
       }
     }
 
     async function showSection(type) {
-      document.getElementById('recent-members-container').classList.add('hidden');
+      const rContainer = document.getElementById('recent-members-container');
+      if (rContainer) rContainer.classList.add('hidden');
 
       if (!dataLoaded) {
         const sec = document.getElementById('detail-section');
-        sec.classList.remove('hidden');
+        if (sec) sec.classList.remove('hidden');
         const body = document.getElementById('table-body');
-        body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
+        if (body) body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#9f402d]"></div></td></tr>';
         await loadUsers();
       }
+      
       const sec = document.getElementById('detail-section');
-      sec.classList.remove('hidden');
+      if (sec) sec.classList.remove('hidden');
       const head = document.getElementById('table-head');
       const body = document.getElementById('table-body');
       const title = document.getElementById('section-title');
+
+      if (!head || !body || !title) return;
 
       if (type === 'users') {
         title.textContent = `All Users`;
         head.innerHTML = '<th class="px-8 py-4">Name</th><th class="px-8 py-4">Email</th><th class="px-8 py-4">Phone</th><th class="px-8 py-4">Joined</th>';
 
-        if (allData.users.length === 0) {
+        if (!allData.users || allData.users.length === 0) {
           body.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-[#89726d]">No users found</td></tr>';
         } else {
-          body.innerHTML = allData.users.map(u => `
-        <tr class="hover:bg-[#f6f3ec] transition-colors">
-          <td class="px-8 py-4 font-semibold">${u.fullname || u.username}</td>
-          <td class="px-8 py-4 text-[#89726d]">${u.email}</td>
-          <td class="px-8 py-4 text-[#89726d]">${u.phone || '—'}</td>
-          <td class="px-8 py-4 text-[#89726d]">${u.date_joined ? new Date(u.date_joined).toLocaleDateString('en-IN') : '—'}</td>
-        </tr>`).join('');
+          body.innerHTML = allData.users.map(u => {
+            if (!u) return '';
+            const name = u.fullname || u.username || '—';
+            const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
+            const profileImg = u.profile_pic ? `http://localhost:8000${u.profile_pic}` : fallback;
+            return `
+            <tr class="hover:bg-[#f6f3ec] transition-colors">
+              <td class="px-8 py-4 font-semibold">
+                <div class="flex items-center gap-3">
+                  <img src="${profileImg}" class="w-8 h-8 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                  <span>${name}</span>
+                </div>
+              </td>
+              <td class="px-8 py-4 text-[#89726d]">${u.email || '—'}</td>
+              <td class="px-8 py-4 text-[#89726d]">${u.phone || '—'}</td>
+              <td class="px-8 py-4 text-[#89726d]">${u.date_joined ? new Date(u.date_joined).toLocaleDateString('en-IN') : '—'}</td>
+            </tr>`;
+          }).join('');
         }
       } else if (type === 'workers') {
         title.textContent = `All Workers`;
         head.innerHTML = '<th class="px-8 py-4">Name</th><th class="px-8 py-4">Skill</th><th class="px-8 py-4">Rating</th><th class="px-8 py-4">Status</th><th class="px-8 py-4">Jobs</th>';
 
-        if (allData.workers.length === 0) {
+        if (!allData.workers || allData.workers.length === 0) {
           body.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-[#89726d]">No workers found</td></tr>';
         } else {
-          body.innerHTML = allData.workers.map(u => `
-        <tr class="hover:bg-[#f6f3ec] transition-colors">
-          <td class="px-8 py-4 font-semibold">${u.fullname || u.username}</td>
-          <td class="px-8 py-4 text-[#9f402d] font-semibold">${u.skill || '—'}</td>
-          <td class="px-8 py-4 text-amber-600 font-bold">⭐ ${u.rating || '0.00'}</td>
-          <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${u.worker_status === 'verified' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${u.worker_status || 'newbie'}</span></td>
-          <td class="px-8 py-4 text-[#89726d] font-semibold">${u.total_jobs || 0}</td>
-        </tr>`).join('');
+          body.innerHTML = allData.workers.map(u => {
+            if (!u) return '';
+            const name = u.fullname || u.username || '—';
+            const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
+            const profileImg = u.profile_pic ? `http://localhost:8000${u.profile_pic}` : fallback;
+            return `
+            <tr class="hover:bg-[#f6f3ec] transition-colors">
+              <td class="px-8 py-4 font-semibold">
+                <div class="flex items-center gap-3">
+                  <img src="${profileImg}" class="w-8 h-8 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                  <span>${name}</span>
+                </div>
+              </td>
+              <td class="px-8 py-4 text-[#9f402d] font-semibold">${u.skill || '—'}</td>
+              <td class="px-8 py-4 text-amber-600 font-bold">⭐ ${u.rating || '0.00'}</td>
+              <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${u.worker_status === 'verified' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${u.worker_status || 'newbie'}</span></td>
+              <td class="px-8 py-4 text-[#89726d] font-semibold">${u.total_jobs || 0}</td>
+            </tr>`;
+          }).join('');
         }
       } else if (type === 'bookings') {
         title.textContent = 'All Bookings';
@@ -382,16 +525,43 @@
         if (sessionKey) headers['X-Session-Key'] = sessionKey;
 
         fetch(`${API}/admin/bookings/`, { credentials: 'include', headers }).then(r => r.json()).then(d => {
-          if (d.status === 'success' && d.data.length) {
+          if (d.status === 'success' && d.data && d.data.length) {
             const statusColors = { pending: 'bg-yellow-100 text-yellow-700', accepted: 'bg-green-100 text-green-700', completed: 'bg-blue-100 text-blue-700', cancelled: 'bg-red-100 text-red-700' };
-            body.innerHTML = d.data.map(b => `
-          <tr class="hover:bg-[#f6f3ec] transition-colors">
-            <td class="px-8 py-4 font-semibold">${b.client_name || 'Client'}</td>
-            <td class="px-8 py-4 text-[#9f402d] font-semibold">${b.worker_name || 'Expert'}</td>
-            <td class="px-8 py-4 text-[#89726d] max-w-xs truncate">${b.service_desc}</td>
-            <td class="px-8 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[b.status] || 'bg-gray-100 text-gray-600'}">${b.status}</span></td>
-            <td class="px-8 py-4 text-[#89726d]">${b.created_at ? new Date(b.created_at).toLocaleDateString('en-IN') : '—'}</td>
-          </tr>`).join('');
+            body.innerHTML = d.data.map(b => {
+              if (!b) return '';
+              const clientName = b.client_name || 'Client';
+              const clientFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=ffdad3&color=9f402d&bold=true`;
+              let clientImg = clientFallback;
+              if (b.client_avatar) {
+                clientImg = b.client_avatar.startsWith('http') ? b.client_avatar : `http://localhost:8000${b.client_avatar}`;
+              }
+
+              const workerName = b.worker_name || 'Expert';
+              const workerFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(workerName)}&background=ffdad3&color=9f402d&bold=true`;
+              let workerImg = workerFallback;
+              if (b.worker_avatar) {
+                workerImg = b.worker_avatar.startsWith('http') ? b.worker_avatar : `http://localhost:8000${b.worker_avatar}`;
+              }
+
+              return `
+              <tr class="hover:bg-[#f6f3ec] transition-colors">
+                <td class="px-8 py-4 font-semibold">
+                  <div class="flex items-center gap-3">
+                    <img src="${clientImg}" class="w-8 h-8 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                    <span>${clientName}</span>
+                  </div>
+                </td>
+                <td class="px-8 py-4 text-[#9f402d] font-semibold">
+                  <div class="flex items-center gap-3">
+                    <img src="${workerImg}" class="w-8 h-8 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                    <span>${workerName}</span>
+                  </div>
+                </td>
+                <td class="px-8 py-4 text-[#89726d] max-w-xs truncate">${b.service_desc || '—'}</td>
+                <td class="px-8 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[b.status] || 'bg-gray-100 text-gray-600'}">${b.status || '—'}</span></td>
+                <td class="px-8 py-4 text-[#89726d]">${b.created_at ? new Date(b.created_at).toLocaleDateString('en-IN') : '—'}</td>
+              </tr>`;
+            }).join('');
           } else {
             body.innerHTML = '<tr><td colspan="5" class="px-8 py-6 text-center text-[#89726d]">No bookings yet</td></tr>';
           }
@@ -402,30 +572,46 @@
         title.textContent = 'Security System: Flagged Fraud & High Risk Accounts';
         head.innerHTML = '<th class="px-8 py-4">Account Name</th><th class="px-8 py-4">Email</th><th class="px-8 py-4">Trust Score</th><th class="px-8 py-4">Status Flag</th>';
 
-        const fraudWorkers = (allData.rawUsers || []).filter(u => u.is_fraud === true || u.trust_score < 40);
+        const fraudWorkers = (allData.rawUsers || []).filter(u => u && u.is_fraud === true);
 
         if (fraudWorkers.length === 0) {
           body.innerHTML = '<tr><td colspan="4" class="px-8 py-8 text-center text-emerald-600 font-bold">✨ Safety protocols clear. No fraud threats flagged in database.</td></tr>';
         } else {
-          body.innerHTML = fraudWorkers.map(w => `
-        <tr class="bg-red-50/30 hover:bg-red-50/60 transition-colors">
-          <td class="px-8 py-4 font-bold text-stone-900">${w.fullname || w.username} <span class="text-xs font-normal text-red-600 italic">(${w.skill || 'User'})</span></td>
-          <td class="px-8 py-4 text-stone-600 font-medium">${w.email}</td>
-          <td class="px-8 py-4 text-red-700 font-extrabold">${w.trust_score || 0} / 100</td>
-          <td class="px-8 py-4"><span class="bg-red-600 text-white px-3 py-1 rounded-md text-xs font-black tracking-wider uppercase">SUSPENDED / FRAUD</span></td>
-        </tr>`).join('');
+          body.innerHTML = fraudWorkers.map(w => {
+            if (!w) return '';
+            const name = w.fullname || w.username || '—';
+            const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
+            const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : fallback;
+            return `
+            <tr class="bg-red-50/30 hover:bg-red-50/60 transition-colors">
+              <td class="px-8 py-4 font-bold text-stone-900">
+                <div class="flex items-center gap-3">
+                  <img src="${profileImg}" class="w-8 h-8 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                  <span>${name} <span class="text-xs font-normal text-red-600 italic">(${w.skill || 'User'})</span></span>
+                </div>
+              </td>
+              <td class="px-8 py-4 text-stone-600 font-medium">${w.email || '—'}</td>
+              <td class="px-8 py-4 text-red-700 font-extrabold">${w.trust_score || 0} / 100</td>
+              <td class="px-8 py-4"><span class="bg-red-600 text-white px-3 py-1 rounded-md text-xs font-black tracking-wider uppercase">SUSPENDED / FRAUD</span></td>
+            </tr>`;
+          }).join('');
         }
       }
-      sec.scrollIntoView({ behavior: 'smooth' });
+      if (sec && typeof sec.scrollIntoView === 'function') {
+        sec.scrollIntoView({ behavior: 'smooth' });
+      }
     }
 
     function closeDetailsSection() {
-      document.getElementById('detail-section').classList.add('hidden');
-      document.getElementById('recent-members-container').classList.remove('hidden');
+      const dSec = document.getElementById('detail-section');
+      const rCont = document.getElementById('recent-members-container');
+      if (dSec) dSec.classList.add('hidden');
+      if (rCont) rCont.classList.remove('hidden');
     }
 
     function toggleAdminBell() {
       const dropdown = document.getElementById('admin-bell-dropdown');
+      if (!dropdown) return;
       dropdown.classList.toggle('hidden');
       if (!dropdown.classList.contains('hidden')) {
         populateAdminMessages();
@@ -435,45 +621,85 @@
     function populateAdminMessages() {
       const list = document.getElementById('admin-bell-messages-list');
       const badge = document.getElementById('admin-bell-badge');
+      const indicator = document.getElementById('bell-indicator');
 
-      if (!allData || !allData.rawUsers) return;
+      if (!allData || !Array.isArray(allData.rawUsers) || !list) return;
 
       let allMessages = [];
+      const workers = allData.rawUsers.filter(u => u && u.role_id == 2);
 
-      allData.rawUsers.filter(u => u.role_id == 2 && u.bio).forEach(w => {
-        const rawMessages = w.bio.split('|MSG|');
+      workers.forEach(w => {
+        if (!w) return;
+        const source = w.admin_messages;
+        if (!source || source === "No messages sent to administration yet.") return;
 
-        rawMessages.forEach(msgBlock => {
-          if (msgBlock.includes('VERIFICATION_NOTE:') || msgBlock.includes('APPEAL_REQUEST:')) {
-            let msgType = msgBlock.includes('APPEAL_REQUEST:') ? 'Appeal' : 'Note';
-            let badgeColor = msgBlock.includes('APPEAL_REQUEST:') ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700';
-            let cleanText = msgBlock.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
+        // Split text blocks by lines or explicit pipes to look for multiple notes
+        const segments = source.split(/[\n|]+/);
 
-            let dateObj = new Date(0); // Default old date
-            let finalMessage = cleanText;
-            
-            // Extract the exact time inside [ ]
-            const timeMatch = cleanText.match(/^\[(.*?)\]\s*(.*)/);
+        segments.forEach(segment => {
+          let trimmed = segment.trim();
+          if (!trimmed) return;
+
+          const hasPrefix = trimmed.includes('VERIFICATION_NOTE:') || trimmed.includes('APPEAL_REQUEST:');
+          const hasTimestamp = /^\[[^\]]+\]/.test(trimmed);
+
+          if (hasPrefix || hasTimestamp) {
+            const isAppeal = trimmed.includes('APPEAL_REQUEST:');
+            const msgType = isAppeal ? 'Appeal' : 'Message';
+            const badgeColor = isAppeal ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700';
+
+            // Strip out system communication code tags cleanly
+            trimmed = trimmed.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
+            if (!trimmed) return; // Skip empty markers
+
+            let dateStr = 'Recent Update';
+            let finalMessage = trimmed;
+
+            // Extract the unified bracketed timestamp cleanly
+            const timeMatch = trimmed.match(/^\[([^\]]+)\]\s*(.*)/);
             if (timeMatch) {
-              dateObj = new Date(timeMatch[1]); // Parse the string into a real Date object
-              finalMessage = timeMatch[2];
+              dateStr = timeMatch[1]; // Full bracket string parameter e.g. "6 Jun 2026, 11:53 am"
+              finalMessage = timeMatch[2]; // Full clean text string content
             }
 
-            allMessages.push({
-              workerName: w.fullname || w.username,
-              type: msgType,
-              color: badgeColor,
-              text: finalMessage,
-              date: dateObj // Store the Date object for sorting
-            });
+            if (finalMessage && finalMessage !== 'undefined') {
+              let safeDateInstance;
+              if (timeMatch) {
+                // Try parsing the full datetime string first to preserve time and date
+                safeDateInstance = new Date(timeMatch[1]);
+                if (isNaN(safeDateInstance.getTime())) {
+                  // Fallback to only the date part if full datetime fails to parse
+                  safeDateInstance = new Date(timeMatch[1].split(',')[0]);
+                }
+              }
+              if (!safeDateInstance || isNaN(safeDateInstance.getTime())) {
+                safeDateInstance = new Date(w.date_joined || Date.now());
+              }
+
+              allMessages.push({
+                workerName: w.fullname || w.username || 'Unknown Worker',
+                type: msgType,
+                color: badgeColor,
+                text: finalMessage,
+                date: dateStr,
+                sortTimestamp: safeDateInstance
+              });
+            }
           }
         });
       });
 
-      // 🚀 SORTING LOGIC: Newest date first
-      allMessages.sort((a, b) => b.date - a.date);
+      // Chronological Sort: Newest message boxes always display on top
+      allMessages.sort((a, b) => b.sortTimestamp - a.sortTimestamp);
 
-      badge.textContent = `${allMessages.length} New`;
+      if (badge) badge.textContent = `${allMessages.length} New`;
+      if (indicator) {
+        if (allMessages.length > 0) {
+          indicator.classList.remove('hidden');
+        } else {
+          indicator.classList.add('hidden');
+        }
+      }
 
       if (allMessages.length === 0) {
         list.innerHTML = '<p class="text-center py-6 text-xs text-[#89726d] font-medium italic">No new messages from workers.</p>';
@@ -487,11 +713,16 @@
             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${m.color} uppercase tracking-wider">${m.type}</span>
           </div>
           <p class="text-[11px] text-[#56423e] font-medium leading-relaxed italic mb-2 break-words">"${m.text}"</p>
-          <p class="text-[9px] text-[#89726d] text-right font-bold">${m.date.toLocaleString()}</p>
+          <div class="flex justify-between items-center text-[10px] text-[#89726d] font-semibold">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">schedule</span> ${m.date}
+            </span>
+          </div>
         </div>
       `).join('');
     }
 
+    // Initialize sequences
     loadStats();
     loadUsers();
   </script>

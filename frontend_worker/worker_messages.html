@@ -77,12 +77,12 @@
   </header>
 
   <!-- Responsive Scaled Main Viewport Layout -->
-  <main class="pt-6 sm:pt-10 px-4 sm:px-6 max-w-3xl mx-auto">
+  <main class="pt-6 sm:pt-10 px-4 sm:px-6 max-w-3xl lg:max-w-5xl mx-auto">
     <div id="receipt-container"
-      class="space-y-4 p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-outline-variant/30 shadow-sm">
+      class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-outline-variant/30 shadow-sm">
 
       <!-- Dynamic Content Loader Frame -->
-      <div id="loading-spinner" class="text-center py-12">
+      <div id="loading-spinner" class="text-center py-12 md:col-span-2">
         <p class="text-sm font-semibold text-outline animate-pulse">Retrieving your financial records...</p>
       </div>
 
@@ -118,7 +118,7 @@
 
         if (completedJobs.length === 0) {
           container.innerHTML = `
-            <div class="text-center py-12">
+            <div class="text-center py-12 md:col-span-2">
               <span class="material-symbols-outlined text-4xl text-outline/40 mb-2 block">folder_open</span>
               <p class="text-sm font-semibold text-outline">No completed job receipts found in your ledger.</p>
             </div>`;
@@ -159,7 +159,7 @@
       } catch (e) {
         console.error("Database connection exception generated:", e);
         container.innerHTML = `
-          <div class="text-center py-12">
+          <div class="text-center py-12 md:col-span-2">
             <span class="material-symbols-outlined text-3xl text-primary mb-1">error</span>
             <p class="text-sm font-bold text-primary">Error: Could not load accounting records cleanly.</p>
           </div>`;

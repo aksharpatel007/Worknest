@@ -170,8 +170,23 @@
   </header>
 
 
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl transition-all border border-outline/20 text-center">
+      <div class="w-12 h-12 rounded-full bg-orange-50 text-[#9f402d] flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-2xl font-bold">help_outline</span>
+      </div>
+      <h3 id="confirm-title" class="text-lg font-black text-[#1c1c18] tracking-tight">Confirm Action</h3>
+      <p id="confirm-message" class="text-xs sm:text-sm text-[#56423e] leading-relaxed font-medium"></p>
+      <div class="flex gap-3 pt-2">
+        <button id="confirm-cancel-btn" class="w-1/2 py-3 bg-surface-variant text-[#56423e] font-bold rounded-full text-xs sm:text-sm transition-colors hover:bg-outline/30">Cancel</button>
+        <button id="confirm-ok-btn" class="w-1/2 py-3 bg-primary text-white font-extrabold rounded-full text-xs sm:text-sm shadow-md hover:bg-primary-light transition-all active:scale-95">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Grid Layout -->
-  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+  <main class="max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
     <div class="mb-6 sm:mb-10 flex justify-between items-end">
       <div>
         <div
@@ -201,8 +216,8 @@
     </div>
 
     <!-- Bookings Container -->
-    <div id="bookings-container" class="space-y-4 sm:space-y-6">
-      <div class="text-center py-16 sm:py-20 bg-white border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl premium-glow">
+    <div id="bookings-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div class="text-center py-16 sm:py-20 bg-white border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl premium-glow md:col-span-2">
         <div class="w-8 h-8 sm:w-10 sm:h-10 border-4 border-[#9f402d] border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4">
         </div>
         <p class="text-[10px] sm:text-xs font-bold text-[#89726d] uppercase tracking-widest">Synchronizing activity trails safely...
@@ -212,7 +227,7 @@
   </main>
 
   <nav
-    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg">
+    class="fixed bottom-2 left-4 right-4 z-50 flex justify-between items-center px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl border border-[#ddc0ba]/30 rounded-2xl shadow-lg max-w-sm mx-auto">
     <style>
       .nav-item {
         color: #89726d;
@@ -258,6 +273,31 @@
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
+    function showConfirm(message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+        msgEl.textContent = message;
+        modal.classList.remove('hidden');
+
+        function cleanup(result) {
+          modal.classList.add('hidden');
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        }
+
+        function onOk() { cleanup(true); }
+        function onCancel() { cleanup(false); }
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
     const API = 'http://localhost:8000/api';
     let allBookings = [];
 
@@ -277,7 +317,7 @@
         }
       } catch (e) {
         document.getElementById('bookings-container').innerHTML = `
-          <div class="text-center py-12 bg-white border border-red-100 rounded-2xl premium-glow p-4 sm:p-6">
+          <div class="text-center py-12 bg-white border border-red-100 rounded-2xl premium-glow p-4 sm:p-6 md:col-span-2">
             <span class="material-symbols-outlined text-red-500 text-2xl sm:text-3xl mb-1.5 sm:mb-2">cloud_off</span>
             <p class="text-xs sm:text-sm font-bold text-red-700">Database Connection Exception</p>
             <p class="text-[10px] sm:text-xs text-red-500 mt-0.5 sm:mt-1">Please verify your server cluster status channels and refresh.</p>
@@ -289,7 +329,7 @@
       const container = document.getElementById('bookings-container');
       if (bookings.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-16 sm:py-20 bg-white border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl premium-glow px-4 sm:px-6 pebble-card-1">
+          <div class="text-center py-16 sm:py-20 bg-white border border-[#ddc0ba]/20 rounded-2xl sm:rounded-3xl premium-glow px-4 sm:px-6 pebble-card-1 md:col-span-2">
             <span class="material-symbols-outlined text-[#ddc0ba] text-3xl sm:text-4xl mb-2 sm:mb-3">folder_open</span>
             <p class="text-xs sm:text-sm font-extrabold text-[#1c1c18]">No Ledger Items Found</p>
             <p class="text-[10px] sm:text-xs text-[#89726d] mt-0.5 sm:mt-1 max-w-xs mx-auto">There are no operational assignments logged under this category context tab.</p>
@@ -358,7 +398,8 @@
     }
 
     async function cancelBooking(id) {
-      if (!confirm("Are you sure you want to decline this job request entry?")) return;
+      const confirmed = await showConfirm("Are you sure you want to decline this job request entry?");
+      if (!confirmed) return;
       const res = await fetch(`${API}/bookings/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },

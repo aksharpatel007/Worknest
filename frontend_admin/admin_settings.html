@@ -145,10 +145,51 @@
     </div>
   </main>
 
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal" class="hidden fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl transition-all border border-outline/20 text-center">
+      <div class="w-12 h-12 rounded-full bg-orange-50 text-[#9f402d] flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-2xl font-bold">help_outline</span>
+      </div>
+      <h3 id="confirm-title" class="text-lg font-black text-[#1c1c18] tracking-tight">Confirm Action</h3>
+      <p id="confirm-message" class="text-xs sm:text-sm text-[#56423e] leading-relaxed font-medium"></p>
+      <div class="flex gap-3 pt-2">
+        <button id="confirm-cancel-btn" class="w-1/2 py-3 bg-[#f1eee7] text-[#56423e] font-bold rounded-full text-xs sm:text-sm transition-colors hover:bg-[#ddc0ba]/50">Cancel</button>
+        <button id="confirm-ok-btn" class="w-1/2 py-3 bg-[#9f402d] text-white font-extrabold rounded-full text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    function showConfirm(message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+        msgEl.textContent = message;
+        modal.classList.remove('hidden');
+
+        function cleanup(result) {
+          modal.classList.add('hidden');
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        }
+
+        function onOk() { cleanup(true); }
+        function onCancel() { cleanup(false); }
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
     // FIX: Professional Logout Logic
-    function adminLogout() {
-      if (confirm("Are you sure you want to exit the Worknest Admin Panel?")) {
+    async function adminLogout() {
+      const confirmed = await showConfirm("Are you sure you want to exit the Worknest Admin Panel?");
+      if (confirmed) {
         localStorage.removeItem('session_key'); //
         localStorage.clear(); //
         window.location.href = '../frontend_user/login.html'; // Ensure path is correct
