@@ -10,8 +10,6 @@
     rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     body {
       font-family: 'Manrope', sans-serif;
@@ -47,10 +45,7 @@
       border: 1px solid #ddc0ba;
     }
 
-    #map {
-      height: 280px;
-      border-radius: 1.5rem;
-    }
+
 
     .worker-card {
       transition: all 0.2s;
@@ -127,15 +122,40 @@
         data-skill="Driver">🚗 Driver</button>
     </div>
 
-    <!-- Grid Layout for Map & List -->
+    <!-- Grid Layout for Match Form & List -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <!-- Map Column -->
-      <div class="lg:col-span-5 space-y-3">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="font-bold text-[#1c1c18]" id="map-title">Workers near you</h2>
-          <span class="text-xs text-[#89726d]" id="map-count"></span>
+      <!-- Instant Request Column -->
+      <div class="lg:col-span-5 space-y-5">
+        <!-- Instant Match Form -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20 space-y-4">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="material-symbols-outlined text-[#9f402d] text-xl font-bold">bolt</span>
+            <h3 class="font-headline font-extrabold text-base text-[#1c1c18] tracking-tight">Instant Match & Request</h3>
+          </div>
+          <p class="text-xs text-[#89726d] leading-relaxed">
+            Choose a service category and explain what you need. We'll automatically request the nearest online workers to help you.
+          </p>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[10px] font-bold text-[#89726d] uppercase tracking-wider mb-1">Service Category</label>
+              <select id="quick-category" class="w-full px-4 py-2.5 bg-[#fcf9f2] border border-[#ddc0ba] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20">
+                <option value="" disabled selected>Select a category...</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-[10px] font-bold text-[#89726d] uppercase tracking-wider mb-1">Reason for Booking</label>
+              <textarea id="quick-reason" rows="2" placeholder="e.g. Toilet plumbing leak, needs immediate repair" class="w-full px-4 py-2.5 bg-[#fcf9f2] border border-[#ddc0ba] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20 resize-none"></textarea>
+            </div>
+            
+            <div id="quick-msg" class="hidden text-xs font-bold p-3 rounded-xl"></div>
+            
+            <button id="quick-send-btn" onclick="sendQuickBooking()" class="w-full bg-gradient-to-r from-[#9f402d] to-[#e2725b] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-sm">send</span> Match & Send Request
+            </button>
+          </div>
         </div>
-        <div id="map" class="shadow-sm border border-[#ddc0ba]/30"></div>
       </div>
 
       <!-- Workers List Column -->
@@ -175,35 +195,26 @@
   <script>
     const API = 'http://localhost:8000/api';
     let allWorkers = [];
-    let map, markers = [];
+    let userLat = null, userLon = null;
 
-    // Init map
-    map = L.map('map').setView([28.6139, 77.2090], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
-        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
-        L.circle([pos.coords.latitude, pos.coords.longitude], { radius: 300, color: '#9f402d', fillOpacity: 0.1 }).addTo(map);
-      });
-    }
-
-    function makeIcon(skill) {
-      const emojis = { Plumber: '🔧', Electrician: '⚡', 'House Maid': '🧹', 'Home Cook': '🍳', Carpenter: '🪚', Painter: '🎨', Gardener: '🌿', 'Baby Sitter': '👶', Labourer: '💪', Driver: '🚗' };
-      const e = emojis[skill] || '👷';
-      return L.divIcon({ className: '', html: `<div style="width:40px;height:40px;border-radius:50%;background:#9f402d;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">${e}</div>`, iconSize: [40, 40], iconAnchor: [20, 20] });
-    }
-
-    function renderMap(workers) {
-      markers.forEach(m => map.removeLayer(m));
-      markers = [];
-      workers.forEach(w => {
-        if (w.latitude && w.longitude) {
-          const m = L.marker([parseFloat(w.latitude), parseFloat(w.longitude)], { icon: makeIcon(w.skill) }).addTo(map);
-          m.bindPopup(`<b>${w.fullname}</b><br>${w.skill}<br>⭐ ${w.rating}<br><a href="booking_request.html?worker_id=${w.id}" style="color:#9f402d;font-weight:bold">Book Now</a>`);
-          markers.push(m);
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
+        
+        // Save user live position coordinates (Phase 3)
+        const sessionKey = localStorage.getItem('session_key');
+        if (sessionKey) {
+          fetch(`${API}/profile/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+            body: JSON.stringify({ latitude: userLat, longitude: userLon })
+          }).catch(err => console.error("Error updating location profile:", err));
         }
+        
+        // Reload workers with user coordinates
+        loadWorkers();
       });
-      document.getElementById('map-count').textContent = `${markers.length} on map`;
     }
 
     function renderList(workers) {
@@ -213,20 +224,25 @@
     <div class="worker-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20">
       <div class="flex items-start justify-between mb-3">
         <div class="flex items-center gap-3">
-          <div class="w-14 h-14 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-xl font-black text-[#9f402d]">${w.fullname.charAt(0)}</div>
+          <div onclick="window.location.href='worker_detail.html?worker_id=${w.id}'" class="w-14 h-14 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-xl font-black text-[#9f402d] cursor-pointer overflow-hidden hover:scale-105 active:scale-95 transition-all" title="View Profile Details">
+            ${w.profile_pic 
+              ? `<img src="http://localhost:8000${w.profile_pic}" alt="${w.fullname}" class="w-full h-full object-cover">`
+              : w.fullname.charAt(0).toUpperCase()}
+          </div>
           <div>
             <h3 class="font-bold text-[#1c1c18] text-base">${w.fullname}</h3>
             <p class="text-[#9f402d] font-semibold text-sm">${w.skill}</p>
           </div>
         </div>
-        <span class="px-3 py-1 rounded-full text-xs font-bold ${w.status === 'pro' ? 'bg-[#ffdad3] text-[#9f402d]' : w.status === 'verified' ? 'bg-[#d6e7a1] text-[#56642b]' : 'bg-gray-100 text-gray-600'}">${w.status}</span>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-[#d6e7a1] text-[#56642b] uppercase">${w.worker_status || 'online'}</span>
       </div>
       <p class="text-sm text-[#56423e] mb-3 leading-relaxed">${w.bio || 'Experienced and reliable worker.'}</p>
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3 text-sm text-[#56423e]">
-          <span>⭐ ${w.rating} (${w.total_jobs} jobs)</span>
-          ${w.hourly_rate ? `<span>₹${w.hourly_rate}/hr</span>` : ''}
-          ${w.is_available ? '<span class="text-green-600 font-bold">● Available</span>' : '<span class="text-gray-400">○ Busy</span>'}
+        <div class="flex items-center gap-3 text-[11px] sm:text-xs text-[#56423e]">
+          <span>⭐ ${w.rating.toFixed(1)} (${w.total_jobs} jobs)</span>
+          ${w.hourly_rate ? `<span>• ₹${w.hourly_rate}/hr</span>` : ''}
+          ${w.distance_text ? `<span>• 📍 ${w.distance_text}</span>` : ''}
+          ${w.is_available ? '<span class="text-green-600 font-bold">• Available</span>' : '<span class="text-gray-400">• Busy</span>'}
         </div>
        <a href="booking_request.html?worker_id=${w.id}" 
           class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">
@@ -239,18 +255,167 @@
 
     async function loadWorkers(skill = '') {
       try {
-        const url = skill ? `${API}/workers/?skill=${encodeURIComponent(skill)}` : `${API}/workers/`;
+        let url = `${API}/workers/`;
+        const params = [];
+        if (skill) params.push(`skill=${encodeURIComponent(skill)}`);
+        if (userLat !== null && userLon !== null) {
+          params.push('latitude=' + userLat);
+          params.push('longitude=' + userLon);
+        }
+        if (params.length > 0) {
+          url += '?' + params.join('&');
+        }
+
         const res = await fetch(url);
         const data = await res.json();
         if (data.status === 'success') {
           allWorkers = data.data;
-          renderMap(allWorkers);
           renderList(allWorkers);
-          document.getElementById('list-title').textContent = skill ? `${skill}s (${allWorkers.length})` : `All Workers (${allWorkers.length})`;
-          document.getElementById('map-title').textContent = skill ? `${skill}s near you` : 'Workers near you';
+          document.getElementById('list-title').textContent = skill ? skill + 's (' + allWorkers.length + ')' : 'All Workers (' + allWorkers.length + ')';
         }
       } catch (e) {
         document.getElementById('workers-list').innerHTML = '<div class="text-center py-8 text-[#89726d]">Start the server to see workers.</div>';
+      }
+    }
+
+    const categories = [
+      { name: 'Plumber', emoji: '🔧' },
+      { name: 'Electrician', emoji: '⚡' },
+      { name: 'Carpenter', emoji: '🪚' },
+      { name: 'Painter', emoji: '🎨' },
+      { name: 'Mason (Mistri)', emoji: '🧱' },
+      { name: 'Appliance Repair', emoji: '🔌' },
+      { name: 'House Maid', emoji: '🧹' },
+      { name: 'Laundry / Dhobi', emoji: '🧺' },
+      { name: 'Cleaning Specialist', emoji: '🧼' },
+      { name: 'Cook / Chef', emoji: '🍳' },
+      { name: 'Gardener', emoji: '🌿' },
+      { name: 'Car Washer', emoji: '🧽' },
+      { name: 'Security Guard', emoji: '🛡️' },
+      { name: 'Driver', emoji: '🚗' },
+      { name: 'Mechanic', emoji: '⚙️' }
+    ];
+
+    function renderCategories() {
+      const container = document.querySelector('.flex.gap-2.overflow-x-auto');
+      if (container) {
+        let html = '<button class="cat-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill(\'\')" data-skill="">All</button>';
+        categories.forEach(cat => {
+          html += '<button class="cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold" onclick="filterSkill(\'' + cat.name + '\')" data-skill="' + cat.name + '">' + cat.emoji + ' ' + cat.name + '</button>';
+        });
+        container.innerHTML = html;
+      }
+
+      const select = document.getElementById('quick-category');
+      if (select) {
+        select.innerHTML = '<option value="" disabled selected>Select a category...</option>';
+        categories.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat.name;
+          opt.textContent = cat.emoji + ' ' + cat.name;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    async function sendQuickBooking() {
+      const category = document.getElementById('quick-category').value;
+      const reason = document.getElementById('quick-reason').value.trim();
+      const btn = document.getElementById('quick-send-btn');
+      const msgEl = document.getElementById('quick-msg');
+      const sessionKey = localStorage.getItem('session_key');
+
+      function showQuickMsg(text, type) {
+        msgEl.textContent = text;
+        msgEl.className = 'text-xs font-bold p-3 rounded-xl ' + (type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700');
+        msgEl.classList.remove('hidden');
+      }
+
+      if (!sessionKey) {
+        showQuickMsg('Please login to send requests.', 'error');
+        return;
+      }
+      if (!category) {
+        showQuickMsg('Please select a service category.', 'error');
+        return;
+      }
+      if (!reason) {
+        showQuickMsg('Please describe what help you need.', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span> Requesting nearest workers...';
+      msgEl.classList.add('hidden');
+
+      try {
+        // 1. Fetch nearest workers in this category
+        let url = API + '/workers/?skill=' + encodeURIComponent(category);
+        if (userLat !== null && userLon !== null) {
+          url += '&latitude=' + userLat + '&longitude=' + userLon;
+        }
+        
+        const workersRes = await fetch(url);
+        const workersData = await workersRes.json();
+        
+        if (workersData.status !== 'success' || !workersData.data || workersData.data.length === 0) {
+          showQuickMsg('No online ' + category + 's found near you.', 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-sm">send</span> Match & Send Request';
+          return;
+        }
+
+        // Take up to top 3 nearest workers
+        const nearestWorkers = workersData.data.slice(0, 3);
+
+        // 2. Fetch current profile to get client ID securely
+        const profileRes = await fetch(API + '/profile/', {
+          headers: { 'X-Session-Key': sessionKey }
+        });
+        const profileData = await profileRes.json();
+
+        if (profileData.status !== 'success') {
+          showQuickMsg('Your session expired. Please sign in again.', 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-sm">send</span> Match & Send Request';
+          return;
+        }
+
+        const loggedInClientId = profileData.data.id;
+
+        // 3. Create booking request for each nearby worker in parallel
+        const bookingPromises = nearestWorkers.map(w => {
+          return fetch(API + '/bookings/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Session-Key': sessionKey
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              worker_id: parseInt(w.id),
+              client_id: parseInt(loggedInClientId),
+              service_desc: reason
+            })
+          }).then(res => res.json());
+        });
+
+        const results = await Promise.all(bookingPromises);
+        const successes = results.filter(r => r.status === 'success');
+
+        if (successes.length > 0) {
+          showQuickMsg('Request sent to ' + successes.length + ' nearby worker(s)!', 'success');
+          setTimeout(() => window.location.href = 'booking_history.html', 2000);
+        } else {
+          const errorMsg = results[0]?.message || 'Could not send request. Try again.';
+          showQuickMsg(errorMsg, 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-sm">send</span> Match & Send Request';
+        }
+      } catch (err) {
+        showQuickMsg('Cannot connect to server.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-sm">send</span> Match & Send Request';
       }
     }
 
@@ -266,9 +431,9 @@
       const q = e.target.value.toLowerCase();
       const filtered = allWorkers.filter(w => w.fullname.toLowerCase().includes(q) || w.skill.toLowerCase().includes(q));
       renderList(filtered);
-      renderMap(filtered);
     });
 
+    renderCategories();
     loadWorkers();
   </script>
 </body>

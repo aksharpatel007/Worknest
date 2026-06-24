@@ -12,6 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Leaflet Map API -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script id="tailwind-config">
     tailwind.config = {
       theme: {
@@ -273,6 +276,22 @@
         </div>
       </section>
 
+      <!-- Active Job Tracking Map Section (Phase 7 & 8) -->
+      <section id="worker-tracking-section" class="hidden">
+        <div class="p-4 sm:p-6 bg-white border border-[#ddc0ba]/30 rounded-2xl sm:rounded-3xl shadow-md space-y-4">
+          <div class="flex justify-between items-center flex-wrap gap-2">
+            <div>
+              <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Navigation & Navigation Details</span>
+              <h3 class="text-sm sm:text-lg font-black text-[#1c1c18]" id="tracking-client-name">Client Location</h3>
+            </div>
+            <a id="google-maps-btn" target="_blank" class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-full hover:bg-primary-light transition-all flex items-center gap-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-xs">navigation</span> Open in Google Maps
+            </a>
+          </div>
+          <div id="worker-tracking-map" style="height: 250px; border-radius: 1.5rem;" class="shadow-inner border border-[#ddc0ba]/20 z-0"></div>
+        </div>
+      </section>
+
       <!-- Bento grids and history wrapped in responsive container -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         <!-- Left Side: Bento Analytics grids -->
@@ -475,7 +494,13 @@
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
     const API_BASE = 'http://localhost:8000/api';
-    let isWorkerOnline = true; // State tracker flag
+    let isWorkerOnline = false; // State tracker flag
+    let locationIntervalId = null;
+    let trackingMap = null;
+    let trackingMarkerWorker = null;
+    let trackingMarkerClient = null;
+    let trackingPolyline = null;
+    let hasFitBounds = false;
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
@@ -523,6 +548,15 @@
             headerAvatar.src = avatarPic;
           }
 
+          // Sync online switch state (Phase 1)
+          isWorkerOnline = (worker.worker_status === 'online');
+          updateToggleUI();
+          if (isWorkerOnline) {
+            startLocationUpdates();
+          } else {
+            stopLocationUpdates();
+          }
+
           await loadHistoricalBookingsLogs(worker.id);
         }
       } catch (e) { console.error("Identity status processing error:", e); }
@@ -541,27 +575,114 @@
 
           if (finishedJobs.length === 0) {
             scroller.innerHTML = `<p class="text-[10px] sm:text-xs text-[#89726d] italic text-center py-4">No historical transactions found.</p>`;
-            return;
+          } else {
+            scroller.innerHTML = finishedJobs.map(j => `
+              <div class="p-2.5 bg-[#f1eee7]/30 border border-[#ddc0ba]/20 rounded-lg flex justify-between items-center text-[11px] sm:text-xs">
+                <div class="truncate pr-2">
+                  <span class="font-extrabold text-[#1c1c18] block truncate">${j.client_name || 'Client'}</span>
+                  <span class="text-[9px] sm:text-[10px] text-[#89726d] font-medium block truncate mt-0.5">"${j.service_desc}"</span>
+                </div>
+                <div class="text-right font-black text-[#56642b] shrink-0 bg-[#d6e7a1]/30 border border-[#d6e7a1] px-2.5 py-0.5 rounded-md text-[10px] sm:text-xs">
+                  +₹${j.final_price || 'Paid'}
+                </div>
+              </div>
+            `).join('');
           }
 
           const activeJob = json.data.find(b => b.status === 'in_progress' || b.status === 'accepted');
           if (activeJob) {
             document.getElementById('priority-job-desc').textContent = `${activeJob.service_desc} — for ${activeJob.client_name}`;
+            
+            // Show tracking section (Phase 7 & 8)
+            document.getElementById('worker-tracking-section').classList.remove('hidden');
+            document.getElementById('tracking-client-name').textContent = `Navigate to ${activeJob.client_name}`;
+            
+            const cLat = activeJob.client_latitude;
+            const cLon = activeJob.client_longitude;
+            const wLat = activeJob.worker_latitude;
+            const wLon = activeJob.worker_longitude;
+            
+            if (cLat && cLon) {
+              const origin = (wLat && wLon) ? `${wLat},${wLon}` : '';
+              document.getElementById('google-maps-btn').href = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${cLat},${cLon}&travelmode=driving`;
+              document.getElementById('google-maps-btn').classList.remove('pointer-events-none', 'opacity-50');
+              
+              const clientLatLng = [parseFloat(cLat), parseFloat(cLon)];
+              const workerLatLng = (wLat && wLon) ? [parseFloat(wLat), parseFloat(wLon)] : null;
+              
+              setTimeout(() => {
+                if (!trackingMap) {
+                  trackingMap = L.map('worker-tracking-map').setView(clientLatLng, 14);
+                  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                  }).addTo(trackingMap);
+                  hasFitBounds = false;
+                }
+                
+                // Worker marker icon
+                const wIcon = L.divIcon({
+                  className: '',
+                  html: `<div style="width:36px;height:36px;border-radius:50%;background:#56642b;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">👷</div>`,
+                  iconSize: [36, 36],
+                  iconAnchor: [18, 18]
+                });
+                
+                // Client marker icon
+                const cIcon = L.divIcon({
+                  className: '',
+                  html: `<div style="width:36px;height:36px;border-radius:50%;background:#9f402d;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">🏠</div>`,
+                  iconSize: [36, 36],
+                  iconAnchor: [18, 18]
+                });
+                
+                if (trackingMarkerClient) {
+                  trackingMarkerClient.setLatLng(clientLatLng);
+                } else {
+                  trackingMarkerClient = L.marker(clientLatLng, { icon: cIcon }).addTo(trackingMap).bindPopup(`<b>Client: ${activeJob.client_name}</b>`);
+                }
+                
+                if (workerLatLng) {
+                  if (trackingMarkerWorker) {
+                    trackingMarkerWorker.setLatLng(workerLatLng);
+                  } else {
+                    trackingMarkerWorker = L.marker(workerLatLng, { icon: wIcon }).addTo(trackingMap).bindPopup(`<b>Your Location</b>`);
+                  }
+                  
+                  // Polyline between worker and client
+                  if (trackingPolyline) {
+                    trackingPolyline.setLatLngs([workerLatLng, clientLatLng]);
+                  } else {
+                    trackingPolyline = L.polyline([workerLatLng, clientLatLng], { color: '#9f402d', weight: 4, dashArray: '5, 10' }).addTo(trackingMap);
+                  }
+                  
+                  // Fit bounds to show both
+                  if (!hasFitBounds) {
+                    const group = new L.featureGroup([trackingMarkerClient, trackingMarkerWorker]);
+                    trackingMap.fitBounds(group.getBounds().pad(0.15));
+                    hasFitBounds = true;
+                  }
+                } else {
+                  if (!hasFitBounds) {
+                    trackingMap.setView(clientLatLng, 14);
+                    hasFitBounds = true;
+                  }
+                }
+              }, 100);
+            } else {
+              document.getElementById('google-maps-btn').classList.add('pointer-events-none', 'opacity-50');
+            }
           } else {
             document.getElementById('priority-job-desc').textContent = 'No active task assigned. Waiting for requests.';
+            document.getElementById('worker-tracking-section').classList.add('hidden');
+            if (trackingMap) {
+              trackingMap.remove();
+              trackingMap = null;
+              trackingMarkerWorker = null;
+              trackingMarkerClient = null;
+              trackingPolyline = null;
+            }
+            hasFitBounds = false;
           }
-
-          scroller.innerHTML = finishedJobs.map(j => `
-            <div class="p-2.5 bg-[#f1eee7]/30 border border-[#ddc0ba]/20 rounded-lg flex justify-between items-center text-[11px] sm:text-xs">
-              <div class="truncate pr-2">
-                <span class="font-extrabold text-[#1c1c18] block truncate">${j.client_name || 'Client'}</span>
-                <span class="text-[9px] sm:text-[10px] text-[#89726d] font-medium block truncate mt-0.5">"${j.service_desc}"</span>
-              </div>
-              <div class="text-right font-black text-[#56642b] shrink-0 bg-[#d6e7a1]/30 border border-[#d6e7a1] px-2.5 py-0.5 rounded-md text-[10px] sm:text-xs">
-                +₹${j.final_price || 'Paid'}
-              </div>
-            </div>
-          `).join('');
         }
       } catch (e) {
         scroller.innerHTML = `<p class="text-[10px] text-red-600 italic text-center py-2">Error loading items matrix.</p>`;
@@ -569,23 +690,91 @@
     }
 
     // 🎯 LIVE CUSTOM TACTILE TOGGLE ENGINE ACTIONS
-    function handleToggleInteraction() {
-      isWorkerOnline = !isWorkerOnline;
-
+    function updateToggleUI() {
       const track = document.getElementById('custom-toggle-track');
       const thumb = document.getElementById('custom-toggle-thumb');
       const textLabel = document.getElementById('toggle-status-text');
+      if (!track || !thumb || !textLabel) return;
 
       if (isWorkerOnline) {
-        track.className = "w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56642b] rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center";
+        track.className = "w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56642b] rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center cursor-pointer";
         thumb.className = "w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-md transform translate-x-3.5 sm:translate-x-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]";
         textLabel.textContent = "Online";
         textLabel.className = "text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#56642b] transition-colors duration-200";
       } else {
-        track.className = "w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56423e]/20 rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center";
+        track.className = "w-8 h-4.5 sm:w-9 sm:h-5 bg-[#56423e]/20 rounded-full relative p-0.5 transition-all duration-300 shadow-inner flex items-center cursor-pointer";
         thumb.className = "w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-md transform translate-x-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]";
         textLabel.textContent = "Offline";
         textLabel.className = "text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#89726d] transition-colors duration-200";
+      }
+    }
+
+    async function handleToggleInteraction() {
+      isWorkerOnline = !isWorkerOnline;
+      updateToggleUI();
+      
+      const sessionKey = localStorage.getItem('session_key');
+      if (!sessionKey) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          body: JSON.stringify({ worker_status: isWorkerOnline ? 'online' : 'offline' })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast(`Status switched ${isWorkerOnline ? 'Online' : 'Offline'}!`, 'success');
+          if (isWorkerOnline) {
+            startLocationUpdates();
+          } else {
+            stopLocationUpdates();
+          }
+        } else {
+          showToast(data.message || 'Status transition failed', 'error');
+        }
+      } catch (err) {
+        showToast('Network error during transition', 'error');
+      }
+    }
+
+    function startLocationUpdates() {
+      if (locationIntervalId) return;
+      updateWorkerLocation(); // Immediate update
+      locationIntervalId = setInterval(updateWorkerLocation, 15000); // Update periodically (Phase 2)
+    }
+
+    function stopLocationUpdates() {
+      if (locationIntervalId) {
+        clearInterval(locationIntervalId);
+        locationIntervalId = null;
+      }
+    }
+
+    async function updateWorkerLocation() {
+      if (!isWorkerOnline) return;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const sessionKey = localStorage.getItem('session_key');
+          if (!sessionKey) return;
+          try {
+            await fetch(`${API_BASE}/profile/`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+              body: JSON.stringify({ latitude: lat, longitude: lon })
+            });
+            // Update active job log to refresh client location coordinate tracking
+            const profileRes = await fetch(`${API_BASE}/profile/`, {
+              headers: { 'X-Session-Key': sessionKey }
+            });
+            const profileData = await profileRes.json();
+            if (profileData.status === 'success') {
+              await loadHistoricalBookingsLogs(profileData.data.id);
+            }
+          } catch (e) { console.error("Periodic coordinates update failure:", e); }
+        });
       }
     }
 

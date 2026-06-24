@@ -10,6 +10,9 @@
     rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
+  <!-- Leaflet Map API -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     html,
     body {
@@ -117,13 +120,17 @@
           class="w-full pl-12 pr-6 py-4 bg-white rounded-2xl border border-[#ddc0ba]/30 shadow-sm focus:ring-2 focus:ring-[#9f402d]/20 outline-none transition-all text-sm font-medium">
       </div>
 
-      <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-[#ddc0ba]/20 shadow-sm">
+      <div class="flex flex-wrap items-center gap-3 bg-white p-4 rounded-2xl border border-[#ddc0ba]/20 shadow-sm">
         <button id="filter-all" onclick="filterQueue('all')"
           class="px-5 py-2 rounded-full text-xs font-bold bg-[#9f402d] text-white">All Workers</button>
         <button id="filter-verified" onclick="filterQueue('verified')"
           class="px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e]">Verified</button>
         <button id="filter-unverified" onclick="filterQueue('unverified')"
           class="px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e]">Pending</button>
+        <button id="filter-online" onclick="filterQueue('online')"
+          class="px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e]">Online</button>
+        <button id="filter-offline" onclick="filterQueue('offline')"
+          class="px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e]">Offline</button>
       </div>
 
       <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20">
@@ -166,6 +173,33 @@
       <div class="flex gap-3 pt-2">
         <button id="confirm-cancel-btn" class="w-1/2 py-3 bg-[#f1eee7] text-[#56423e] font-bold rounded-full text-xs sm:text-sm transition-colors hover:bg-[#ddc0ba]/50">Cancel</button>
         <button id="confirm-ok-btn" class="w-1/2 py-3 bg-[#9f402d] text-white font-extrabold rounded-full text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Location Map Modal -->
+  <div id="map-modal"
+    class="hidden fixed inset-0 z-[10000] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col">
+      <div class="p-6 border-b border-[#f1eee7] flex justify-between items-center bg-[#fcf9f2]">
+        <div>
+          <h3 id="map-modal-title" class="text-lg font-black text-[#1c1c18]">Worker Location Tracking</h3>
+          <p id="map-modal-subtitle" class="text-xs text-[#89726d] font-semibold uppercase tracking-wider mt-0.5"></p>
+        </div>
+        <button onclick="closeLocationModal()" class="text-2xl text-[#89726d] hover:text-black">✕</button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div id="admin-map" style="height: 380px; border-radius: 1.5rem;" class="shadow-inner border border-[#ddc0ba]/20 z-0"></div>
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-[#fcf9f2] p-4 rounded-2xl border border-[#ddc0ba]/20">
+          <div class="text-left space-y-0.5">
+            <span class="text-[10px] font-black uppercase text-[#89726d] tracking-widest block">Coordinates</span>
+            <p id="map-modal-coords" class="text-xs font-bold text-on-surface"></p>
+          </div>
+          <a id="admin-google-maps-link" target="_blank"
+             class="px-5 py-2.5 bg-[#9f402d] text-white text-xs font-bold rounded-full hover:bg-[#e2725b] transition-all flex items-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-xs">navigation</span> Open in Google Maps
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -213,17 +247,21 @@
           const val = String(w.is_verified).toLowerCase();
           return val === 'false' || val === 'f' || w.is_verified === 0 || w.is_verified === false;
         });
+      } else if (status === 'online') {
+        filtered = rawWorkerData.filter(w => w.worker_status === 'online');
+      } else if (status === 'offline') {
+        filtered = rawWorkerData.filter(w => w.worker_status !== 'online');
       } else {
         filtered = rawWorkerData;
       }
 
-      ['all', 'verified', 'unverified'].forEach(key => {
+      ['all', 'verified', 'unverified', 'online', 'offline'].forEach(key => {
         const btn = document.getElementById(`filter-${key}`);
         if (btn) {
           if (key === status) {
-            btn.className = "px-6 py-2.5 rounded-full text-xs font-black bg-[#9f402d] text-white shadow-lg transition-all";
+            btn.className = "px-5 py-2 rounded-full text-xs font-bold bg-[#9f402d] text-white shadow-md transition-all";
           } else {
-            btn.className = "px-6 py-2.5 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30 transition-all";
+            btn.className = "px-5 py-2 rounded-full text-xs font-bold bg-[#f1eee7] text-[#56423e] hover:bg-[#ddc0ba]/30 transition-all";
           }
         }
       });
@@ -257,7 +295,12 @@
             ${greenDotBadge}
           </div>
           <div>
-            <p class="font-bold text-[#1c1c18]">${w.fullname}</p>
+            <div class="flex items-center gap-2">
+              <p class="font-bold text-[#1c1c18]">${w.fullname}</p>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${w.worker_status === 'online' ? 'bg-green-100 text-green-700' : 'bg-stone-100 text-stone-500'}">
+                ${w.worker_status === 'online' ? 'Online' : 'Offline'}
+              </span>
+            </div>
             <p class="text-[10px] uppercase font-black ${w.is_verified ? 'text-green-600' : 'text-orange-600'}">${w.is_verified ? 'Verified' : 'Pending'}</p>
           </div>
         </td>
@@ -338,11 +381,13 @@
       const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
       const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : avatarFallback;
 
-
-
       const statusBadge = w.is_verified
         ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Verified Expert</span>'
         : '<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Pending Review</span>';
+
+      const onlineBadge = w.worker_status === 'online'
+        ? '<span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse"></span>Online</span>'
+        : '<span class="bg-stone-100 text-stone-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Offline</span>';
 
       const displayTime = w.submitted_at ? w.submitted_at : new Date(w.date_joined).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
@@ -355,9 +400,15 @@
           </div>
           <div>
             <h4 class="text-2xl font-black text-[#1c1c18] leading-tight">${w.fullname}</h4>
-            <div class="mt-1">${statusBadge}</div>
+            <div class="mt-1.5 flex flex-wrap gap-2">${statusBadge} ${onlineBadge}</div>
           </div>
         </div>
+
+        <button onclick="openLocationMap(${w.id})" 
+                class="w-full py-4 bg-[#56642b] hover:bg-[#3e4c16] text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2 shadow-md hover:scale-[1.01]">
+          <span class="material-symbols-outlined text-base">location_on</span>
+          ${w.worker_status === 'online' ? 'Track Live Location' : 'See Last Known Location'}
+        </button>
 
         <div class="space-y-4 bg-[#fcf9f2] p-6 rounded-3xl border border-[#ddc0ba]/20">
           <div class="flex justify-between border-b border-[#ddc0ba]/10 pb-2">
@@ -625,6 +676,91 @@
 
 
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    let adminLeafletMap = null;
+    let adminMapMarker = null;
+
+    function openLocationMap(workerId) {
+      const w = rawWorkerData.find(x => x.id == workerId);
+      if (!w) return;
+
+      const modal = document.getElementById('map-modal');
+      const titleEl = document.getElementById('map-modal-title');
+      const subtitleEl = document.getElementById('map-modal-subtitle');
+      const coordsEl = document.getElementById('map-modal-coords');
+      const gMapsBtn = document.getElementById('admin-google-maps-link');
+
+      modal.classList.remove('hidden');
+      titleEl.textContent = `Location Tracking — ${w.fullname}`;
+      
+      let lat = parseFloat(w.latitude);
+      let lon = parseFloat(w.longitude);
+      let isFallback = false;
+
+      if (isNaN(lat) || isNaN(lon) || lat === 0 || lon === 0) {
+        isFallback = true;
+        // Deterministic offset based on worker ID to spread markers around Ahmedabad center
+        const offsetLat = ((w.id * 17) % 100) / 10000 - 0.005;
+        const offsetLon = ((w.id * 23) % 100) / 10000 - 0.005;
+        lat = 23.0225 + offsetLat;
+        lon = 72.5714 + offsetLon;
+      }
+
+      const isOnline = w.worker_status === 'online';
+      if (isFallback) {
+        subtitleEl.innerHTML = `<span class="text-amber-600 font-extrabold">Estimated Position (Offline / No GPS data)</span>`;
+      } else {
+        subtitleEl.innerHTML = isOnline
+          ? `<span class="text-green-600 font-extrabold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></span>Active & Online</span>`
+          : `<span class="text-stone-500 font-bold">Offline — Last Known Location</span>`;
+      }
+
+      const mapDiv = document.getElementById('admin-map');
+
+      // Clear any previous map instance safely
+      if (adminLeafletMap) {
+        adminLeafletMap.remove();
+        adminLeafletMap = null;
+        adminMapMarker = null;
+      }
+
+      // Clear the container div
+      mapDiv.innerHTML = "";
+      coordsEl.textContent = isFallback 
+        ? `Estimated Coords (Seeded): ${lat.toFixed(6)}, ${lon.toFixed(6)}`
+        : `Latitude: ${lat.toFixed(6)}, Longitude: ${lon.toFixed(6)}`;
+      
+      gMapsBtn.classList.remove('hidden');
+      gMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+
+      // Initialize Leaflet Map
+      setTimeout(() => {
+        adminLeafletMap = L.map('admin-map', { zoomControl: true }).setView([lat, lon], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(adminLeafletMap);
+
+        const customIcon = L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div class="w-8 h-8 rounded-full bg-[#9f402d] border-2 border-white flex items-center justify-center shadow-lg transform -translate-x-1/2 -translate-y-1/2">
+                  <span class="material-symbols-outlined text-white text-base font-bold">person_pin</span>
+                 </div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        });
+
+        adminMapMarker = L.marker([lat, lon], { icon: customIcon }).addTo(adminLeafletMap);
+
+        // Force Leaflet recalculation
+        adminLeafletMap.invalidateSize();
+      }, 150);
+    }
+
+    function closeLocationModal() {
+      document.getElementById('map-modal').classList.add('hidden');
+    }
+
     loadQueue();
   </script>
 </body>

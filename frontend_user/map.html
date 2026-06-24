@@ -105,13 +105,14 @@
     <div class="flex justify-between items-center px-6 py-4 w-full">
       <button
         class="p-2 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors rounded-full active:scale-95 duration-200"
-        onclick="window.location.href='worker_list.html'">
-        <span class="material-symbols-outlined" data-icon="search">search</span>
+        onclick="window.location.href='dashboard.html'">
+        <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <h1 class="text-2xl font-extrabold text-orange-700 dark:text-orange-500 tracking-tighter font-manrope">Worknest
       </h1>
       <div
-        class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20 shadow-sm">
+        class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20 shadow-sm cursor-pointer"
+        onclick="window.location.href='profile.html'">
         <img alt="User Profile" class="w-full h-full object-cover"
           data-alt="Close-up portrait of a friendly professional man with a neat beard, soft outdoor lighting, natural skin tones"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Yn0FsEgVYKF7TdkFi7rP8OgrH-FS3qg95gtrDft4Gi-XUVh7LLtkZE6PPXYRIrmbkn5j8AbiBdztULvC7fzzugx30_AhfrGdNctCfuvdvvJzSYxkuncaiXrcIRvBP_DHvs-LAoQsA2hfCOG6KEoPD9iIh18b9KsLskN7U2CwUeQQd6eoW4yu308TKHuZXm2rLHjcxAKFuKI2PAOmh8udJueKREEHotTmOHWz7KNxNCgWXnthYNBwcyWitdMZsbw-kkYLTVpF77Xh" />
@@ -121,153 +122,122 @@
   <!-- Main Map Content -->
   <main class="relative h-screen w-full overflow-hidden">
     <div id="map" class="absolute inset-0 z-0"></div>
-    <!-- Custom Markers (Workers) -->
-    <!-- Marker 1 -->
-    <div class="absolute top-[30%] left-[25%] z-10">
-      <div class="relative flex flex-col items-center">
-        <div
-          class="w-12 h-12 rounded-full border-4 border-white shadow-xl overflow-hidden active:scale-95 transition-transform cursor-pointer">
-          <img class="w-full h-full object-cover"
-            data-alt="Portrait of a young woman with a warm smile, wearing a casual linen shirt, natural sunlight"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbYF-5asftVPGf1YgOXMB7IrFI-jgYvhBmens1EMQsq_s5I6P7QE35ASAdhQ6UiyQm4qLWeUeGVczvG3MUB5F71rav5ylUFTX9M51wv9R-IEK-HkoPzniUS42UaNNCrUqCkaToxhHbPOiXjGL9qT4Wr7KbP_lHtdHUZASpvA2OPrAWROR5oaQD-SrJBH7WMqeFuTa5VVIxyidplFc4S5zPFTRr22RSOpuTdchJX62ac1d8iz9pm4zY5kSqpo0PNQrlCi6HoEV9xtKI" />
+    <!-- Active Tracking Banner overlay (Phase 8) -->
+    <div id="tracking-banner" class="hidden fixed top-20 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40 bg-[#9f402d] text-white p-4 rounded-2xl shadow-xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button onclick="window.location.href='booking_history.html'" class="p-1.5 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all active:scale-90" title="Back to Bookings">
+          <span class="material-symbols-outlined text-sm font-bold">arrow_back</span>
+        </button>
+        <div>
+          <p class="text-[9px] uppercase tracking-widest text-orange-200 font-bold">Active Job Tracking</p>
+          <h4 id="tracking-worker-name" class="text-sm font-extrabold">Tracking Specialist</h4>
+          <p id="tracking-worker-status" class="text-[10px] text-orange-100 mt-0.5">En route to your location</p>
         </div>
-        <div
-          class="mt-2 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[10px] font-bold tracking-wider text-primary uppercase">
-          Handyman</div>
+      </div>
+      <div class="text-right flex flex-col items-end gap-1">
+        <span id="tracking-worker-distance" class="bg-white/20 px-3 py-1 rounded-full text-xs font-black">-- km</span>
+        <span id="tracking-worker-skill" class="text-[9px] font-bold text-orange-200 uppercase tracking-wider">Skill</span>
       </div>
     </div>
-    <!-- Marker 2 (Clicked State Visual) -->
-    <div class="absolute top-[50%] left-[60%] z-20">
-      <div class="relative flex flex-col items-center">
-        <!-- Community Pulse Animation logic represented by Sage Ring -->
-        <div class="absolute -inset-2 bg-tertiary-container/20 rounded-full animate-pulse"></div>
-        <div
-          class="w-14 h-14 rounded-full border-4 border-primary-container shadow-2xl overflow-hidden ring-4 ring-primary-container/20 transition-all scale-110 cursor-pointer">
-          <img class="w-full h-full object-cover"
-            data-alt="Friendly middle-aged male gardener with a kind face, wearing a worn baseball cap, soft greenhouse lighting"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA47vdWOs_ElcE5dshbV867qwxWGDl6wxjfZIkXAFAXr_8FikE_fdUsyUmnzujdog0HDmv-84cX7YnF7nQqPhmMrDoYCHIP7DDfiVBDCjMcbL2drlNtBSejSkqbA3_NEBddLuZv_mpEylAp9PgF6iWi01xfWUW9HwG_RYyp0BbkCrZqUNAFLfDLGo5df_smMuZ6FSJ9JWoR1fpoiM1sa04UvVqRpZn0naOvSjQkMYktZFSZN6ZvZH6cORVJaMp5fiFWieY_H-JlX7-I" />
-        </div>
-        <div
-          class="mt-2 px-3 py-1 bg-primary text-white rounded-full shadow-md text-[10px] font-bold tracking-wider uppercase">
-          Active Now</div>
-      </div>
-    </div>
-    <!-- Marker 3 -->
-    <div class="absolute top-[65%] left-[20%] z-10">
-      <div
-        class="w-10 h-10 rounded-full border-2 border-white shadow-lg overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer">
-        <img class="w-full h-full object-cover"
-          data-alt="Professional young male carpenter in a woodshop setting, focused expression, warm workshop lighting"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmRP3_odu9unlFzNxh-FYRQ3cq4qsBYdtk3uUArN7s5EacVxMjqD21pnxGlngl8oz90zJiOlEsgQLQXeftT0wusYHlhpSUoPu1ChDcO9eZADVBqjPTIvG5sg0owrAxw3LP_pIe7Hej5LLQZv-foII6Jdt1NL7JGaT0tPp5RjrUz5-AwUDTMVlbyjzWlgKwo2sdYVzpiTU9Y2DXkUvCICcTm7VZyLgxOv-EW9VJAXpvdWkTrdnsANLKQVAObkIUX26pZpBbdD50wlbu" />
-      </div>
-    </div>
+
     <!-- Floating Action Controls -->
     <div class="absolute top-24 right-6 z-30 flex flex-col gap-3">
       <button
         class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all"
         onclick="window.location.href='dashboard.html'">
-        <span class="material-symbols-outlined" data-icon="layers">layers</span>
+        <span class="material-symbols-outlined">layers</span>
       </button>
       <button
         class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all"
-        onclick="window.location.href='dashboard.html'">
-        <span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+        onclick="window.location.href='map.html'">
+        <span class="material-symbols-outlined">my_location</span>
       </button>
     </div>
+
     <!-- Organic Bottom Drawer (Pebble Shaped) -->
-    <div class="fixed bottom-[88px] left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40">
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40" id="worker-drawer" style="display: none;">
       <div
         class="bg-surface-container-lowest rounded-lg shadow-2xl border border-outline-variant/10 p-6 overflow-hidden relative">
+        <!-- Close Button -->
+        <button onclick="document.getElementById('worker-drawer').style.display='none'" class="absolute top-4 right-4 p-1 rounded-full hover:bg-surface-container text-on-surface-variant flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
         <!-- Aesthetic Corner Shape -->
         <div class="absolute -top-12 -right-12 w-24 h-24 bg-secondary-container/30 rounded-full blur-2xl"></div>
         <div class="flex items-start gap-5">
           <!-- Worker Avatar Large -->
           <div class="relative">
             <div class="w-20 h-20 rounded-lg overflow-hidden shadow-inner">
-              <img class="w-full h-full object-cover"
-                data-alt="Detailed portrait of a local gardener, friendly expression, terracotta and sage colored background environment"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcHa0SpjalQgy8UOVPHMzMOj8YVnQfyvntQmTfP7miTtK0ubaemtiBbhGVRtcyTQGIWmuoX-f73LghNzFFc22bJXX5pQcvAffTdHNAyJe7nprsI42o59oIMS53Hk3N0KNlTz0wjD-r84YcvSshaIHy2wlQPEd37rrO4Y2aib8kZOT0ZWY2HsD_UTZpovMhLlb76Xup2i63VuClY0epyKf-4hALFVjCu9vuhmJH6eYwwBQDJUjKy2arp0mBC4dWHbE4v3Fy_BAB9AIf" />
+              <img id="drawer-avatar" class="w-full h-full object-cover"
+                src="" />
             </div>
             <div
               class="absolute -bottom-2 -right-2 bg-tertiary text-white w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
-              <span class="material-symbols-outlined text-sm" data-icon="verified"
-                style="font-variation-settings: 'FILL' 1;">verified</span>
+              <span class="material-symbols-outlined text-sm">verified</span>
             </div>
           </div>
           <!-- Details -->
-          <div class="flex-1">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-headline font-extrabold text-xl text-on-surface tracking-tight">Marcus Thorne</h3>
-                <p class="text-on-surface-variant text-sm font-medium">Landscape &amp; Garden Specialist</p>
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start gap-2">
+              <div class="min-w-0">
+                <h3 id="drawer-name" class="font-headline font-extrabold text-xl text-on-surface tracking-tight truncate">Marcus Thorne</h3>
+                <p id="drawer-skill" class="text-on-surface-variant text-sm font-medium truncate">Landscape &amp; Garden Specialist</p>
               </div>
+              <span id="drawer-rate" class="text-primary font-bold text-base shrink-0">₹450/hr</span>
             </div>
-            <div class="mt-3 flex items-center gap-1">
-              <div class="flex text-primary">
-                <span class="material-symbols-outlined text-lg" data-icon="star"
-                  style="font-variation-settings: 'FILL' 1;">star</span>
-                <span class="material-symbols-outlined text-lg" data-icon="star"
-                  style="font-variation-settings: 'FILL' 1;">star</span>
-                <span class="material-symbols-outlined text-lg" data-icon="star"
-                  style="font-variation-settings: 'FILL' 1;">star</span>
-                <span class="material-symbols-outlined text-lg" data-icon="star"
-                  style="font-variation-settings: 'FILL' 1;">star</span>
-                <span class="material-symbols-outlined text-lg" data-icon="star_half"
-                  style="font-variation-settings: 'FILL' 1;">star_half</span>
+            <div class="mt-3 flex items-center gap-1.5 flex-wrap">
+              <div id="drawer-stars" class="flex text-primary">
+                <!-- Stars dynamically rendered -->
               </div>
-              <span class="text-xs font-bold text-on-surface-variant ml-1">4.8 (124 reviews)</span>
+              <span id="drawer-rating" class="text-xs font-bold text-on-surface-variant">4.8 (124 reviews)</span>
+            </div>
+            <div class="mt-2.5 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
+              <span id="drawer-distance" class="px-2.5 py-1 bg-surface-container text-on-surface-variant rounded-full flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">distance</span>
+                <span id="drawer-distance-value">-- km</span>
+              </span>
+              <span id="drawer-availability" class="px-2.5 py-1 bg-[#d6e7a1]/40 text-[#56642b] rounded-full flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">check_circle</span>
+                <span id="drawer-availability-value">Available</span>
+              </span>
             </div>
           </div>
         </div>
         <div class="mt-6 flex gap-3">
-          <button
-            class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all"
-            onclick="window.location.href='dashboard.html'">
+          <button id="drawer-book-btn"
+            class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
             Request Availability
           </button>
-          <button
-            class="w-14 bg-secondary-container text-on-secondary-container rounded-xl flex items-center justify-center active:scale-95 transition-all"
-            onclick="window.location.href='dashboard.html'">
-            <span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+          <button id="drawer-chat-btn"
+            class="w-14 bg-secondary-container text-on-secondary-container rounded-xl flex items-center justify-center active:scale-95 transition-all">
+            <span class="material-symbols-outlined">chat_bubble</span>
           </button>
         </div>
         <!-- Verified Badge Indicator (Eco-Trust) -->
         <div class="mt-4 flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-full w-fit">
-          <span class="material-symbols-outlined text-tertiary text-sm" data-icon="shield_with_heart"
-            style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
-          <span class="text-[11px] font-bold text-on-surface-variant tracking-wide">Worknest Verified Safety
-            Guarantee</span>
+          <span class="material-symbols-outlined text-tertiary text-sm">shield_with_heart</span>
+          <span class="text-[11px] font-bold text-on-surface-variant tracking-wide">Worknest Verified Safety Guarantee</span>
         </div>
       </div>
     </div>
   </main>
-  <!-- BottomNavBar -->
-  <nav
-    class="fixed bottom-2 left-4 right-4 z-50 flex justify-around items-center px-2 sm:px-4 py-2.5 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl shadow-xl border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
-    <a class="flex flex-col items-center justify-center bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-200 rounded-full px-5 py-1.5 transition-all active:scale-90 duration-300 ease-out"
-      href="map.html">
-      <span class="material-symbols-outlined text-lg" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
-      <span class="font-manrope text-[10px] font-semibold tracking-wide">Explore</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-5 py-1.5 hover:text-orange-500 transition-all active:scale-90"
-      href="booking_request.html">
-      <span class="material-symbols-outlined text-lg" data-icon="bookmark">bookmark</span>
-      <span class="font-manrope text-[10px] font-semibold tracking-wide">Saved</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-5 py-1.5 hover:text-orange-500 transition-all active:scale-90"
-      href="dashboard.html">
-      <span class="material-symbols-outlined text-lg" data-icon="work_outline">work_outline</span>
-      <span class="font-manrope text-[10px] font-semibold tracking-wide">Jobs</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-5 py-1.5 hover:text-orange-500 transition-all active:scale-90"
-      href="profile.html">
-      <span class="material-symbols-outlined text-lg" data-icon="person">person</span>
-      <span class="font-manrope text-[10px] font-semibold tracking-wide">Profile</span>
-    </a>
-  </nav>
   <script>
     const API_BASE = 'http://localhost:8000/api';
     let activeWorkersCache = [];
+    let markers = [];
+    let userLat = 23.0225, userLon = 72.5714;
+    let trackingInterval = null;
+    let isTrackingActive = false;
+    let hasFitBounds = false; // Prevents map snaps and jerky lag
+
+    // Extract booking_id from query parameters (Phase 10)
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingIdParam = urlParams.get('booking_id') ? parseInt(urlParams.get('booking_id')) : null;
+
+    // Tracking layer variables
+    let trackingMarkerWorker = null;
+    let trackingMarkerUser = null;
+    let trackingPolyline = null;
 
     // Initialize the Leaflet map matrix
     const map = L.map('map').setView([23.0225, 72.5714], 13); // Default view center: Ahmedabad, India
@@ -278,30 +248,39 @@
     // Define custom orange icon framework for verified active workers
     const workerIcon = L.divIcon({
       className: '',
-      html: `<div style="width:44px;height:44px;border-radius:50%;border:3px solid #fff;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:#fff flex items-center justify-center">
+      html: `<div style="width:44px;height:44px;border-radius:50%;border:3px solid #fff;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:#fff;display:flex;align-items:center;justify-content:center">
       <div style="width:100%;height:100%;background:linear-gradient(135deg,#ea580c,#c2410c);display:flex;align-items:center;justify-content:center;color:white;font-size:18px">👷</div>
     </div>`,
       iconSize: [44, 44],
       iconAnchor: [22, 22]
     });
 
+    const userIcon = L.divIcon({
+      className: '',
+      html: `<div style="width:36px;height:36px;border-radius:50%;border:3px solid #fff;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:#fff;display:flex;align-items:center;justify-content:center">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;color:white;font-size:16px">🏠</div>
+    </div>`,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
+    });
+
     // Target client location and synchronize coordinates with the PostgreSQL user table
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
 
-        map.setView([lat, lon], 14);
-        L.circle([lat, lon], { radius: 400, color: '#9f402d', fillOpacity: 0.08 }).addTo(map);
+        map.setView([userLat, userLon], 14);
+        L.circle([userLat, userLon], { radius: 400, color: '#9f402d', fillOpacity: 0.08 }).addTo(map);
 
-        // Save user live position coordinates back into user profile database row fields
+        // Save user live position coordinates back into user profile database row fields (Phase 3)
         const sessionKey = localStorage.getItem('session_key');
         if (sessionKey) {
           try {
             await fetch(`${API_BASE}/profile/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
-              body: JSON.stringify({ latitude: lat, longitude: lon })
+              body: JSON.stringify({ latitude: userLat, longitude: userLon })
             });
           } catch (err) { console.error("Geographical mapping sync failure:", err); }
         }
@@ -310,19 +289,24 @@
 
     // Fetch verified active worker arrays from the database pipeline
     async function loadLiveMapNetwork() {
+      if (isTrackingActive || bookingIdParam) return; // Don't load other workers if tracking an active booking or viewing a specific worker
       try {
-        const res = await fetch(`${API_BASE}/workers/`);
+        const url = userLat && userLon ? `${API_BASE}/workers/?latitude=${userLat}&longitude=${userLon}` : `${API_BASE}/workers/`;
+        const res = await fetch(url);
         const data = await res.json();
 
         if (data.status === 'success') {
           activeWorkersCache = data.data || [];
 
+          // Clear existing markers
+          markers.forEach(m => map.removeLayer(m));
+          markers = [];
+
           activeWorkersCache.forEach(w => {
             if (w.latitude && w.longitude) {
               const marker = L.marker([parseFloat(w.latitude), parseFloat(w.longitude)], { icon: workerIcon }).addTo(map);
-
-              // Interaction hook: Click marker to populate the organic bottom info drawer instantly
               marker.on('click', () => populateBottomDrawer(w));
+              markers.push(marker);
             }
           });
         }
@@ -333,18 +317,144 @@
     function populateBottomDrawer(worker) {
       const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname || 'Worker')}&background=ea580c&color=fff&bold=true`;
 
-      document.querySelector('main h3').textContent = worker.fullname || 'Artisan Provider';
-      document.querySelector('main p').textContent = worker.skill || 'General Specialist';
-      document.querySelector('main img').src = worker.profile_pic ? `http://localhost:8000${worker.profile_pic}` : fallbackAvatar;
-      document.querySelector('main .text-primary').textContent = `₹${worker.hourly_rate || 0}/hr`;
-      document.querySelector('main .text-on-surface-variant').textContent = `⭐ ${parseFloat(worker.rating || 0).toFixed(1)} (${worker.total_jobs || 0} reviews)`;
+      document.getElementById('drawer-name').textContent = worker.fullname || 'Artisan Provider';
+      document.getElementById('drawer-skill').textContent = worker.skill || 'General Specialist';
+      document.getElementById('drawer-avatar').src = worker.profile_pic ? `http://localhost:8000${worker.profile_pic}` : fallbackAvatar;
+      document.getElementById('drawer-rate').textContent = `₹${worker.hourly_rate || 0}/hr`;
+      document.getElementById('drawer-rating').textContent = `⭐ ${parseFloat(worker.rating || 0).toFixed(1)} (${worker.total_jobs || 0} reviews)`;
+      document.getElementById('drawer-distance-value').textContent = worker.distance_text || 'Nearby';
+      
+      const availEl = document.getElementById('drawer-availability');
+      const availValEl = document.getElementById('drawer-availability-value');
+      if (worker.is_available) {
+        availEl.className = "px-2.5 py-1 bg-[#d6e7a1]/40 text-[#56642b] rounded-full flex items-center gap-1";
+        availValEl.textContent = "Available";
+      } else {
+        availEl.className = "px-2.5 py-1 bg-[#ffdad3]/40 text-[#9f402d] rounded-full flex items-center gap-1";
+        availValEl.textContent = "Busy";
+      }
 
-      // Bind checkout action redirect button to pass the parameter string dynamically
-      const bookBtn = document.querySelector('main button');
-      bookBtn.setAttribute('onclick', `window.location.href='booking_request.html?worker_id=${worker.id}'`);
+      // Stars calculation
+      const rating = parseFloat(worker.rating || 0);
+      const fullStars = Math.floor(rating);
+      const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+      let starsHtml = '';
+      for (let i = 0; i < fullStars; i++) {
+        starsHtml += `<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>`;
+      }
+      if (halfStar) {
+        starsHtml += `<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star_half</span>`;
+      }
+      const emptyStars = 5 - fullStars - halfStar;
+      for (let i = 0; i < emptyStars; i++) {
+        starsHtml += `<span class="material-symbols-outlined text-lg">star</span>`;
+      }
+      document.getElementById('drawer-stars').innerHTML = starsHtml;
+
+      // Bind checkout redirect buttons
+      document.getElementById('drawer-book-btn').setAttribute('onclick', `window.location.href='booking_request.html?worker_id=${worker.id}'`);
+      document.getElementById('drawer-chat-btn').setAttribute('onclick', `window.location.href='user_messages.html?worker_id=${worker.id}'`);
+
+      document.getElementById('worker-drawer').style.display = 'block';
     }
 
+    // Live Tracking System (Phase 8)
+    async function trackActiveBookings() {
+      const sessionKey = localStorage.getItem('session_key');
+      if (!sessionKey) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/bookings/`, {
+          headers: { 'X-Session-Key': sessionKey }
+        });
+        const json = await res.json();
+
+        if (json.status === 'success' && json.data) {
+          const activeJob = bookingIdParam
+            ? json.data.find(b => b.id == bookingIdParam && (b.status === 'accepted' || b.status === 'in_progress'))
+            : json.data.find(b => b.status === 'accepted' || b.status === 'in_progress');
+
+          if (activeJob) {
+            isTrackingActive = true;
+            document.getElementById('worker-drawer').style.display = 'none'; // Hide drawer
+            
+            // Clear other worker markers
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            const banner = document.getElementById('tracking-banner');
+            const wName = document.getElementById('tracking-worker-name');
+            const wStatus = document.getElementById('tracking-worker-status');
+            const wDist = document.getElementById('tracking-worker-distance');
+            const wSkill = document.getElementById('tracking-worker-skill');
+
+            wName.textContent = activeJob.worker_name;
+            wStatus.textContent = activeJob.status === 'accepted' ? 'Heading to your location' : 'Work in progress';
+            wDist.textContent = activeJob.approximate_distance || '-- km';
+            if (wSkill) {
+              wSkill.textContent = activeJob.worker_skill || 'Specialist';
+            }
+            banner.classList.remove('hidden');
+
+            const cLat = activeJob.client_latitude || userLat;
+            const cLon = activeJob.client_longitude || userLon;
+            const wLat = activeJob.worker_latitude;
+            const wLon = activeJob.worker_longitude;
+
+            if (wLat && wLon) {
+              const workerLatLng = [parseFloat(wLat), parseFloat(wLon)];
+              const clientLatLng = [parseFloat(cLat), parseFloat(cLon)];
+
+              // Update/Draw worker tracking marker
+              if (trackingMarkerWorker) {
+                trackingMarkerWorker.setLatLng(workerLatLng);
+              } else {
+                trackingMarkerWorker = L.marker(workerLatLng, { icon: workerIcon }).addTo(map).bindPopup(`<b>Your Artisan: ${activeJob.worker_name}</b>`);
+              }
+
+              // Update/Draw user tracking marker
+              if (trackingMarkerUser) {
+                trackingMarkerUser.setLatLng(clientLatLng);
+              } else {
+                trackingMarkerUser = L.marker(clientLatLng, { icon: userIcon }).addTo(map).bindPopup(`<b>Your Location</b>`);
+              }
+
+              // Update/Draw polyline route
+              if (trackingPolyline) {
+                trackingPolyline.setLatLngs([workerLatLng, clientLatLng]);
+              } else {
+                trackingPolyline = L.polyline([workerLatLng, clientLatLng], { color: '#ea580c', weight: 5, dashArray: '6, 12' }).addTo(map);
+              }
+
+              // Set view bounds to fit both
+              if (!hasFitBounds) {
+                const group = new L.featureGroup([trackingMarkerWorker, trackingMarkerUser]);
+                map.fitBounds(group.getBounds().pad(0.2));
+                hasFitBounds = true;
+              }
+            }
+          } else {
+            // Clean up tracking if no active job is found
+            if (isTrackingActive) {
+              isTrackingActive = false;
+              document.getElementById('tracking-banner').classList.add('hidden');
+              if (trackingMarkerWorker) { map.removeLayer(trackingMarkerWorker); trackingMarkerWorker = null; }
+              if (trackingMarkerUser) { map.removeLayer(trackingMarkerUser); trackingMarkerUser = null; }
+              if (trackingPolyline) { map.removeLayer(trackingPolyline); trackingPolyline = null; }
+              hasFitBounds = false;
+              loadLiveMapNetwork(); // Reload normal workers map
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Live tracking polling anomaly:", err);
+      }
+    }
+
+    // Start loading normal workers and polling tracking loop
     loadLiveMapNetwork();
+    trackActiveBookings();
+    setInterval(trackActiveBookings, 10000); // Poll tracking data every 10s (Phase 8)
   </script>
 </body>
 </html>

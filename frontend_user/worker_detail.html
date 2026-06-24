@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Worknest — Specialist Profile</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9f402d',
+                        'primary-light': '#e2725b',
+                        'primary-container': '#ffdad3',
+                        surface: '#fcf9f2',
+                        'surface-container': '#f1eee7',
+                        'surface-container-low': '#f6f3ec',
+                        'on-surface': '#1c1c18',
+                        secondary: '#56642b',
+                        'secondary-container': '#d6e7a1',
+                        outline: '#89726d',
+                        'outline-variant': '#ddc0ba'
+                    },
+                    fontFamily: { sans: ['Manrope', 'sans-serif'] },
+                    borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #fcf9f2;
+            color: #1c1c18;
+        }
+
+        .grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .fill-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f1eee7 25%, #f6f3ec 50%, #f1eee7 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* 🔔 Swing Animation Keyframes */
+        @keyframes bellSwing {
+            0% { transform: rotate(0); }
+            15% { transform: rotate(15deg); }
+            30% { transform: rotate(-12deg); }
+            45% { transform: rotate(10deg); }
+            60% { transform: rotate(-8deg); }
+            75% { transform: rotate(4deg); }
+            90% { transform: rotate(-2deg); }
+            100% { transform: rotate(0); }
+        }
+
+        .bell-container:hover .swing-bell {
+            display: inline-block;
+            transform-origin: top center;
+            animation: bellSwing 0.8s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-sans min-h-screen pb-32">
+    <div class="fixed inset-0 grain z-0 pointer-events-none"></div>
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
+        <div class="flex items-center gap-2 sm:gap-2.5">
+            <button onclick="history.back()" class="p-2 text-[#56423e] hover:bg-[#f1eee7] rounded-full active:scale-95 transition-all flex items-center justify-center">
+                <span class="material-symbols-outlined text-xl">arrow_back</span>
+            </button>
+            <div
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+                <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
+            </div>
+            <span class="text-xl sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <a href="user_messages.html"
+                class="bell-container relative p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors">
+                <span class="material-symbols-outlined swing-bell text-2xl" style="display: inline-block;">notifications</span>
+            </a>
+            <div onclick="window.location.href='profile.html'"
+                class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 cursor-pointer hover:border-primary transition-all hover:scale-105 active:scale-95 group">
+                <img id="header-avatar" alt="User Profile" class="w-full h-full object-cover"
+                    src="https://ui-avatars.com/api/?name=User&amp;background=ffdad3&amp;color=9f402d" />
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 pt-6 px-4 md:px-6 max-w-5xl mx-auto space-y-6">
+
+        <div class="flex items-center justify-between gap-4">
+            <button onclick="history.back()"
+                class="group flex items-center gap-2 text-primary hover:text-primary-light font-bold text-xs md:text-sm bg-white border border-outline-variant/30 py-2.5 px-5 rounded-full transition-all shadow-sm hover:shadow-md shrink-0">
+                <span
+                    class="material-symbols-outlined text-sm font-bold group-hover:-translate-x-1 transition-transform">arrow_back_ios</span>
+                Back to Directory
+            </button>
+
+            <div id="trust-indicator"
+                class="hidden items-center gap-1.5 bg-secondary/10 px-3 py-1.5 rounded-full text-secondary text-[11px] font-bold shrink-0">
+                <span class="material-symbols-outlined text-sm fill-icon">shield_with_heart</span>
+                <span id="trust-score-badge">Trust Score: 100%</span>
+            </div>
+        </div>
+
+        <div id="worker-shimmer" class="space-y-6">
+            <div
+                class="bg-white p-6 rounded-3xl border border-outline-variant/20 flex flex-col md:flex-row items-center md:items-start gap-6">
+                <div class="w-24 h-24 md:w-28 md:h-28 rounded-full shimmer shrink-0"></div>
+                <div class="space-y-3 w-full text-center md:text-left">
+                    <div class="h-6 w-48 shimmer mx-auto md:mx-0 rounded-md"></div>
+                    <div class="h-4 w-28 shimmer mx-auto md:mx-0 rounded-md"></div>
+                    <div class="h-4 w-20 shimmer mx-auto md:mx-0 rounded-md"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="h-24 bg-white border border-outline-variant/20 rounded-2xl shimmer"></div>
+                <div class="h-24 bg-white border border-outline-variant/20 rounded-2xl shimmer"></div>
+                <div class="h-24 bg-white border border-outline-variant/20 rounded-2xl shimmer"></div>
+                <div class="h-24 bg-white border border-outline-variant/20 rounded-2xl shimmer"></div>
+            </div>
+        </div>
+
+        <div id="profile-container" class="hidden space-y-6">
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+                <section
+                    class="lg:col-span-2 bg-white p-6 md:p-8 h-full rounded-3xl border border-outline-variant/30 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-sm">
+                    <img id="worker-avatar"
+                        class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-primary-container shadow-md shrink-0 transition-transform duration-300 hover:scale-105"
+                        src="" alt="Worker Avatar">
+
+                    <div class="flex-grow text-center sm:text-left space-y-3.5 w-full">
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 justify-center sm:justify-start">
+                            <h2 id="worker-name"
+                                class="text-2xl md:text-3xl font-black text-on-surface tracking-tight break-words"></h2>
+                            <div id="verified-badge-container" class="flex justify-center sm:justify-start">
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                            <span id="worker-skill"
+                                class="bg-secondary-container text-secondary text-[11px] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-wider"></span>
+                            <span id="worker-status-badge"
+                                class="bg-primary/10 text-primary text-[11px] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-wider"></span>
+                        </div>
+                        <div
+                            class="flex flex-col sm:flex-row sm:flex-wrap justify-center sm:justify-start items-center gap-2 text-xs md:text-sm text-[#56423e] pt-1 border-t border-dashed border-[#ddc0ba]/30">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="material-symbols-outlined text-base text-primary shrink-0">mail</span>
+                                <span id="worker-email" class="font-medium truncate max-w-[200px] sm:max-w-none"></span>
+                            </div>
+                            <span class="hidden sm:inline text-outline-variant/40">|</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base text-primary shrink-0">call</span>
+                                <span id="worker-phone" class="font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="grid grid-cols-2 lg:grid-cols-1 gap-4 w-full h-full">
+                    <div
+                        class="bg-white p-4 rounded-2xl border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-all shadow-sm">
+                        <span class="text-[10px] font-extrabold text-outline uppercase tracking-wider">Hourly
+                            Rate</span>
+                        <span id="metric-rate" class="text-xl md:text-2xl font-black text-primary mt-1"></span>
+                        <span class="text-[10px] text-outline mt-1 font-medium">Standard snapshot</span>
+                    </div>
+                    <div
+                        class="bg-white p-4 rounded-2xl border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-all shadow-sm">
+                        <span class="text-[10px] font-extrabold text-outline uppercase tracking-wider">Rating
+                            Score</span>
+                        <div class="flex items-center gap-1 mt-1">
+                            <span class="material-symbols-outlined text-lg fill-icon text-amber-500">star</span>
+                            <span id="metric-rating" class="text-xl md:text-2xl font-black text-on-surface"></span>
+                        </div>
+                        <span class="text-[10px] text-outline mt-1 font-medium">Out of 5 stars</span>
+                    </div>
+                    <button id="book-specialist-btn" class="col-span-2 lg:col-span-1 w-full bg-gradient-to-r from-primary to-primary-light text-white py-4 rounded-2xl font-bold text-sm shadow-md hover:opacity-95 active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-primary/10">
+                        <span class="material-symbols-outlined text-sm font-bold">calendar_month</span> Request Booking
+                    </button>
+                </section>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+                <div
+                    class="bg-white p-4 rounded-2xl border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-all shadow-sm">
+                    <span class="text-[10px] font-extrabold text-outline uppercase tracking-wider">Jobs Done</span>
+                    <span id="metric-jobs" class="text-xl md:text-2xl font-black text-secondary mt-1"></span>
+                    <span class="text-[10px] text-outline mt-1 font-medium">100% completion rate</span>
+                </div>
+                <div
+                    class="bg-white p-4 rounded-2xl border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-all shadow-sm">
+                    <span class="text-[10px] font-extrabold text-outline uppercase tracking-wider">Member Since</span>
+                    <span id="metric-joined"
+                        class="text-sm md:text-base font-black text-on-surface mt-2 truncate"></span>
+                    <span class="text-[10px] text-outline mt-1 font-medium">Registered account</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+                <section
+                    class="bg-white p-6 md:p-8 rounded-3xl border border-outline-variant/30 space-y-3.5 shadow-sm h-full lg:col-span-1">
+                    <h3 class="text-base md:text-lg font-black text-on-surface tracking-tight flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary fill-icon">person_pin_circle</span>
+                        About the Specialist
+                    </h3>
+                    <p id="worker-bio"
+                        class="text-[#56423e] text-sm md:text-base leading-relaxed font-medium whitespace-pre-line break-words">
+                    </p>
+                </section>
+
+                <section class="space-y-4 lg:col-span-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3
+                            class="text-lg md:text-xl font-black text-on-surface tracking-tight flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary fill-icon">rate_review</span>
+                            Client Reviews & Ratings
+                        </h3>
+                        <span id="review-count"
+                            class="bg-primary-container text-primary text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shrink-0"></span>
+                    </div>
+                    <div id="reviews-feed" class="space-y-4">
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-2 left-4 right-4 z-50 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-[#ddc0ba]/30 rounded-2xl max-w-sm mx-auto">
+        <a href="dashboard.html"
+            class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+            <span class="material-symbols-outlined text-xl">home</span>
+            <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
+        </a>
+        <a href="services.html"
+            class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2 active:scale-90 shadow-sm">
+            <span class="material-symbols-outlined text-xl">grid_view</span>
+            <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
+        </a>
+        <a href="booking_history.html"
+            class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+            <span class="material-symbols-outlined text-xl">event_note</span>
+            <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
+        </a>
+        <a href="profile.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+            <span class="material-symbols-outlined text-xl">person</span>
+            <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        // URL query parameter parsing
+        function getQueryParam(param) {
+            return new URLSearchParams(window.location.search).get(param);
+        }
+        // Star generation helper
+        function renderStarIcons(rating) {
+            let starsHtml = '';
+            const ratingFloor = Math.floor(rating);
+            for (let i = 1; i <= 5; i++) {
+                if (i <= ratingFloor) {
+                    starsHtml += `<span class="material-symbols-outlined fill-icon text-amber-500 text-sm">star</span>`;
+                } else if (i - rating === 0.5) {
+                    starsHtml += `<span class="material-symbols-outlined text-amber-500 text-sm" style="font-variation-settings: 'FILL' 0.5;">star_half</span>`;
+                } else {
+                    starsHtml += `<span class="material-symbols-outlined text-amber-300 text-sm">star</span>`;
+                }
+            }
+            return starsHtml;
+        }
+
+        // Avatar fallback URL creator
+        function getAvatarUrl(person) {
+            if (person && person.profile_pic) {
+                return person.profile_pic.startsWith('http')
+                    ? person.profile_pic
+                    : `http://localhost:8000${person.profile_pic}`;
+            }
+            const name = encodeURIComponent(person ? (person.fullname || person.username || 'User') : 'User');
+            return `https://ui-avatars.com/api/?name=${name}&background=ffdad3&color=9f402d&bold=true`;
+        }
+        
+        window.onload = async () => {
+            const sessionKey = localStorage.getItem('session_key');
+            if (sessionKey) {
+                try {
+                    // Sync the current user profile picture in the header
+                    const myRes = await fetch(`${API_BASE}/profile/`, { headers: { 'X-Session-Key': sessionKey } });
+                    const myData = await myRes.json();
+                    if (myData.status === 'success' && myData.data) {
+                        const headerAvatar = document.getElementById('header-avatar');
+                        if (headerAvatar) {
+                            headerAvatar.src = getAvatarUrl(myData.data);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to load user header profile:", e);
+                }
+            }
+            const workerId = getQueryParam('worker_id');
+            if (!workerId) {
+                document.getElementById('worker-shimmer').innerHTML = `
+                    <div class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-3xl text-center font-bold">
+                        Error: No Specialist ID specified in the URL path.
+                    </div>`;
+                return;
+            }
+            try {
+                // Fetch the worker's complete profile and review lists
+                const response = await fetch(`${API_BASE}/workers/${workerId}/`);
+                if (!response.ok) {
+                    throw new Error("Unable to fetch specialist details.");
+                }
+                const dataObj = await response.json();
+                if (dataObj.status !== 'success') {
+                    throw new Error(dataObj.message || "Failed request transaction.");
+                }
+                const worker = dataObj.data.worker;
+                const reviews = dataObj.data.reviews || [];
+                // Render Worker Details
+                document.getElementById('worker-avatar').src = getAvatarUrl(worker);
+                document.getElementById('worker-name').textContent = worker.fullname;
+                document.getElementById('worker-skill').textContent = worker.skill;
+                document.getElementById('worker-status-badge').textContent = worker.is_verified ? 'Verified Pro' : 'New Specialist';
+                document.getElementById('worker-email').textContent = worker.email || 'No email provided';
+                document.getElementById('worker-phone').textContent = worker.phone || 'No phone number';
+
+                // Verified checkmark badge
+                const verifiedContainer = document.getElementById('verified-badge-container');
+                if (worker.is_verified) {
+                    verifiedContainer.innerHTML = `
+                        <span class="inline-flex items-center gap-1 bg-[#d6e7a1] text-secondary text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-xs fill-icon">verified</span> VERIFIED
+                        </span>`;
+                } else {
+                    verifiedContainer.innerHTML = `
+                        <span class="inline-flex items-center gap-1 bg-[#ffdad3] text-primary text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-xs">pending</span> PENDING
+                        </span>`;
+                }
+                // Trust Score Badge
+                if (worker.trust_score > 0) {
+                    document.getElementById('trust-score-badge').textContent = `Trust Score: ${worker.trust_score}%`;
+                    document.getElementById('trust-indicator').classList.remove('hidden');
+                    document.getElementById('trust-indicator').classList.add('flex');
+                }
+                // Metrics
+                document.getElementById('metric-rate').textContent = `₹${worker.hourly_rate || 0}/hr`;
+                document.getElementById('metric-rating').textContent = worker.rating ? worker.rating.toFixed(1) : '0.0';
+                document.getElementById('metric-jobs').textContent = `${worker.total_jobs || 0} Jobs`;
+                document.getElementById('metric-joined').textContent = worker.date_joined ? new Date(worker.date_joined).toLocaleDateString('en-IN') : 'N/A';
+                
+                // Bind Booking Button
+                const bookBtn = document.getElementById('book-specialist-btn');
+                if (bookBtn) {
+                    bookBtn.onclick = () => {
+                        window.location.href = `booking_request.html?worker_id=${worker.id}`;
+                    };
+                }
+
+                // Bio
+                document.getElementById('worker-bio').textContent = worker.bio || "This expert hasn't written a biography yet.";
+                // Reviews Section
+                document.getElementById('review-count').textContent = `${reviews.length} Review${reviews.length === 1 ? '' : 's'}`;
+
+                const reviewsFeed = document.getElementById('reviews-feed');
+                if (reviews.length === 0) {
+                    reviewsFeed.innerHTML = `
+                        <div class="bg-white p-8 rounded-3xl border border-outline-variant/30 text-center text-[#89726d] text-sm font-medium">
+                            <span class="material-symbols-outlined text-3xl mb-2 text-outline/50 block">rate_review</span>
+                            No community reviews posted for this specialist yet.
+                        </div>`;
+                } else {
+                    reviewsFeed.innerHTML = reviews.map(rev => {
+                        const reviewAvatar = rev.client_avatar
+                            ? (rev.client_avatar.startsWith('http') ? rev.client_avatar : `http://localhost:8000${rev.client_avatar}`)
+                            : `https://ui-avatars.com/api/?name=${encodeURIComponent(rev.client_name)}&background=f1eee7&color=56642b&bold=true`;
+
+                        // Determine border accent based on rating value
+                        let borderAccent = 'border-l-4 border-l-red-400';
+                        if (rev.rating >= 4) {
+                            borderAccent = 'border-l-4 border-l-[#56642b]';
+                        } else if (rev.rating >= 3) {
+                            borderAccent = 'border-l-4 border-l-amber-400';
+                        }
+                        
+                        // Parse review date beautifully
+                        const reviewDateStr = rev.created_at ? new Date(rev.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : (rev.date || 'Recent');
+
+                        return `
+                        <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm flex flex-col gap-3 transition-transform hover:scale-[1.01] ${borderAccent}">
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img class="w-9 h-9 rounded-full object-cover border border-[#ddc0ba]/40 shadow-sm shrink-0" src="${reviewAvatar}" alt="Client Photo">
+                                    <div class="min-w-0">
+                                        <h4 class="font-bold text-xs md:text-sm text-on-surface leading-tight truncate">${rev.client_name}</h4>
+                                        <span class="text-[9px] font-bold text-outline uppercase tracking-wider block mt-0.5">Booking Client</span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] md:text-xs font-semibold text-outline shrink-0">${reviewDateStr}</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-1">
+                                ${renderStarIcons(rev.rating)}
+                            </div>
+                            <p class="text-xs md:text-sm text-[#56423e] leading-relaxed font-medium break-words">
+                                "${rev.review}"
+                            </p>
+                            <div class="flex items-center gap-1.5 bg-[#f6f3ec] px-3 py-1.5 rounded-xl border border-outline-variant/10 text-[10px] font-semibold text-[#89726d] w-fit mt-1 max-w-full">
+                                <span class="material-symbols-outlined text-xs shrink-0">info</span>
+                                <span class="truncate">Job Description: "${rev.service_desc || 'General maintenance services'}"</span>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                }
+                // Show real content, hide shimmer
+                document.getElementById('worker-shimmer').classList.add('hidden');
+                document.getElementById('profile-container').classList.remove('hidden');
+            } catch (err) {
+                console.error("Error loading worker details:", err);
+                document.getElementById('worker-shimmer').innerHTML = `
+                    <div class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-3xl text-center font-bold">
+                        Failed to load specialist details. Please check if backend server is running and try again.
+                    </div>`;
+            }
+        };
+    </script>
+</body>
+
+</html>

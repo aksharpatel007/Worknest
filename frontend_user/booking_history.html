@@ -316,10 +316,18 @@
             </button>`;
         }
         else if (b.status === 'accepted' || b.status === 'in_progress') {
+          let extraBtn = '';
+          if (b.status === 'accepted') {
+            extraBtn = `
+              <button onclick="window.location.href='map.html?booking_id=${b.id}'" class="w-full mt-2 py-3 bg-[#9f402d] text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm sm:text-base">map</span> View Worker Location
+              </button>`;
+          }
           actionHtml = `
             <button onclick="closeBooking(${b.id})" class="w-full mt-4 py-3 sm:py-3.5 bg-green-600 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-green-700 transition-all active:scale-95">
               Mark as Completed & Calculate Pay
-            </button>`;
+            </button>
+            ${extraBtn}`;
         }
         else if (b.status === 'completed') {
           if (!b.rating_given) {
