@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate,login
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.http import JsonResponse
 import math
 import uuid
@@ -15,6 +15,27 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import authentication_classes, permission_classes
 from django.contrib.auth import get_user_model 
 
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    R = 6371.0  # Radius of Earth in km
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+    
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+    
+    a = math.sin(dlat / 2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
+
+@csrf_exempt
+@api_view(['GET'])
+def category_list(request):
+    """Fetches all unique skills/categories from verified workers in the database."""
+    skills = User.objects.filter(role_id=2, is_verified=True, is_fraud=False, skill__isnull=False).exclude(skill='').values_list('skill', flat=True).distinct()
+    return Response({'status': 'success', 'data': list(skills)}, status=200)
 
 # --- AUTHENTICATION & SIGNUP ---
 
@@ -62,7 +83,15 @@ def login_view(request):
     email = request.data.get('email')
     password = request.data.get('password')
     
-    user = authenticate(username=email, password=password)
+    # Support login using either username or email
+    username_to_auth = email
+    try:
+        user_obj = User.objects.get(Q(username__iexact=email) | Q(email__iexact=email))
+        username_to_auth = user_obj.username
+    except User.DoesNotExist:
+        pass
+        
+    user = authenticate(username=username_to_auth, password=password)
     
     if user:
         login(request, user)  # Sets native Django cookies
@@ -120,11 +149,67 @@ def change_password_api(request):
 @csrf_exempt
 @api_view(['GET'])
 def worker_list(request):
-    """Fetches all workers for the system directories."""
-    workers = User.objects.filter(role_id=2).order_by('-id')
+    """Fetches all online, verified, non-fraud workers, optionally filtered by skill and sorted by distance."""
+    user = get_authenticated_user_from_header(request)
+    ref_lat = None
+    ref_lon = None
     
+    # 1. Check query parameters
+    lat_param = request.query_params.get('latitude')
+    lon_param = request.query_params.get('longitude')
+    if lat_param and lon_param:
+        try:
+            ref_lat = float(lat_param)
+            ref_lon = float(lon_param)
+        except ValueError:
+            pass
+            
+    # 2. Check authenticated user's profile location
+    if (ref_lat is None or ref_lon is None) and user:
+        if user.latitude is not None and user.longitude is not None:
+            ref_lat = float(user.latitude)
+            ref_lon = float(user.longitude)
+            
+    # Fallback Ahmedabad coords
+    fallback_used = False
+    if ref_lat is None or ref_lon is None:
+        ref_lat = 23.0225
+        ref_lon = 72.5714
+        fallback_used = True
+
+    # Filter online, verified, non-fraud workers
+    workers = User.objects.filter(
+        role_id=2, 
+        is_verified=True, 
+        is_fraud=False, 
+        worker_status='online'
+    )
+    
+    # Optional category filter
+    skill = request.query_params.get('skill')
+    if skill:
+        workers = workers.filter(skill__iexact=skill)
+        
     data_list = []
     for worker in workers:
+        lat = worker.latitude
+        lon = worker.longitude
+        
+        # Seed coordinates if null
+        if lat is None or lon is None:
+            import hashlib
+            h = int(hashlib.md5(str(worker.id).encode()).hexdigest(), 16)
+            lat_offset = ((h % 1000) / 1000.0 - 0.5) * 0.04
+            lon_offset = (((h // 1000) % 1000) / 1000.0 - 0.5) * 0.04
+            lat = ref_lat + lat_offset
+            lon = ref_lon + lon_offset
+        else:
+            lat = float(lat)
+            lon = float(lon)
+            
+        dist = haversine_distance(ref_lat, ref_lon, lat, lon)
+        is_available = not Booking.objects.filter(worker=worker, status='in_progress').exists()
+        
         data_list.append({
             'id': worker.id,
             'fullname': worker.fullname,
@@ -132,10 +217,21 @@ def worker_list(request):
             'skill': worker.skill or 'Artisan',
             'hourly_rate': worker.hourly_rate,
             'bio': getattr(worker, 'bio', ''),
-            'rating': getattr(worker, 'rating', 0.0),
+            'rating': float(worker.rating) if worker.rating else 0.0,
             'total_jobs': getattr(worker, 'total_jobs', 0),
-            'submitted_at': worker.date_joined.strftime('%I:%M %p') if worker.date_joined else 'N/A'
+            'submitted_at': worker.date_joined.strftime('%I:%M %p') if worker.date_joined else 'N/A',
+            'latitude': lat,
+            'longitude': lon,
+            'profile_pic': worker.profile_pic.url if worker.profile_pic else None,
+            'is_verified': worker.is_verified,
+            'is_fraud': worker.is_fraud,
+            'worker_status': worker.worker_status,
+            'is_available': is_available,
+            'distance': dist,
+            'distance_text': f"{round(dist, 1)} km" if not fallback_used else "Nearby"
         })
+        
+    data_list.sort(key=lambda w: w['distance'])
         
     return Response({'status': 'success', 'data': data_list}, status=200)
 
@@ -170,7 +266,11 @@ def profile_view(request):
                 'date_joined': user.date_joined.isoformat() if user.date_joined else None,
                 'rating': float(user.rating) if user.rating else 0.0,
                 'total_jobs': user.total_jobs,
-                'earnings': earnings
+                'earnings': earnings,
+                'worker_status': user.worker_status,
+                'latitude': float(user.latitude) if user.latitude is not None else None,
+                'longitude': float(user.longitude) if user.longitude is not None else None,
+                'trust_score': user.trust_score
             }
         })
 
@@ -182,6 +282,9 @@ def profile_view(request):
         if 'phone' in data: user.phone = data['phone'] 
         if 'hourly_rate' in data: user.hourly_rate = data['hourly_rate']
         if 'skill' in data: user.skill = data['skill']
+        if 'worker_status' in data: user.worker_status = data['worker_status']
+        if 'latitude' in data: user.latitude = data['latitude']
+        if 'longitude' in data: user.longitude = data['longitude']
         
         # 🎯 CHANNELS MODULAR ROUTING: Separates verification streams from clean text bios instantly
         if 'bio' in data:
@@ -205,7 +308,7 @@ import math
 def user_bookings(request):
     user = get_authenticated_user_from_header(request)
     
-  # ------------------ GET: LISTING LEDGERS ------------------
+    # ------------------ GET: LISTING LEDGERS ------------------
     if request.method == 'GET':
         if not user:
             return Response({'status': 'success', 'data': []}, status=200)
@@ -217,12 +320,57 @@ def user_bookings(request):
             
         serializer = BookingSerializer(bookings, many=True)
         
-        # 🎯 ADDITION: Inject formatted dates into the response list loop
+        # 🎯 ADDITION: Inject formatted dates and security-wrapped locations
         custom_data = []
         for b, serialized_item in zip(bookings, serializer.data):
             item_dict = dict(serialized_item)
-            # Format and attach the real calendar assignment dates safely
             item_dict['formatted_date'] = b.created_at.strftime('%d %b %Y') if b.created_at else 'Recent'
+            
+            # Inject client & worker phone numbers
+            item_dict['client_phone'] = b.client.phone or '+91 98765 43210'
+            item_dict['worker_phone'] = b.worker.phone or '+91 98765 43210'
+            
+            if b.status in ['accepted', 'in_progress']:
+                c_lat = float(b.client.latitude) if b.client.latitude is not None else 23.0225
+                c_lon = float(b.client.longitude) if b.client.longitude is not None else 72.5714
+                
+                w_lat = b.worker.latitude
+                w_lon = b.worker.longitude
+                if w_lat is None or w_lon is None:
+                    import hashlib
+                    h = int(hashlib.md5(str(b.worker.id).encode()).hexdigest(), 16)
+                    lat_offset = ((h % 1000) / 1000.0 - 0.5) * 0.04
+                    lon_offset = (((h // 1000) % 1000) / 1000.0 - 0.5) * 0.04
+                    w_lat = c_lat + lat_offset
+                    w_lon = c_lon + lon_offset
+                else:
+                    w_lat = float(w_lat)
+                    w_lon = float(w_lon)
+                    
+                item_dict['client_latitude'] = c_lat
+                item_dict['client_longitude'] = c_lon
+                item_dict['worker_latitude'] = w_lat
+                item_dict['worker_longitude'] = w_lon
+            else:
+                item_dict['client_latitude'] = None
+                item_dict['client_longitude'] = None
+                item_dict['worker_latitude'] = None
+                item_dict['worker_longitude'] = None
+                
+            # Include approximate distance
+            if b.client.latitude is not None and b.client.longitude is not None and b.worker.latitude is not None and b.worker.longitude is not None:
+                dist = haversine_distance(
+                    float(b.client.latitude), float(b.client.longitude),
+                    float(b.worker.latitude), float(b.worker.longitude)
+                )
+                item_dict['approximate_distance'] = f"~{round(dist, 1)} km"
+            else:
+                # Seed approximate distance if coordinates are null
+                import hashlib
+                h = int(hashlib.md5(str(b.id).encode()).hexdigest(), 16)
+                approx_dist = 1.0 + (h % 50) / 10.0  # 1.0 to 6.0 km
+                item_dict['approximate_distance'] = f"~{round(approx_dist, 1)} km"
+                
             custom_data.append(item_dict)
             
         return Response({'status': 'success', 'data': custom_data}, status=200)
@@ -236,6 +384,10 @@ def user_bookings(request):
 
             client = User.objects.get(id=client_id)
             worker = User.objects.get(id=worker_id)
+
+            # Enforce Online/Offline verification (Phase 1)
+            if worker.worker_status != 'online':
+                return Response({'status': 'error', 'message': 'This worker is currently unavailable.'}, status=400)
 
             booking = Booking.objects.create(
                 client=client,
@@ -316,6 +468,17 @@ def user_bookings(request):
                 
             else:
                 booking.status = new_status
+                if new_status == 'accepted':
+                    # Find duplicate pending bookings by the same client with the same service description
+                    duplicate_bookings = Booking.objects.filter(
+                        client=booking.client,
+                        service_desc=booking.service_desc,
+                        status='pending'
+                    ).exclude(id=booking.id)
+                    # Delete notifications for duplicate bookings
+                    Notification.objects.filter(booking_reference__in=duplicate_bookings).delete()
+                    # Delete the duplicate bookings
+                    duplicate_bookings.delete()
                 
             booking.save()
             return Response({'status': 'success', 'message': f'State moved to {new_status}'}, status=200)
