@@ -79,7 +79,7 @@
             data-icon="potted_plant">potted_plant</span>
           <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
         </div>
-        <a href="map.html"
+        <a href="{% url 'map_page' %}"
           class="flex items-center gap-1 text-sm font-bold text-[#9f402d] bg-[#ffdad3] px-4 py-2 rounded-full hover:bg-[#e2725b] hover:text-white transition-colors">
           <span class="material-symbols-outlined text-base fill-icon">map</span> Map View
         </a>
@@ -160,7 +160,17 @@
 
       <!-- Workers List Column -->
       <div class="lg:col-span-7 space-y-3">
-        <h2 class="font-bold text-[#1c1c18] mb-4" id="list-title">All Workers</h2>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-[#1c1c18]" id="list-title">All Workers</h2>
+          <div class="flex items-center gap-2">
+            <label for="sort-select" class="text-xs font-bold text-[#89726d] uppercase tracking-wider">Sort by:</label>
+            <select id="sort-select" onchange="sortAndRenderWorkers()" class="px-3 py-1.5 bg-white border border-[#ddc0ba] rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20 text-[#56423e]">
+              <option value="distance">Distance</option>
+              <option value="rating">Rating</option>
+              <option value="rate">Hourly Rate</option>
+            </select>
+          </div>
+        </div>
         <div id="workers-list" class="space-y-4 lg:max-h-[600px] lg:overflow-y-auto lg:pr-2 hide-scroll">
           <div class="text-center py-8 text-[#89726d]">Loading workers...</div>
         </div>
@@ -171,29 +181,29 @@
 
   <!-- Bottom Nav -->
   <nav class="fixed bottom-2 left-4 right-4 z-40 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
-    <a href="dashboard.html"
+    <a href="{% url 'dashboard_page' %}"
       class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
       <span class="material-symbols-outlined text-xl">home</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
     </a>
-    <a href="services.html"
+    <a href="{% url 'services_page' %}"
       class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2 active:scale-90 shadow-sm">
       <span class="material-symbols-outlined text-xl">grid_view</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
     </a>
-    <a href="booking_history.html"
+    <a href="{% url 'booking_history_page' %}"
       class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
       <span class="material-symbols-outlined text-xl">event_note</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
     </a>
-    <a href="profile.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+    <a href="{% url 'profile_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
       <span class="material-symbols-outlined text-xl fill-icon">person</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
     </a>
   </nav>
 
   <script>
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
     let allWorkers = [];
     let userLat = null, userLon = null;
 
@@ -224,9 +234,9 @@
     <div class="worker-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/20">
       <div class="flex items-start justify-between mb-3">
         <div class="flex items-center gap-3">
-          <div onclick="window.location.href='worker_detail.html?worker_id=${w.id}'" class="w-14 h-14 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-xl font-black text-[#9f402d] cursor-pointer overflow-hidden hover:scale-105 active:scale-95 transition-all" title="View Profile Details">
+          <div onclick="window.location.href='{% url 'worker_detail_page' %}?worker_id=${w.id}'" class="w-14 h-14 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-xl font-black text-[#9f402d] cursor-pointer overflow-hidden hover:scale-105 active:scale-95 transition-all" title="View Profile Details">
             ${w.profile_pic 
-              ? `<img src="http://localhost:8000${w.profile_pic}" alt="${w.fullname}" class="w-full h-full object-cover">`
+              ? `<img src="${window.location.origin}${w.profile_pic}" alt="${w.fullname}" class="w-full h-full object-cover">`
               : w.fullname.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -244,13 +254,38 @@
           ${w.distance_text ? `<span>• 📍 ${w.distance_text}</span>` : ''}
           ${w.is_available ? '<span class="text-green-600 font-bold">• Available</span>' : '<span class="text-gray-400">• Busy</span>'}
         </div>
-       <a href="booking_request.html?worker_id=${w.id}" 
+       <a href="{% url 'booking_request_page' %}?worker_id=${w.id}" 
           class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">
           Book
         </a>
       </div>
     </div>
   `).join('');
+    }
+
+    function sortAndRenderWorkers() {
+      const sortBy = document.getElementById('sort-select').value;
+      const q = document.getElementById('search-input').value.toLowerCase();
+      
+      let filtered = [...allWorkers];
+      if (q) {
+        filtered = filtered.filter(w => 
+          (w.fullname || "").toLowerCase().includes(q) || 
+          (w.username || "").toLowerCase().includes(q) || 
+          (w.email || "").toLowerCase().includes(q) || 
+          (w.skill || "").toLowerCase().includes(q)
+        );
+      }
+      
+      if (sortBy === 'distance') {
+        filtered.sort((a, b) => a.distance - b.distance);
+      } else if (sortBy === 'rating') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      } else if (sortBy === 'rate') {
+        filtered.sort((a, b) => a.hourly_rate - b.hourly_rate);
+      }
+      
+      renderList(filtered);
     }
 
     async function loadWorkers(skill = '') {
@@ -266,11 +301,17 @@
           url += '?' + params.join('&');
         }
 
-        const res = await fetch(url);
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = {};
+        if (sessionKey) {
+          headers['X-Session-Key'] = sessionKey;
+        }
+
+        const res = await fetch(url, { headers });
         const data = await res.json();
         if (data.status === 'success') {
           allWorkers = data.data;
-          renderList(allWorkers);
+          sortAndRenderWorkers();
           document.getElementById('list-title').textContent = skill ? skill + 's (' + allWorkers.length + ')' : 'All Workers (' + allWorkers.length + ')';
         }
       } catch (e) {
@@ -405,7 +446,7 @@
 
         if (successes.length > 0) {
           showQuickMsg('Request sent to ' + successes.length + ' nearby worker(s)!', 'success');
-          setTimeout(() => window.location.href = 'booking_history.html', 2000);
+          setTimeout(() => window.location.href = '{% url 'booking_history_page' %}', 2000);
         } else {
           const errorMsg = results[0]?.message || 'Could not send request. Try again.';
           showQuickMsg(errorMsg, 'error');
@@ -428,9 +469,7 @@
 
     // Search
     document.getElementById('search-input').addEventListener('input', e => {
-      const q = e.target.value.toLowerCase();
-      const filtered = allWorkers.filter(w => w.fullname.toLowerCase().includes(q) || w.skill.toLowerCase().includes(q));
-      renderList(filtered);
+      sortAndRenderWorkers();
     });
 
     renderCategories();

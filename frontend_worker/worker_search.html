@@ -73,12 +73,12 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <a href="worker_messages.html"
+            <a href="/worker/messages/"
                 class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
                 <span class="material-symbols-outlined text-2xl">notifications</span>
                 <span class="absolute top-2 right-2 w-2 h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
             </a>
-            <a href="worker_profile.html"
+            <a href="/worker/profile/"
                 class="w-10 h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
                 <img id="header-avatar"
                     src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
@@ -127,22 +127,22 @@
                 transform: scale(1.05);
             }
         </style>
-        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_dashboard.html"
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/dashboard/"
             id="nav-home">
             <span class="material-symbols-outlined text-[20px]">home_work</span>
             <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
         </a>
-        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/requests/"
             id="nav-requests">
             <span class="material-symbols-outlined text-[20px]">hail</span>
             <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
         </a>
-        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+        <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/booking-history/"
             id="nav-history">
             <span class="material-symbols-outlined text-[20px]">calendar_today</span>
             <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
         </a>
-        <a class="nav-item active flex flex-col items-center justify-center px-3 py-2" href="worker_search.html"
+        <a class="nav-item active flex flex-col items-center justify-center px-3 py-2" href="/worker/search/"
             id="nav-search">
             <span class="material-symbols-outlined text-[20px]">search</span>
             <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">search</span>
@@ -150,7 +150,7 @@
     </nav>
 
     <script>
-        const API_BASE = 'http://localhost:8000/api';
+        const API_BASE = '/api';
         let activeSearchChips = new Set();
 
         // Load persistent chips out of memory cache immediately
@@ -188,7 +188,7 @@
             if (person && person.profile_pic) {
                 return person.profile_pic.startsWith('http')
                     ? person.profile_pic
-                    : `http://localhost:8000${person.profile_pic}`;
+                    : `${window.location.origin}${person.profile_pic}`;
             }
             const name = encodeURIComponent(person ? (person.fullname || person.username || 'User') : 'User');
             return `https://ui-avatars.com/api/?name=${name}&background=ffdad3/&color=9f402d`;
@@ -291,7 +291,7 @@
 
             // Inside the dynamic map rendering: updated the header name text to be responsive (text-sm on mobile, text-base on laptop)
             grid.innerHTML = arr.map(w => `
-             <div onclick="window.location.href='worker_detail.html?worker_id=${w.id}'" class="bg-white p-5 rounded-2xl border border-outline-variant/30 flex items-center gap-4 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+             <div onclick="window.location.href='/worker/detail/?worker_id=${w.id}'" class="bg-white p-5 rounded-2xl border border-outline-variant/30 flex items-center gap-4 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
                 <img class="w-14 h-14 rounded-full object-cover border-2 border-[#713f12]/20 shadow-sm shrink-0" 
                      src="${getAvatarUrl(w)}" 
                      alt="Profile Picture">

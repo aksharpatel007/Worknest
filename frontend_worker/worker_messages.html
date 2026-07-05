@@ -65,7 +65,7 @@
   <!-- Responsive Header Deck -->
   <header
     class="sticky top-0 z-40 bg-[#fcf9f2]/90 backdrop-blur-md border-b border-outline-variant/20 px-4 sm:px-6 py-4 flex items-center gap-2 sm:gap-4">
-    <button onclick="window.location.href='worker_dashboard.html'"
+    <button onclick="window.location.href='/worker/dashboard/'"
       class="p-2 rounded-full hover:bg-surface-container transition-colors flex items-center justify-center shrink-0">
       <span class="material-symbols-outlined text-primary font-bold text-xl sm:text-2xl">arrow_back</span>
     </button>
@@ -79,7 +79,7 @@
   <!-- Responsive Scaled Main Viewport Layout -->
   <main class="pt-6 sm:pt-10 px-4 sm:px-6 max-w-3xl lg:max-w-5xl mx-auto">
     <div id="receipt-container"
-      class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-outline-variant/30 shadow-sm">
+      class="grid grid-cols-1 gap-4 p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-outline-variant/30 shadow-sm">
 
       <!-- Dynamic Content Loader Frame -->
       <div id="loading-spinner" class="text-center py-12 md:col-span-2">
@@ -90,7 +90,7 @@
   </main>
 
   <script>
-    const API_BASE = 'http://localhost:8000/api';
+    const API_BASE = '/api';
 
     async function fetchLiveReceipts() {
       const sessionKey = localStorage.getItem('session_key');

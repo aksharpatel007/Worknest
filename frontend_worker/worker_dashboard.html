@@ -145,7 +145,7 @@
         </button>
       </div>
 
-      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+      <button onclick="localStorage.clear(); window.location.href='/login/'"
         class="w-full py-3 bg-[#f1eee7] hover:bg-[#ddc0ba]/40 text-[#56423e] font-bold rounded-lg text-xs uppercase tracking-wider transition-colors duration-300">
         Sign Out Safely
       </button>
@@ -176,7 +176,7 @@
           class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg shadow-md uppercase tracking-wider transition-all duration-300">Send
           Appeal Message</button>
       </div>
-      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+      <button onclick="localStorage.clear(); window.location.href='/login/'"
         class="text-[10px] font-black text-[#89726d] uppercase tracking-wider hover:text-[#9f402d] transition-colors">Disconnect
         Session</button>
     </div>
@@ -196,14 +196,14 @@
       </div>
 
       <div class="flex items-center gap-3 sm:gap-4">
-        <a href="worker_messages.html"
+        <a href="/worker/messages/"
           class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
           <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
           <span
             class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
         </a>
         <div class="h-5 sm:h-6 w-[1px] bg-[#ddc0ba]/40 mx-0.5 sm:mx-1"></div>
-        <a href="worker_profile.html"
+        <a href="/worker/profile/"
           class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
           <img id="header-avatar-preview" src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
             class="w-full h-full object-cover rounded-full">
@@ -269,7 +269,7 @@
             <h4 id="priority-job-desc" class="text-sm sm:text-xl font-bold mt-0.5 sm:mt-1 tracking-tight leading-snug">
               Repairing faucet at Sector 4</h4>
           </div>
-          <a href="worker_booking_history.html"
+          <a href="/worker/booking-history/"
             class="bg-white/15 backdrop-blur-md p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl hover:bg-white/25 text-white shadow-inner transition-all shrink-0">
             <span class="material-symbols-outlined text-base sm:text-lg">arrow_forward</span>
           </a>
@@ -409,24 +409,24 @@
       }
     </style>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_dashboard.html" id="nav-home">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/dashboard/" id="nav-home">
       <span class="material-symbols-outlined text-[20px]">home_work</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/requests/"
       id="nav-requests">
       <span class="material-symbols-outlined text-[20px]">hail</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/booking-history/"
       id="nav-history">
       <span class="material-symbols-outlined text-[20px]">calendar_today</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_search.html" id="nav-search">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/search/" id="nav-search">
       <span class="material-symbols-outlined text-[20px]">search</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">search</span>
     </a>
@@ -493,7 +493,7 @@
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
-    const API_BASE = 'http://localhost:8000/api';
+    const API_BASE = '/api';
     let isWorkerOnline = false; // State tracker flag
     let locationIntervalId = null;
     let trackingMap = null;
@@ -504,7 +504,7 @@
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
-      if (!sessionKey) { window.location.href = '../frontend_user/login.html'; return; }
+      if (!sessionKey) { window.location.href = '/login/'; return; }
 
       try {
         const res = await fetch(`${API_BASE}/profile/`, {
@@ -542,7 +542,7 @@
           document.getElementById('worker-joined-display').textContent = worker.date_joined ? new Date(worker.date_joined).toLocaleDateString('en-IN') : 'Recent';
 
           const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname)}&background=ffdad3&color=9f402d&bold=true`;
-          const avatarPic = worker.profile_pic ? (worker.profile_pic.startsWith('http') ? worker.profile_pic : `http://localhost:8000${worker.profile_pic}`) : fallbackUrl;
+          const avatarPic = worker.profile_pic ? (worker.profile_pic.startsWith('http') ? worker.profile_pic : `${window.location.origin}${worker.profile_pic}`) : fallbackUrl;
           const headerAvatar = document.getElementById('header-avatar-preview');
           if (headerAvatar) {
             headerAvatar.src = avatarPic;

@@ -64,17 +64,17 @@
       </button>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
-      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
+      <a href="/admin-dashboard/" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
         Dashboard</a>
-      <a href="admin_users.html" class="nav-link active"><span class="material-symbols-outlined text-xl">group</span>
+      <a href="/admin-users/" class="nav-link active"><span class="material-symbols-outlined text-xl">group</span>
         Verify Users</a>
-      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+      <a href="/admin-verify/" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
         Verify Workers</a>
-      <a href="admin_booking.html" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
+      <a href="/admin-booking/" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
         System Bookings</a>
-      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud
+      <a href="/admin-fraud/" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud
         Reports</a>
-      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+      <a href="/admin-settings/" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
         Settings</a>
     </nav>
     <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
@@ -140,11 +140,11 @@
     </div>
   </div>
   <script>
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
 
     function adminLogout() {
       localStorage.removeItem('session_key');
-      window.location.href = '../frontend_user/login.html';
+      window.location.href = '/login/';
     }
 
     //
@@ -196,7 +196,7 @@
         <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer group" >
             <td class="px-8 py-5 flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full bg-[#9f402d] overflow-hidden border border-[#ddc0ba]/40 group-hover:ring-2 ring-[#9f402d]">
-                    <img src="${u.profile_pic ? 'http://localhost:8000' + u.profile_pic : 'https://ui-avatars.com/api/?name=' + u.fullname}" class="w-full h-full object-cover">
+                    <img src="${u.profile_pic ? window.location.origin + u.profile_pic : 'https://ui-avatars.com/api/?name=' + u.fullname}" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <p class="font-bold text-[#1c1c18]">${u.fullname}</p>
@@ -236,7 +236,7 @@
           ? d.data.filter(b => b.client === userId)
           : [];
 
-        const avatar = user.profile_pic ? 'http://localhost:8000' + user.profile_pic : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullname)}&background=9f402d&color=fff`;
+        const avatar = user.profile_pic ? window.location.origin + user.profile_pic : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullname)}&background=9f402d&color=fff`;
 
         let ordersHTML = '';
         if (userBookings.length > 0) {

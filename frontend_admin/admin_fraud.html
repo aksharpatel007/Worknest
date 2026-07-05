@@ -78,21 +78,21 @@
       </button>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
-      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
+      <a href="/admin-dashboard/" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
         Dashboard</a>
-      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+      <a href="/admin-users/" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
         Users</a>
-      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+      <a href="/admin-verify/" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
         Verify Workers</a>
-      <a href="admin_booking.html" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
+      <a href="/admin-booking/" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
         System Bookings</a>
-      <a href="admin_fraud.html" class="nav-link active"><span class="material-symbols-outlined text-xl">gavel</span>
+      <a href="/admin-fraud/" class="nav-link active"><span class="material-symbols-outlined text-xl">gavel</span>
         Fraud Reports</a>
-      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+      <a href="/admin-settings/" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
         Settings</a>
     </nav>
     <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
-      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+      <a href="#" onclick="localStorage.clear(); window.location.href='/login/'"
         class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
     </div>
   </aside>
@@ -208,7 +208,7 @@
       });
     }
 
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
     //
     let rawFraudData = [];
     async function loadFraudQueue() {
@@ -269,8 +269,8 @@
 
       // Logic for images and fallbacks
       const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
-      const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : avatarFallback;
-      const idImg = w.id_proof_image ? `http://localhost:8000${w.id_proof_image}` : 'https://placehold.co/600x400?text=No+ID+Image';
+      const profileImg = w.profile_pic ? `${window.location.origin}${w.profile_pic}` : avatarFallback;
+      const idImg = w.id_proof_image ? `${window.location.origin}${w.id_proof_image}` : 'https://placehold.co/600x400?text=No+ID+Image';
 
       content.innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 text-[#1c1c18]">
@@ -405,7 +405,7 @@
           <div class="flex flex-col">
             <p class="text-[10px] font-black uppercase text-[#89726d] mb-3 ml-2">Government ID Reference</p>
             <div class="flex-1 min-h-[300px] bg-stone-100 rounded-[2.5rem] overflow-hidden border-2 border-dashed border-[#ddc0ba] relative">
-               <img src="http://localhost:8000${w.id_proof_image}" class="w-full h-full object-contain p-4">
+               <img src="${window.location.origin}${w.id_proof_image}" class="w-full h-full object-contain p-4">
             </div>
           </div>
         </div>
@@ -567,7 +567,7 @@
           if (!confirmed) return;
 
           try {
-            const res = await fetch(`http://localhost:8000/api/admin/verify/${workerObject.id}/`, {
+            const res = await fetch(`/api/admin/verify/${workerObject.id}/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' }
             });
@@ -587,7 +587,7 @@
     async function suspendWorker(id) {
       const confirmed = await showConfirm("Suspend this worker instantly? They will be hidden from all user maps.");
       if (!confirmed) return;
-      const res = await fetch(`${API}/admin/verify/${id}/`, { method: 'POST', headers: { 'X-Session-Key': localStorage.getItem('session_key') } });
+      const res = await fetch(`${API}/admin/fraud/${id}/`, { method: 'POST', headers: { 'X-Session-Key': localStorage.getItem('session_key') } });
       if ((await res.json()).status === 'success') loadFraudQueue();
     }
     loadFraudQueue();

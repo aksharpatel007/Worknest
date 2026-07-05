@@ -47,7 +47,7 @@
   <!-- Responsive Header Frame -->
   <header class="sticky top-0 z-50 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-outline/30 px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between shadow-sm">
     <div class="flex items-center gap-2 sm:gap-3">
-      <button onclick="window.location.href='dashboard.html'" class="p-2 rounded-full hover:bg-surface-variant transition-colors active:scale-90 flex items-center justify-center">
+      <button onclick="window.location.href='{% url 'dashboard_page' %}'" class="p-2 rounded-full hover:bg-surface-variant transition-colors active:scale-90 flex items-center justify-center">
         <span class="material-symbols-outlined text-primary font-bold text-xl sm:text-2xl">arrow_back</span>
       </button>
       <!-- Text size scales adaptively on mobile vs laptop viewports -->
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Container where real notification items load -->
-    <div id="messages-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div id="messages-container" class="grid grid-cols-1 gap-6">
       <div class="col-span-full text-center py-12 text-[#89726d] text-xs sm:text-sm italic animate-pulse">
         Synchronizing notification trails...
       </div>
@@ -75,27 +75,27 @@
 
   <!-- Bottom Navigation Menu Bar -->
    <nav class="fixed bottom-2 left-4 right-4 z-40 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="dashboard.html">
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'dashboard_page' %}">
       <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">home</span><span>Home</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="services.html">
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'services_page' %}">
       <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">grid_view</span><span>Services</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="booking_history.html">
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'booking_history_page' %}">
       <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">event_note</span><span>Bookings</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="profile.html">
+    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'profile_page' %}">
       <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">person</span><span>Profile</span>
     </a>
   </nav>
 
   <script>
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
     let localNotificationsList = [];
 
     async function fetchUserNotifications() {
       const sessionKey = localStorage.getItem('session_key');
-      if (!sessionKey) { window.location.href = 'login.html'; return; }
+      if (!sessionKey) { window.location.href = '{% url 'login_page' %}'; return; }
 
       try {
         const profileRes = await fetch(`${API}/profile/`, { headers: { 'X-Session-Key': sessionKey } });

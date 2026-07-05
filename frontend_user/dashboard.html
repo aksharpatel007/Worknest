@@ -148,6 +148,17 @@
     body {
       min-height: max(884px, 100dvh);
     }
+    .rec-tab {
+      transition: all 0.2s;
+      background: white;
+      color: #56423e;
+      border: 1px solid #ddc0ba;
+    }
+    .rec-tab.active {
+      background: #9f402d;
+      color: white;
+      border-color: #9f402d;
+    }
   </style>
 </head>
 
@@ -164,11 +175,16 @@
         <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
       </div>
       <div class="flex items-center gap-4">
-        <a href="user_messages.html"
+        <button onclick="openRecommendationsModal()"
+          class="p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors flex items-center justify-center"
+          title="Self-Help Recommendations">
+          <span class="material-symbols-outlined text-2xl">tips_and_updates</span>
+        </button>
+        <a href="{% url 'user_messages_page' %}"
           class="bell-container relative p-2 text-[#9f402d] hover:bg-[#f1eee7] rounded-full transition-colors">
           <span class="material-symbols-outlined swing-bell text-2xl" style="display: inline-block;">notifications</span>
         </a>
-        <div onclick="window.location.href='profile.html'"
+        <div onclick="window.location.href='{% url 'profile_page' %}'"
           class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 cursor-pointer hover:border-primary transition-all hover:scale-105 active:scale-95 group">
           <img id="header-profile-img" alt="User Profile" class="w-full h-full object-cover"
             src="https://ui-avatars.com/api/?name=User&background=ffdad3&color=9f402d" />
@@ -362,7 +378,7 @@
               Bringing 10+ years of restaurant experience to your home kitchen.</p>
             <button
               class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
-              onclick="window.location.href='booking_request.html?worker_id=${w.id}'">Book Elena</button>
+              onclick="window.location.href='{% url 'booking_request_page' %}?worker_id=${w.id}'">Book Elena</button>
           </div>
         </div>
         <!-- Card 2 -->
@@ -394,7 +410,7 @@
               solutions. Reliable, thorough, and pet-friendly service.</p>
             <button
               class="w-full py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
-              onclick="window.location.href='booking_request.html'">Book Marcus</button>
+              onclick="window.location.href='{% url 'booking_request_page' %}'">Book Marcus</button>
           </div>
         </div>
       </div>
@@ -423,22 +439,22 @@
   <!-- Bottom Nav -->
   <nav
     class="fixed bottom-2 left-4 right-4 z-40 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
-    <a href="dashboard.html"
+    <a href="{% url 'dashboard_page' %}"
       class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2">
       <span class="material-symbols-outlined text-xl fill-icon">home</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
     </a>
-    <a href="services.html"
+    <a href="{% url 'services_page' %}"
       class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
       <span class="material-symbols-outlined text-xl">grid_view</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
     </a>
-    <a href="booking_history.html"
+    <a href="{% url 'booking_history_page' %}"
       class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
       <span class="material-symbols-outlined text-xl">event_note</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
     </a>
-    <a href="profile.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+    <a href="{% url 'profile_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
       <span class="material-symbols-outlined text-xl ">person</span>
       <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
     </a>
@@ -446,12 +462,12 @@
   <!-- FAB (Suppressed on Home per rules, but included if contextual intent matches high-priority action) -->
   <!-- Not rendered here to prioritize the dashboard flow per Semantic Shell Mandate -->
   <script>
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
 
     // Secure Profile Greet Sync Engine
     async function loadProfile() {
       const sessionKey = localStorage.getItem('session_key');
-      if (!sessionKey) { window.location.href = 'login.html'; return; }
+      if (!sessionKey) { window.location.href = '{% url 'login_page' %}'; return; }
 
       try {
         const res = await fetch(`${API}/profile/`, {
@@ -476,7 +492,7 @@
           if (profileImg) {
             if (data.data.profile_pic) {
               // Load their actual uploaded photo
-              profileImg.src = `http://localhost:8000${data.data.profile_pic}`;
+              profileImg.src = `${window.location.origin}${data.data.profile_pic}`;
             } else {
               // Generate a beautiful monogram if no photo exists
               profileImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.data.fullname)}&background=ffdad3&color=9f402d&bold=true`;
@@ -525,10 +541,14 @@
       }
     }
 
-    // Load available workers and dynamically filter them based on search queries
     async function loadWorkers(query = '') {
       try {
-        const res = await fetch(`${API}/workers/`);
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = {};
+        if (sessionKey) {
+          headers['X-Session-Key'] = sessionKey;
+        }
+        const res = await fetch(`${API}/workers/`, { headers });
         const data = await res.json();
 
         if (data.status === 'success' && data.data) {
@@ -582,7 +602,7 @@
                 
                 <button 
                   class="w-full py-4 mt-auto rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all active:scale-95" 
-                  onclick="window.location.href='booking_request.html?worker_id=${w.id}'">
+                  onclick="window.location.href='{% url 'booking_request_page' %}?worker_id=${w.id}'">
                   Book ${w.fullname.split(' ')}
                 </button>
                 </div>
@@ -619,15 +639,775 @@
     }
 
     function goToService(skill) {
-      window.location.href = 'services.html';
+      window.location.href = '{% url 'services_page' %}';
     }
 
 
+    // DIY recommendations data structure
+    const recsData = [
+      {
+        id: "leaky-tap",
+        category: "Plumbing",
+        title: {
+          en: "🔧 How to Repair a Leaky Water Tap",
+          hi: "🔧 टपकते हुए पानी के नल की मरम्मत कैसे करें",
+          gu: "🔧 ટપકતા પાણીના નળની મરામત કેવી રીતે કરવી"
+        },
+        steps: {
+          en: [
+            "Turn off the main water supply valve to the house or the specific line.",
+            "Remove the decorative cap/screw on the tap handle and pull the handle off.",
+            "Use a wrench or spanner to unscrew the packing nut and carefully remove the internal valve stem.",
+            "Inspect and replace the worn-out washer or O-ring with a new one of the exact same size.",
+            "Reassemble the tap parts in reverse order, turn the water valve back on, and test."
+          ],
+          hi: [
+            "घर या विशिष्ट पाइपलाइन के मुख्य जल आपूर्ति वाल्व को बंद करें।",
+            "नल के हैंडल पर लगे सजावटी कैप/पेंच को हटा दें और हैंडल को बाहर निकालें।",
+            "पैकिंग नट को खोलने के लिए रिंच या स्पैनर का उपयोग करें और आंतरिक वाल्व स्टेम को सावधानीपूर्वक निकालें।",
+            "घिसे-पिटे वाशर या ओ-रिंग का निरीक्षण करें और उसे उसी आकार के नए वाशर से बदलें।",
+            "नल के हिस्सों को उल्टे क्रम में फिर से जोड़ें, जल आपूर्ति वाल्व वापस चालू करें, और रिसाव का परीक्षण करें।"
+          ],
+          gu: [
+            "ઘર અથવા તે ચોક્કસ પાણીના પાઇપલાઇનના મુખ્ય વાલ્વને બંધ કરો.",
+            "નળના હેન્ડલ પરના સુશોભન કેપ/સ્ક્રૂને હટાવો અને હેન્ડલ બહાર કાઢો.",
+            "પેકિંગ નટ ખોલવા માટે રેન્ચ કે સ્પેનરનો ઉપયોગ કરો અને અંદરના વાલ્વ સ્ટેમને કાળજીપૂર્વક બહાર કાઢો.",
+            "ઘસાઈ ગયેલા વોશર અથવા ઓ-રિંગની તપાસ કરો અને તેની જગ્યાએ સમાન સાઈઝનું નવું વોશર લગાવો.",
+            "નળના ભાગોને ઉલટા ક્રમમાં ફરીથી જોડો, પાણીનો વાલ્વ ચાલુ કરો અને લીકેજ ટેસ્ટ કરો."
+          ]
+        }
+      },
+      {
+        id: "clean-aerator",
+        category: "Plumbing",
+        title: {
+          en: "🔧 How to Clean a Tap Aerator Filter",
+          hi: "🔧 नल के एरेटर (फिल्टर) को कैसे साफ करें",
+          gu: "🔧 નળના એરેટર (ફિલ્ટર) ને કેવી રીતે સાફ કરવું"
+        },
+        steps: {
+          en: [
+            "Wrap a cloth around the aerator at the tip of the tap nozzle to prevent scratches.",
+            "Use pliers to unscrew the aerator clockwise (facing down).",
+            "Disassemble the screen mesh, rubber washer, and plastic flow restrictor.",
+            "Soak parts in white vinegar for 30 minutes to dissolve scale, then scrub with an old toothbrush.",
+            "Rinse all pieces with clean water, reassemble, and screw it back onto the faucet."
+          ],
+          hi: [
+            "खरोंच से बचने के लिए नल के नोक पर लगे जलवाहक (aerator) के चारों ओर एक कपड़ा लपेटें।",
+            "प्लास का उपयोग करके जलवाहक को दक्षिणावर्त (नीचे की ओर देखते हुए) खोलें।",
+            "स्क्रीन मेश, रबर वाशर और प्लास्टिक फ्लो रेस्ट्रिक्टर को अलग करें।",
+            "खनिजों को घोलने के लिए भागों को 30 मिनट के लिए सफेद सिरके में भिगोएँ, फिर पुराने टूथब्रश से साफ़ करें।",
+            "सभी टुकड़ों को साफ पानी से धोएं, फिर से जोड़ें, और नल पर वापस पेंच कसें।"
+          ],
+          gu: [
+            "નળની નોઝલ પરના એરેટર (aerator) ની આસપાસ કાપડ વીંટાળો જેથી સ્ક્રેચ ન પડે.",
+            "પકડ (pliers) નો ઉપયોગ કરીને એરેટરને ફેરવીને ખોલો.",
+            "સ્ક્રીન મેશ, રબર વોશર અને પ્લાસ્ટિક ફ્લો રેસ્ટ્રિક્ટરને અલગ કરો.",
+            "ક્ષાર ઓગાળવા માટે ભાગોને ૩૦ મિનિટ માટે સફેદ સરકામાં પલાળી રાખો, પછી જૂના ટૂથબ્રશથી ઘસો.",
+            "બધા ભાગોને ચોખ્ખા પાણીથી ધોઈ લો, ફરીથી જોડો અને નળ પર પાછું ફિટ કરો."
+          ]
+        }
+      },
+      {
+        id: "toilet-flush",
+        category: "Plumbing",
+        title: {
+          en: "🔧 How to Stop a Running/Leaking Toilet Flush",
+          hi: "🔧 लगातार बहते/टपकते टॉयलेट फ्लश को कैसे रोकें",
+          gu: "🔧 ચાલુ રહેતા/લીક થતા ટોયલેટ ફ્લશને કેવી રીતે રોકવું"
+        },
+        steps: {
+          en: [
+            "Remove the toilet tank lid carefully and place it on a flat towel.",
+            "Inspect the flush chain. If it is tangled or too tight, adjust the links to give it slight slack.",
+            "Inspect the rubber flapper valve at the bottom of the tank. Clean any sediment or slime off it.",
+            "If the flapper is warped or cracked, shut off the water valve, drain the tank, and snap on a replacement flapper.",
+            "Turn the water supply back on, test the flush button, and ensure the running stops."
+          ],
+          hi: [
+            "टॉयलेट टैंक के ढक्कन को हटाकर समतल सतह पर सावधानी से रखें।",
+            "फ्लश वाल्व चेन का निरीक्षण करें। यदि वह उलझी या बहुत कसी हुई है, तो उसे थोड़ा ढीला करें।",
+            "तल पर रबर फ्लैपर वाल्व की जांच करें। यदि वह गंदा या गलत स्थान पर है, तो उसे साफ करें या ठीक करें।",
+            "यदि रबर फ्लैपर खराब या टूटा है, तो पानी का वाल्व बंद करें, टैंक खाली करें, और फ्लैपर बदलें।",
+            "पानी वापस चालू करें, फ्लश बटन का परीक्षण करें, और सुनिश्चित करें कि पानी बहना बंद हो जाए।"
+          ],
+          gu: [
+            "ટોયલેટ ટાંકીનું ઢાંકણું હટાવીને સપાટ જગ્યા પર કાળજીપૂર્વક મૂકો.",
+            "ફ્લશ વાલ્વની ચેઈન ચેક કરો. જો તે ગૂંચવાયેલી કે બહુ ખેંચાયેલી હોય, તો તેને થોડી ઢીલી કરો.",
+            "ટાંકીના તળિયે આવેલા રબર ફ્લેપર વાલ્વની તપાસ કરો. તેના પરથી કચરો સાફ કરો.",
+            "જો રબર ફ્લેપર ખરાબ કે તૂટી ગયું હોય, તો પાણી બંધ કરી ટાંકી ખાલી કરો અને નવું ફ્લેપર લગાવો.",
+            "પાણી ફરી ચાલુ કરો, ફ્લશ બટન ટેસ્ટ કરો અને ખાતરી કરો કે પાણી વહેતું બંધ થઈ ગયું છે."
+          ]
+        }
+      },
+      {
+        id: "repair-bulb",
+        category: "Electrical",
+        title: {
+          en: "💡 How to Change/Replace a Lightbulb",
+          hi: "💡 लाइट बल्ब को कैसे बदलें/प्रतिस्थापित करें",
+          gu: "💡 લાઇટ બલ્બ કેવી રીતે બદલવો"
+        },
+        steps: {
+          en: [
+            "Switch off the power source/socket first. Never change a bulb with the switch on.",
+            "Allow the bulb to cool completely before touching it to prevent burns.",
+            "For screw bulbs, turn counter-clockwise. For pin bulbs, push gently and twist counter-clockwise.",
+            "Insert the new bulb of identical wattage/type and twist clockwise until firmly secured.",
+            "Turn the power switch back on and verify the new lightbulb functions properly."
+          ],
+          hi: [
+            "सबसे पहले बिजली के स्विच/सॉकेट को बंद करें। चालू स्विच के साथ कभी भी बल्ब न बदलें।",
+            "जलने से बचने के लिए छूने से पहले बल्ब को पूरी तरह से ठंडा होने दें।",
+            "स्क्रू वाले बल्बों के लिए वामावर्त (एंटी-क्लॉकवाइज) घुमाएं। पिन वाले बल्बों के लिए धीरे से दबाएं और घुमाएं।",
+            "समान वाट क्षमता/प्रकार का नया बल्ब डालें और सुरक्षित होने तक इसे दक्षिणावर्त (क्लॉकवाइज) घुमाएं।",
+            "पावर स्विच वापस चालू करें और सत्यापित करें कि नया लाइटबल्ब ठीक से काम कर रहा है।"
+          ],
+          gu: [
+            "સૌ પ્રથમ પાવર સ્વીચ/સોકેટ બંધ કરો. ચાલુ સ્વીચ હોય ત્યારે ક્યારેય બલ્બ ન બદલો.",
+            "દાઝી જવાથી બચવા માટે બલ્બને સ્પર્શ કરતા પહેલા સંપૂર્ણપણે ઠંડો થવા દો.",
+            "સ્ક્રૂવાળા બલ્બ માટે એન્ટી-ક્લોકવાઈઝ ફેરવો. પીનવાળા બલ્બ માટે ધીમેથી દબાવીને ફેરવો.",
+            "તે જ વોટેજ/પ્રકારનો નવો બલ્બ દાખલ કરો અને ફિટ થાય ત્યાં સુધી તેને ક્લોકવાઈઝ ફેરવો.",
+            "પાવર સ્વીચ ચાલુ કરો અને નવો બલ્બ યોગ્ય રીતે કામ કરે છે કે નહીં તે ચકાસો."
+          ]
+        }
+      },
+      {
+        id: "reset-mcb",
+        category: "Electrical",
+        title: {
+          en: "💡 How to Reset a Tripped MCB/Circuit Breaker",
+          hi: "💡 ट्रिप हुए एमसीबी (MCB)/सर्किट ब्रेकर को रीसेट कैसे करें",
+          gu: "💡 ટ્રિપ થઈ ગયેલ MCB/સર્કિટ બ્રેકર કેવી રીતે રીસેટ કરવું"
+        },
+        steps: {
+          en: [
+            "Locate your main distribution box/panel in the house.",
+            "Unplug the high-power appliance (like iron, heater, or microwave) that caused the trip.",
+            "Identify the circuit breaker switch that has flipped to the 'OFF' or middle position.",
+            "Pull the switch completely down to 'OFF' first (to reset the mechanism) and then push it all the way up to 'ON'.",
+            "If it immediately trips again, call a certified electrician to check for a short circuit."
+          ],
+          hi: [
+            "घर में अपने मुख्य विद्युत वितरण बॉक्स/पैनल का पता लगाएं।",
+            "उस उच्च-शक्ति उपकरण (जैसे आयरन, हीटर, या माइक्रोवेव) को अनप्लग करें जिसने ट्रिप का कारण बनाया था।",
+            "उस सर्किट ब्रेकर (MCB) स्विच की पहचान करें जो 'OFF' या मध्य स्थिति में आ गया है।",
+            "पहले स्विच को पूरी तरह से नीचे 'OFF' पर खींचें (मैकेनिज्म रीसेट करने के लिए) और फिर उसे ऊपर 'ON' पर धकेलें।",
+            "यदि यह तुरंत फिर से ट्रिप हो जाता है, तो शॉर्ट सर्किट की जांच के लिए प्रमाणित इलेक्ट्रीशियन को बुलाएं।"
+          ],
+          gu: [
+            "ઘરમાં તમારા મુખ્ય વીજળી વિતરણ બોક્સ (MCB પેનલ) ને શોધો.",
+            "તે હાઈ-પાવર ઉપકરણ (જેમ કે ઈસ્ત્રી, હીટર કે માઇક્રોવેવ) ને બંધ કરો જેના કારણે ટ્રિપ થઈ હતી.",
+            "તે સર્કિટ બ્રેકર સ્વીચ શોધો જે 'OFF' અથવા મધ્ય સ્થિતિમાં આવી ગઈ હોય.",
+            "પહેલા સ્વીચને સંપૂર્ણપણે નીચે 'OFF' પર લાવો (રીસેટ કરવા માટે) અને પછી તેને ઉપર 'ON' પર ધકેલો.",
+            "જો તે તરત જ ફરીથી ટ્રિપ થઈ જાય, તો શોર્ટ સર્કિટ ચેક કરવા માટે અનુભવી ઈલેક્ટ્રિશિયનને બોલાવો."
+          ]
+        }
+      },
+      {
+        id: "replace-plug-fuse",
+        category: "Electrical",
+        title: {
+          en: "💡 How to Replace a Plug Fuse Safely",
+          hi: "💡 प्लग फ्यूज को सुरक्षित रूप से कैसे बदलें",
+          gu: "💡 પ્લગ ફ્યુઝ કેવી રીતે સુરક્ષિત રીતે બદલવો"
+        },
+        steps: {
+          en: [
+            "Unplug the appliance plug from the wall socket completely.",
+            "Use a small screwdriver to unscrew the cover screw of the plug and open it.",
+            "Gently pry out the glass/ceramic cartridge fuse from the metal clips inside.",
+            "Replace it with a new fuse of the exact same ampere rating (e.g., 3A, 5A, or 13A).",
+            "Secure the plug cover back on, tighten the screw, plug it back in, and test."
+          ],
+          hi: [
+            "दीवार के सॉकेट से उपकरण के प्लग को पूरी तरह से बाहर निकालें।",
+            "प्लग के कवर स्क्रू को खोलने के लिए एक छोटे पेचकश का उपयोग करें और इसे खोलें।",
+            "अंदर क्लिपों से ग्लास/सिरेमिक कार्ट्रिज फ्यूज को धीरे से बाहर निकालें।",
+            "इसे बिल्कुल उसी एम्पीयर रेटिंग (जैसे, 3A, 5A, या 13A) के नए फ्यूज से बदलें।",
+            "प्लग कवर को वापस ठीक से लगाएं, स्क्रू कसें, प्लग इन करें और जांचें।"
+          ],
+          gu: [
+            "દીવાલના સોકેટમાંથી ઉપકરણના પ્લગને સંપૂર્ણપણે બહાર કાઢી લો.",
+            "નાના સ્ક્રુડ્રાઈવરનો ઉપયોગ કરીને પ્લગના કવરનો સ્ક્રૂ ખોલો અને તેને અલગ કરો.",
+            "અંદરની ક્લિપમાંથી ગ્લાસ/સિરામિક કાર્ટ્રિજ ફ્યુઝને ધીમેથી બહાર કાઢો.",
+            "અહીં સમાન એમ્પીયર રેટિંગ (જેમ કે ૩A, ૫A અથવા ૧૩A) નો નવો ફ્યુઝ લગાવો.",
+            "પ્લગ કવરને ફરીથી જોડો, સ્ક્રૂ ટાઈટ કરો, પ્લગ સોકેટમાં ભરાવો અને ટેસ્ટ કરો."
+          ]
+        }
+      },
+      {
+        id: "unclog-sink",
+        category: "Plumbing",
+        title: {
+          en: "💧 How to Unclog a Clogged Sink Drain",
+          hi: "💧 बंद सिंक नाली को कैसे खोलें (Unclog करें)",
+          gu: "💧 બ્લોક થઈ ગયેલા સિંકને કેવી રીતે સાફ કરવું"
+        },
+        steps: {
+          en: [
+            "Pour a cup of baking soda down the dry sink drain.",
+            "Follow it with one cup of white vinegar, seal the drain with a plug, and let it fizz for 15 minutes.",
+            "Boil a kettle of water in the meantime.",
+            "Slowly pour the boiling water directly down the drain to flush away loosened grease and debris.",
+            "If it remains slow, use a rubber plunger to push and pull water until the clog releases."
+          ],
+          hi: [
+            "सूखे सिंक की नाली में एक कप बेकिंग सोडा डालें।",
+            "इसके बाद एक कप सफेद सिरका डालें, नाली को प्लग से बंद कर दें, और 15 मिनट के लिए छोड़ दें।",
+            "इस बीच एक केतली पानी उबाल लें।",
+            "ढीली हुई ग्रीस और मलबे को बहाने के लिए उबलते पानी को सीधे नाली में डालें।",
+            "यदि पानी का बहाव धीमा रहता है, तो पानी को ऊपर-नीचे करने के लिए रबर प्लंजर का उपयोग करें।"
+          ],
+          gu: [
+            "સૂકા સિંકની ગટરમાં એક કપ ખાવાનો સોડા (બેકિંગ સોડા) નાખો.",
+            "ત્યારબાદ એક કપ સફેદ સરકો (વિનેગર) નાખો, ડ્રેઇન બંધ કરી દો અને ૧૫ મિનિટ માટે રહેવા દો.",
+            "આ સમય દરમિયાન એક કીટલી પાણી ઉકાળો.",
+            "નરમ પડેલી ચરબી અને કચરો સાફ કરવા માટે ઉકળતું પાણી સીધું જ ગટરમાં રેડો.",
+            "જો પાણી હજી પણ ધીમે વહેતું હોય, તો રબર પ્લંજરનો ઉપયોગ કરી કચરો બહાર કાઢો."
+          ]
+        }
+      },
+      {
+        id: "cook-omelette",
+        category: "Cooking",
+        title: {
+          en: "🍳 How to Cook a Perfect Omelette",
+          hi: "🍳 एक सही आमलेट कैसे बनाएं",
+          gu: "🍳 ઉત્તમ ઓમલેટ કેવી રીતે બનાવવી"
+        },
+        steps: {
+          en: [
+            "Crack 2 fresh eggs into a bowl. Add a pinch of salt, pepper, and 1 tablespoon of milk or water.",
+            "Whisk vigorously with a fork until the mixture is uniform and slightly frothy.",
+            "Melt 1 tablespoon of butter in a frying pan over medium-high heat until it bubbles.",
+            "Pour in the eggs, tilt the pan to cover the bottom, and fold the edges inward as they cook.",
+            "Once the center is slightly soft but set, fold the omelette in half and slide it onto a plate."
+          ],
+          hi: [
+            "एक कटोरे में 2 ताजे अंडे फोड़ें। एक चुटकी नमक, काली मिर्च और 1 बड़ा चम्मच दूध या पानी डालें।",
+            "कांटे से तब तक फेंटें जब तक कि मिश्रण एक समान और थोड़ा झागदार न हो जाए।",
+            "मध्यम-तेज आँच पर एक फ्राइंग पैन में 1 बड़ा चम्मच मक्खन पिघलाएँ जब तक कि उसमें बुलबुले न बनने लगें।",
+            "अंडे डालें, पैन को चारों ओर घुमाएँ, और पकने पर किनारों को अंदर की तरफ मोड़ें।",
+            "जब बीच का हिस्सा थोड़ा नरम लेकिन सेट हो जाए, तो आमलेट को आधा मोड़ें और प्लेट में निकालें।"
+          ],
+          gu: [
+            "એક બાઉલમાં ૨ તાજા ઈંડા તોડો. ચપટી મીઠું, મરી અને ૧ મોટી ચમચી દૂધ કે પાણી ઉમેરો.",
+            "કાંટાની મદદથી મિશ્રણ એકસરખું અને ફીણવાળું થાય ત્યાં સુધી બરાબર હલાવો.",
+            "મધ્યમ તાપ પર ફ્રાઈંગ પેનમાં ૧ મોટી ચમચી માખણ ઓગાળો.",
+            "ઈંડાનું મિશ્રણ ઉમેરો, પેનને ફેલાવો અને જેમ જેમ પાકે તેમ કિનારીઓને અંદર વાળો.",
+            "જ્યારે વચ્ચેનો ભાગ થોડો નરમ થાય પરંતુ પાકી જાય, ત્યારે ઓમલેટને વાળી પ્લેટમાં કાઢી લો."
+          ]
+        }
+      },
+      {
+        id: "masala-tea",
+        category: "Cooking",
+        title: {
+          en: "🍳 How to Brew Indian Masala Chai",
+          hi: "🍳 भारतीय मसाला चाय कैसे बनाएं",
+          gu: "🍳 ઈન્ડિયન મસાલા ચા કેવી રીતે બનાવવી"
+        },
+        steps: {
+          en: [
+            "Crush 1 inch of ginger, 2 green cardamoms, and 1 black peppercorn in a mortar.",
+            "Boil 1 cup of water in a tea saucepan and add the crushed spices.",
+            "Add 2 teaspoons of black tea leaves and let it simmer for 2 minutes.",
+            "Pour in 1 cup of milk and 1-2 teaspoons of sugar, then bring the mixture to a boil.",
+            "Lower heat, simmer for 1 more minute, strain it into cups, and enjoy hot."
+          ],
+          hi: [
+            "एक ओखली में 1 इंच अदरक, 2 हरी इलायची और 1 काली मिर्च को कूट लें।",
+            "चाय के पतीले में 1 कप पानी उबालें और कूटा हुआ मसाला मिश्रण डालें।",
+            "2 छोटी चम्मच काली चाय की पत्ती डालें और इसे गहरा रंग होने तक 2 मिनट के लिए उबलने दें।",
+            "1 कप दूध डालें और 1-2 चम्मच चीनी डालें, फिर मिश्रण को उबालें।",
+            "आँच धीमी करें, एक मिनट और पकने दें, फिर कप में छानकर गरमागरम आनंद लें।"
+          ],
+          gu: [
+            "ખાંડણી-દસ્તામાં ૧ ઈંચ આદુ, ૨ લીલી ઈલાયચી અને ૧ મરીનો દાણો વાટી લો.",
+            "તપેલીમાં ૧ કપ પાણી ઉકાળો અને તેમાં વાટેલો મસાલો ઉમેરો.",
+            "૨ નાની ચમચી ચાની પત્તી ઉમેરો અને તેને ડાર્ક કલર આવે ત્યાં સુધી ૨ મિનિટ ઉકળવા દો.",
+            "૧ કપ દૂધ અને ૧-૨ ચમચી ખાંડ ઉમેરો, પછી ચાને બરાબર ઉકળવા દો.",
+            "તાપ ધીમો કરો અને એકાદ મિનિટ ઉકાળો, પછી કપમાં ગાળી લો અને ગરમાગરમ સર્વ કરો."
+          ]
+        }
+      },
+      {
+        id: "white-rice",
+        category: "Cooking",
+        title: {
+          en: "🍳 How to Cook Fluffy White Rice",
+          hi: "🍳 खिले-खिले सफेद चावल कैसे बनाएं",
+          gu: "🍳 સોફ્ટ સફેદ ભાત કેવી રીતે બનાવવા"
+        },
+        steps: {
+          en: [
+            "Rinse 1 cup of white rice under cold running water until the water runs clear.",
+            "In a pot, combine the rinsed rice with 2 cups of water and a pinch of salt.",
+            "Bring to a boil uncovered over high heat, then cover with a tight lid and lower heat to low.",
+            "Simmer for exactly 15 minutes, then turn off the heat without removing the lid.",
+            "Let it steam covered for 5 minutes, then fluff gently with a fork and serve."
+          ],
+          hi: [
+            "1 कप सफेद चावल को ठंडे बहते पानी में तब तक धोएं जब तक कि पानी साफ न हो जाए।",
+            "एक बर्तन में धोए हुए चावल को 2 कप पानी और एक चुटकी नमक के साथ मिलाएं।",
+            "बिना ढके तेज आंच पर उबालें, फिर टाइट ढक्कन से ढक दें और आंच को धीमा कर दें।",
+            "ठीक 15 मिनट के लिए धीमी आंच पर पकाएं, फिर ढक्कन हटाए बिना आंच बंद कर दें।",
+            "ढके हुए बर्तन में 5 मिनट के लिए भाप बनने दें, फिर कांटे से धीरे से चावल को हिलाकर परोसें।",
+          ],
+          gu: [
+            "૧ કપ સફેદ ચોખાને ઠંડા પાણીથી ત્યાં સુધી ધોઈ લો જ્યાં સુધી ચોખ્ખું પાણી ન નીકળે.",
+            "એક વાસણમાં ધોયેલા ચોખા, ૨ કપ પાણી અને ચપટી મીઠું ઉમેરી મિક્સ કરો.",
+            "ઢાંક્યા વિના તેજ તાપ પર ઉકાળો, ત્યારબાદ તેના પર ફીટ ઢાંકણ ઢાંકી તાપ ધીમો કરો.",
+            "બરાબર ૧૫ મિનિટ સુધી ધીમા તાપે પકાવો, પછી ઢાંકણ ખોલ્યા વિના ગેસ બંધ કરી દો.",
+            "૫ મિનિટ સુધી વરાળમાં રહેવા દો, પછી કાંટાની મદદથી ચોખાને હલાવી લો અને ગરમ સર્વ કરો."
+          ]
+        }
+      },
+      {
+        id: "clean-window",
+        category: "Maid",
+        title: {
+          en: "🧹 How to Clean a Greasy Glass Window Pane",
+          hi: "🧹 ग्रीस लगी कांच की खिड़की को कैसे साफ करें",
+          gu: "🧹 ગ્રીસવાળો બારીનો કાચ કેવી રીતે સાફ કરવો"
+        },
+        steps: {
+          en: [
+            "Mix equal parts of white vinegar and warm water in a spray bottle.",
+            "Spray the solution generously over the greasy glass surface.",
+            "Let it sit for 2 minutes to dissolve the grease.",
+            "Wipe the window clean with a microfibre cloth using a 'Z' motion.",
+            "Buff with dry newspaper for a streak-free, crystal-clear shine."
+          ],
+          hi: [
+            "एक स्प्रे बोतल में बराबर मात्रा में सफेद सिरका और गुनगुना पानी मिलाएं।",
+            "ग्रीस लगी कांच की सतह पर इस घोल का उदारतापूर्वक छिड़काव करें।",
+            "ग्रीस को घोलने के लिए इसे 2 मिनट के लिए छोड़ दें।",
+            "एक माइक्रोफाइबर कपड़े से 'Z' गति में खिड़की को पोंछकर साफ करें।",
+            "बिना लकीरों वाली चमकदार चमक के लिए सूखे समाचार पत्र से रगड़ें।"
+          ],
+          gu: [
+            "સ્પ્રે બોટલમાં સમાન માત્રામાં સફેદ સરકો અને નવશેકું પાણી મિક્સ કરો.",
+            "ગ્રીસવાળી કાચની સપાટી પર આ મિશ્રણનો પૂરતો છંટકાવ કરો.",
+            "ગ્રીસ ઓગળવા માટે તેને ૨ મિનિટ રહેવા દો.",
+            "માઇક્રોફાઇબર કાપડથી 'Z' આકારમાં ફેરવીને કાચ સાફ કરો.",
+            "એકદમ ચમકદાર સપાટી માટે સૂકા છાપાથી કાચને સાફ કરો."
+          ]
+        }
+      },
+      {
+        id: "pruning-plants",
+        category: "Gardener",
+        title: {
+          en: "🌱 How to Prune Dead Leaves from Indoor Plants",
+          hi: "🌱 इनडोर पौधों से सूखी पत्तियों की छंटाई कैसे करें",
+          gu: "🌱 ઘરમાં વાવેલા છોડના સૂકા પાંદડા કેવી રીતે કાપવા"
+        },
+        steps: {
+          en: [
+            "Disinfect your pruning shears or scissors with rubbing alcohol to prevent spreading plant diseases.",
+            "Identify yellow, brown, or completely dry leaves near the bottom of the plant.",
+            "Cut the dead leaf stem at a 45-degree angle close to the main branch.",
+            "Remove any fallen leaves from the soil surface to prevent mold and pest attraction.",
+            "Wipe the healthy leaves with a damp cloth to clean dust and allow better photosynthesis."
+          ],
+          hi: [
+            "पौधों की बीमारियों को फैलने से रोकने के लिए कैंची को रबिंग अल्कोहल से कीटाणुरहित करें।",
+            "पौधे के निचले हिस्से के पास पीले, भूरे या पूरी तरह से सूखे पत्तों की पहचान करें।",
+            "मृत पत्ते के तने को मुख्य शाखा के करीब 45-डिग्री के कोण पर काटें।",
+            "फफूंद और कीड़ों को आकर्षित होने से रोकने के लिए मिट्टी की सतह से गिरे हुए पत्तों को हटा दें।",
+            "धूल साफ करने और बेहतर प्रकाश संश्लेषण के लिए स्वस्थ पत्तों को नम कपड़े से पोंछें।"
+          ],
+          gu: [
+            "છોડમાં રોગ ન ફેલાય તે માટે કાતરને રબિંગ આલ્કોહોલથી સાફ (ડિસઇન્ફેક્ટ) કરો.",
+            "છોડની નીચે આવેલા પીળા, ભૂરા અથવા સુકાઈ ગયેલા પાંદડા ઓળખો.",
+            "સુકાઈ ગયેલા પાંદડાની ડાળીને મુખ્ય ડાળીની નજીકથી ૪૫-ડિગ્રીના ખૂણે કાપો.",
+            "ફૂગ કે જીવાત ન થાય તે માટે માટીની સપાટી પર પડેલા પાંદડાને હટાવી લો.",
+            "ધૂળ સાફ કરવા અને છોડને પૂરતો સૂર્યપ્રકાશ મળે તે માટે તંદુરસ્ત પાંદડાને ભીના કાપડથી સાફ કરો."
+          ]
+        }
+      },
+      {
+        id: "patch-nail-hole",
+        category: "Painter",
+        title: {
+          en: "🎨 How to Patch a Small Wall Nail Hole",
+          hi: "🎨 दीवार के छोटे कील के छेद को कैसे ठीक करें (पुट्टी लगाएं)",
+          gu: "🎨 દીવાલના ખીલીના નાના કાણાંને કેવી રીતે પૂરવું"
+        },
+        steps: {
+          en: [
+            "Clean the hole by removing any loose plaster or debris with a utility knife.",
+            "Use a putty knife to press a small amount of wall filler or spackle into the hole.",
+            "Scrape off any excess filler so it is flush with the surrounding wall.",
+            "Let it dry completely for 2-4 hours, then sand it smooth with fine-grit sandpaper.",
+            "Apply a dab of matching wall paint using a small brush or sponge."
+          ],
+          hi: [
+            "चाकू या पेचकश की मदद से छेद के आसपास के ढीले प्लास्टर या मलबे को साफ करें।",
+            "छेद में थोड़ी मात्रा में वॉल पुट्टी या फिलर दबाने के लिए पुट्टी चाकू का उपयोग करें।",
+            "अतिरिक्त फिलर को खुरच कर हटा दें ताकि यह आसपास की दीवार के बराबर हो जाए।",
+            "इसे 2-4 घंटे तक पूरी तरह सूखने दें, फिर महीन सैंडपेपर से घिसकर चिकना करें।",
+            "एक छोटे ब्रश या स्पंज का उपयोग करके मेल खाते हुए दीवार के रंग का एक कोट लगाएं।"
+          ],
+          gu: [
+            "બ્લેડ અથવા અણીદાર વસ્તુથી કાણાંની આસપાસનો નકામો કચરો કે પ્લાસ્ટર સાફ કરો.",
+            "પતરી (putty knife) નો ઉપયોગ કરી કાણામાં દીવાલ ભરવાની પુટ્ટી (wall filler) દબાવીને ભરો.",
+            "વધારાની પુટ્ટીને ઘસીને હટાવી લો જેથી તે આજુબાજુની દીવાલ સાથે સમાન થઈ જાય.",
+            "તેને ૨-૪ કલાક સૂકાવા દો, પછી બારીક કાચકાગળ (sandpaper) થી ઘસીને સપાટ કરો.",
+            "નાના બ્રશ અથવા સ્પોન્જની મદદથી દીવાલના રંગનો મેચિંગ કલર લગાવો."
+          ]
+        }
+      },
+      {
+        id: "fix-squeaky-hinge",
+        category: "Carpenter",
+        title: {
+          en: "🪚 How to Fix a Squeaky Door Hinge",
+          hi: "🪚 आवाज करने वाले दरवाजे के कब्जे को कैसे ठीक करें",
+          gu: "🪚 અવાજ કરતા દરવાજાના મિજાગરાને કેવી રીતે સરખો કરવો"
+        },
+        steps: {
+          en: [
+            "Identify which door hinge is squeaking by opening and closing the door slowly.",
+            "Spray a small amount of penetrating oil (like WD-40) or liquid lubricant onto the hinge pin.",
+            "Open and close the door several times to distribute the lubricant inside the hinge.",
+            "If the squeaking persists, tap the hinge pin upward using a hammer and nail, wipe it clean, apply grease, and reinstall.",
+            "Wipe away any excess oil from the door frame with a paper towel."
+          ],
+          hi: [
+            "दरवाजे को धीरे-धीरे खोलकर और बंद करके पहचानें कि कौन सा कब्जा आवाज (सूं-सूं) कर रहा है।",
+            "कब्जे के पिन पर थोड़ी मात्रा में तेल (जैसे WD-40) या कोई चिकनाई स्प्रे करें।",
+            "चिकनाई को अंदर तक फैलाने के लिए दरवाजे को कई बार खोलें और बंद करें।",
+            "यदि आवाज बनी रहती है, तो हथौड़े से पिन को ऊपर की ओर ठोक कर निकालें, साफ करें, ग्रीस लगाएं और वापस लगाएं।",
+            "दरवाजे के फ्रेम से अतिरिक्त तेल को पेपर टॉवल से पोंछकर साफ करें।"
+          ],
+          gu: [
+            "દરવાજો ધીમેથી ખોલી-બંધ કરીને ચેક કરો કે કયો મિજાગરો (hinge) અવાજ કરે છે.",
+            "મિજાગરાની પિન પર થોડું લ્યુબ્રિકન્ટ તેલ (જેમ કે WD-40) અથવા મશીન ઓઈલ છાંટો.",
+            "તેલ અંદર સુધી જાય તે માટે દરવાજો થોડીવાર ખોલ-બંધ કરો.",
+            "જો અવાજ ચાલુ રહે, તો હથોડીની મદદથી પિન સહેજ બહાર કાઢી સાફ કરી ગ્રીસ લગાવી પાછી ફિટ કરો.",
+            "દરવાજાના ચોકઠા પરથી વધારાનું તેલ કાગળ કે કપડાથી સાફ કરી નાખો."
+          ]
+        }
+      },
+      {
+        id: "check-washer-fluid",
+        category: "Driver",
+        title: {
+          en: "🚗 How to Check and Refill Windshield Washer Fluid",
+          hi: "🚗 कार के विंडशील्ड वाशर लिक्विड को कैसे चेक और रीफिल करें",
+          gu: "🚗 વાઇપર પાણીની બોટલ કેવી રીતે ચેક કરવી અને ભરવી"
+        },
+        steps: {
+          en: [
+            "Pull the hood release latch under the dashboard and open your car's hood.",
+            "Locate the windshield washer fluid reservoir (typically a white cap marked with a windshield/wiper symbol).",
+            "Open the cap and check the fluid level inside.",
+            "Pour a mixture of clean water and windshield washer concentrate up to the fill line.",
+            "Close the cap tightly, shut the car hood, and test the washer spray from inside the car."
+          ],
+          hi: [
+            "डैशबोर्ड के नीचे लगे बोनट रिलीज लीवर को खींचें और अपनी कार का बोनट खोलें।",
+            "विंडशील्ड वाशर फ्लूइड टैंक का पता लगाएं (आमतौर पर विंडशील्ड/वाइपर प्रतीक वाले सफेद कैप)।",
+            "कैप खोलें और अंदर तरल पदार्थ के स्तर की जांच करें।",
+            "फिल लाइन तक साफ पानी और विंडशील्ड वाशर लिक्विड का मिश्रण डालें।",
+            "कैप को कसकर बंद करें, कार का बोनट बंद करें और कार के अंदर से वाशर स्प्रे का परीक्षण करें।"
+          ],
+          gu: [
+            "ડેશબોર્ડની નીચે આવેલું બોનેટ લોક ખેંચી કારનું બોનેટ ખોલો.",
+            "વાઇપર પાણીની બોટલ (windshield washer reservoir) શોધો (સામાન્ય રીતે વાઇપરના ચિત્રવાળી સફેદ કેપ હશે).",
+            "કેપ ખોલી અંદર પાણીનું સ્તર ચેક કરો.",
+            "ચોખ્ખા પાણી અને ગ્લાસ ક્લીનર લિક્વિડનું મિશ્રણ કરી બોટલ ભરી દો.",
+            "કેપ બરાબર બંધ કરો, બોનેટ નીચે કરો અને કારની અંદરથી વાઇપર સ્પ્રે ચાલુ કરી ચેક કરો."
+          ]
+        }
+      },
+      {
+        id: "study-schedule",
+        category: "Tutor",
+        title: {
+          en: "📚 How to Create an Effective Study Schedule",
+          hi: "📚 पढ़ाई के लिए एक प्रभावी समय सारणी (Study Schedule) कैसे बनाएं",
+          gu: "📚 ભણવા માટેનું અસરકારક ટાઇમટેબલ કેવી રીતે બનાવવું"
+        },
+        steps: {
+          en: [
+            "Write down all your upcoming exams, assignments, and study topics in a list.",
+            "Divide your study time into 45-minute blocks, separated by 5-10 minute rest breaks (Pomodoro technique).",
+            "Assign specific topics to each study block, prioritizing difficult subjects first when your mind is fresh.",
+            "Keep a quiet, distraction-free desk area and turn off phone notifications during study blocks.",
+            "Review what you learned at the end of each session and track your progress."
+          ],
+          hi: [
+            "अपनी आगामी सभी परीक्षाओं, असाइनमेंट और अध्ययन विषयों को एक सूची में लिख लें।",
+            "अपने अध्ययन के समय को 45 मिनट के ब्लॉक में विभाजित करें, जिसमें 5-10 मिनट का आराम अंतराल हो।",
+            "प्रत्येक ब्लॉक में विशिष्ट विषय तय करें, कठिन विषयों को पहले प्राथमिकता दें जब आपका दिमाग तरोताजा हो।",
+            "पढ़ाई के दौरान शांत वातावरण रखें और फोन नोटिफिकेशन बंद रखें।",
+            "प्रत्येक सत्र के अंत में आपने जो सीखा उसकी समीक्षा करें और अपनी प्रगति को ट्रैक करें।"
+          ],
+          gu: [
+            "તમારી આગામી પરીક્ષાઓ, લેસન અને વાંચવાના વિષયોની એક યાદી બનાવો.",
+            "તમારા અભ્યાસના સમયને ૪૫-મિનિટના ગાળામાં વહેંચો, વચ્ચે ૫-૧૦ મિનિટનો વિરામ (બ્રેક) લો.",
+            "દરેક ગાળા માટે ચોક્કસ વિષય નક્કી કરો, જ્યારે મગજ ફ્રેશ હોય ત્યારે અઘરા વિષયો પહેલા વાંચો.",
+            "ભણવા માટે શાંત અને વિક્ષેપ વિનાની જગ્યા પસંદ કરો અને ફોનના નોટિફિકેશન બંધ કરો.",
+            "વાંચન પૂરું થાય ત્યારે તમે શું શીખ્યા તેની એકવાર સમીક્ષા કરો અને તમારી પ્રગતિ નોંધી લો."
+          ]
+        }
+      },
+      {
+        id: "clean-ac-filter",
+        category: "AC Repair",
+        title: {
+          en: "❄️ How to Clean Your AC Mesh Filter",
+          hi: "❄️ अपने एसी (AC) के जालीदार फिल्टर को कैसे साफ करें",
+          gu: "❄️ એસી (AC) ના જાળીવાળા ફિલ્ટરને કેવી રીતે સાફ કરવું"
+        },
+        steps: {
+          en: [
+            "Turn off the main electrical power switch of the air conditioner unit.",
+            "Open the front cover panel of the indoor AC unit by pulling the side tabs.",
+            "Carefully slide out the plastic mesh filters from their slots.",
+            "Wash the filters under running tap water to remove accumulated dust, and shake dry.",
+            "Let them dry completely, slide them back into place, and secure the front panel."
+          ],
+          hi: [
+            "एयर कंडीशनर यूनिट के मुख्य बिजली के स्विच को बंद करें।",
+            "साइड टैब खींचकर इनडोर एसी यूनिट के फ्रंट कवर पैनल को खोलें।",
+            "खांचे से प्लास्टिक जाल (mesh) फिल्टर को सावधानीपूर्वक बाहर स्लाइड करें।",
+            "जमी हुई धूल हटाने के लिए फिल्टर को बहते पानी के नीचे धोएं और पानी सुखाएं।",
+            "उन्हें पूरी तरह से सूखने दें, वापस अपनी जगह पर स्लाइड करें, और फ्रंट पैनल बंद कर दें।"
+          ],
+          gu: [
+            "એર કંડિશનર (AC) નો પાવર સ્વીચ બંધ કરો.",
+            "ઇન્ડોર AC યુનિટની બંને બાજુના લોક ખેંચી આગળની પેનલ ખોલો.",
+            "ખાંચમાંથી પ્લાસ્ટિક જાળીવાળા ફિલ્ટરને કાળજીપૂર્વક સ્લાઈડ કરીને બહાર કાઢો.",
+            "જાળીમાં જામેલી ધૂળ સાફ કરવા નળના વહેતા પાણીમાં ફિલ્ટર ધોઈ લો અને પાણી ખંખેરી નાખો.",
+            "ફિલ્ટર પૂરેપૂરું સૂકાઈ જાય એટલે પાછું તેની જગ્યાએ લગાવી પેનલ બંધ કરો."
+          ]
+        }
+      },
+      {
+        id: "facial-massage",
+        category: "Beautician",
+        title: {
+          en: "💇 How to Perform a Hydrating Facial Massage",
+          hi: "💇 हाइड्रेटिंग फेशियल मसाज (Facial Massage) कैसे करें",
+          gu: "💇 ચહેરા માટે હાઇડ્રેટિંગ મસાજ કેવી રીતે કરવો"
+        },
+        steps: {
+          en: [
+            "Wash your hands and face thoroughly with a mild cleanser.",
+            "Apply a few drops of lightweight facial oil or aloe vera gel to your palms.",
+            "Massage in gentle, upward circular motions starting from your neck up to your cheeks.",
+            "Use your ring fingers to sweep gently around your eyes to reduce puffiness.",
+            "Press lightly on key pressure points (temples, jawline) for 10 seconds to release tension."
+          ],
+          hi: [
+            "सौम्य क्लींजर से अपने हाथों और चेहरे को अच्छी तरह धोएं।",
+            "अपनी हथेलियों पर फेशियल ऑयल या एलोवेरा जेल की कुछ बूंदें लगाएं।",
+            "गर्दन से शुरू करते हुए गालों तक धीरे-धीरे ऊपर की ओर गोलाकार गति में मालिश करें।",
+            "सूजन कम करने के लिए अपनी अनामिका (ring finger) से आंखों के आसपास धीरे से घुमाएं।",
+            "तनाव मुक्त करने के लिए मुख्य दबाव बिंदुओं (कनपटी, जबड़े) पर 10 सेकंड के लिए हल्के से दबाएं।"
+          ],
+          gu: [
+            "સૌમ્ય ક્લીંઝરથી તમારા ચહેરો અને હાથ બરાબર ધોઈ લો.",
+            "હથેળીમાં મોઇશ્ચરાઇઝર ફેસ ઓઈલ અથવા એલોવેરા જેલના થોડા ટીપાં લો.",
+            "ગરદનથી શરૂ કરીને ગાલ સુધી ધીમે-ધીમે ગોળાકાર દિશામાં ઉપરની તરફ મસાજ કરો.",
+            "આંખોની નીચેનો સોજો ઓછો કરવા અનામિકા (ring finger) થી આંખોની આજુબાજુ હળવા હાથે મસાજ કરો.",
+            "તણાવ દૂર કરવા માટે ચહેરાના મુખ્ય પ્રેશર પોઈન્ટ (કપાળ, જડબું) પર ૧૦ સેકન્ડ સુધી હળવું દબાણ આપો."
+          ]
+        }
+      },
+      {
+        id: "pack-glassware",
+        category: "Movers",
+        title: {
+          en: "📦 How to Pack Fragile Glassware for Moving",
+          hi: "📦 शिफ्टिंग के लिए कांच के नाजुक सामान को कैसे पैक करें",
+          gu: "📦 ઘર બદલતી વખતે કાચના નાજુક સામાનનું પેકિંગ કેવી રીતે કરવું"
+        },
+        steps: {
+          en: [
+            "Crumple packing paper and line the bottom of a heavy-duty cardboard box for cushioning.",
+            "Wrap each glass individually in two layers of packing paper or bubble wrap.",
+            "Place wrapped glasses vertically (upright like in a cupboard), never lay them flat.",
+            "Fill all empty spaces with crumpled paper to prevent glasses from shifting during transit.",
+            "Tape the box securely and clearly write 'FRAGILE - GLASSWARE' on all sides."
+          ],
+          hi: [
+            "गत्ते के मजबूत डिब्बे के निचले हिस्से में कुचला हुआ अखबारी कागज फैलाएं।",
+            "प्रत्येक कांच के बर्तन को अलग से पैकिंग पेपर या बबल रैप की दो परतों में लपेटें।",
+            "लपेटे हुए गिलासों को डिब्बे में लंबवत (सीधा) रखें, उन्हें कभी भी आड़ा न लिटाएं।",
+            "सफर के दौरान सामान हिलने से रोकने के लिए खाली जगहों को कुचले हुए कागज से भरें।",
+            "बॉक्स को टेप से सुरक्षित रूप से सील करें और सभी तरफ 'FRAGILE - GLASSWARE' लिखें।"
+          ],
+          gu: [
+            "જાડા ખોખાના તળિયે કાગળના ડૂચા ગોઠવો જેથી કરીને સામાનમાં ગાદી જેવો સપોર્ટ મળે.",
+            "દરેક કાચના વાસણને અલગથી કાગળ અથવા બબલ રેપના બે પડમાં બરાબર વીંટાળો.",
+            "પેક કરેલા કાચના ગ્લાસ ખોખામાં ઊભા ગોઠવો, તેમને ક્યારેય આડા ન સૂવડાવો.",
+            "હેરફેર દરમિયાન ગ્લાસ એકબીજા સાથે અથડાય નહીં તે માટે ખાલી જગ્યામાં કાગળના ડૂચા ભરો.",
+            "બોક્સને સેલોટેપથી સરખી રીતે બંધ કરી તેના પર 'FRAGILE - GLASSWARE' (કાચનો નાજુક સામાન) લખો."
+          ]
+        }
+      },
+      {
+        id: "check-engine-oil",
+        category: "Mechanic",
+        title: {
+          en: "⚙️ How to Check Car Engine Oil Level",
+          hi: "⚙️ कार के इंजन ऑयल का स्तर (Oil Level) कैसे चेक करें",
+          gu: "⚙️ કારનું એન્જિન ઓઈલ કેવી રીતે ચેક કરવું"
+        },
+        steps: {
+          en: [
+            "Ensure the car is parked on a flat surface and the engine has been turned off for at least 10 minutes.",
+            "Open the hood and locate the engine oil dipstick (usually has a yellow/orange plastic ring handle).",
+            "Pull the dipstick completely out and wipe the oil off the tip with a clean rag or paper towel.",
+            "Reinsert the dipstick fully back into the tube, then pull it out again.",
+            "Check the oil level: it should be between the 'MIN' and 'MAX' marks. If it is below 'MIN', top up with recommended oil."
+          ],
+          hi: [
+            "सुनिश्चित करें कि कार समतल सतह पर खड़ी है और इंजन कम से कम 10 मिनट से बंद है।",
+            "बोनट खोलें और इंजन ऑयल डिपस्टिक का पता लगाएं (आमतौर पर पीले/नारंगी प्लास्टिक का हैंडल होता है)।",
+            "डिपस्टिक को पूरी तरह बाहर निकालें और किसी साफ कपड़े या पेपर टॉवल से इसकी नोक को पोंछें।",
+            "डिपस्टिक को वापस ट्यूब में पूरी तरह डालें, फिर दोबारा बाहर निकालें।",
+            "तेल के स्तर की जांच करें: यह 'MIN' और 'MAX' चिह्नों के बीच होना चाहिए। यदि 'MIN' से नीचे है, तो तेल डालें।"
+          ],
+          gu: [
+            "ખાતરી કરો કે કાર સપાટ જમીન પર પાર્ક કરેલી છે અને એન્જિન ૧૦ મિનિટથી બંધ છે.",
+            "બોનેટ ખોલી એન્જિન ઓઈલ ચેક કરવાની પટ્ટી (dipstick) શોધો (પીળા કે નારંગી પ્લાસ્ટિક હેન્ડલવાળી).",
+            "પટ્ટીને બહાર ખેંચી તેના પર ચોંટેલું તેલ સાફ કપડાં કે પેપર નેપકિનથી સાફ કરો.",
+            "પટ્ટીને ફરીથી તેના હોલમાં છેક સુધી ઉતારો, પછી ફરી બહાર ખેંચો.",
+            "ઓઈલનું સ્તર ચેક કરો: તે 'MIN' અને 'MAX' માર્કની વચ્ચે હોવું જોઈએ. જો 'MIN' થી ઓછું હોય તો નવું ઓઈલ ઉમેરો."
+          ]
+        }
+      }
+    ];
+
+    let currentRecsCategory = 'all';
+
+    function openRecommendationsModal() {
+      const modal = document.getElementById('recs-modal');
+      const card = document.getElementById('recs-modal-card');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      renderRecommendations();
+      setTimeout(() => {
+        card.classList.remove('scale-95', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+      }, 20);
+    }
+
+    function closeRecommendationsModal() {
+      const modal = document.getElementById('recs-modal');
+      const card = document.getElementById('recs-modal-card');
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    function filterRecsCategory(category) {
+      currentRecsCategory = category;
+      document.querySelectorAll('.rec-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      const safeId = category.replace(/\s+/g, '-');
+      document.getElementById(`tab-rec-${safeId}`).classList.add('active');
+      renderRecommendations();
+    }
+
+    function renderRecommendations() {
+      const lang = document.getElementById('recs-lang-select').value;
+      const recsList = document.getElementById('recs-list');
+      
+      const filtered = currentRecsCategory === 'all' 
+        ? recsData 
+        : recsData.filter(r => r.category === currentRecsCategory);
+
+      if (filtered.length === 0) {
+        recsList.innerHTML = `<p class="text-center py-8 text-xs text-[#89726d] font-semibold italic">No recommendations found in this category.</p>`;
+        return;
+      }
+
+      recsList.innerHTML = filtered.map(item => `
+        <div class="bg-white border border-[#ddc0ba]/40 rounded-2xl p-4 shadow-sm space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-[#f1eee7]">
+            <h4 class="text-sm font-bold text-[#1c1c18]">${item.title[lang]}</h4>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#ddc0ba]/30 text-[#89726d]">
+              ${item.category}
+            </span>
+          </div>
+          <ol class="list-decimal list-inside space-y-2 text-xs text-[#56423e] font-semibold leading-relaxed">
+            ${item.steps[lang].map(step => `
+              <li class="pl-1"><span class="ml-1">${step}</span></li>
+            `).join('')}
+          </ol>
+        </div>
+      `).join('');
+    }
+
     loadProfile();
     loadWorkers();
-
-
   </script>
+
+  <!-- Recommendations Popup Modal -->
+  <div id="recs-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-300">
+    <div class="bg-[#fcf9f2] border border-[#ddc0ba]/40 shadow-2xl rounded-3xl p-6 max-w-xl w-full mx-4 flex flex-col max-h-[80vh] transform transition-all duration-300 scale-95 opacity-0" id="recs-modal-card">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-[#ddc0ba]/20 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#9f402d] text-2xl">tips_and_updates</span>
+          <h3 class="text-lg font-black text-[#1c1c18] tracking-tight">DIY Self-Help Tips</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="recs-lang-select" onchange="renderRecommendations()" class="px-2.5 py-1 bg-white border border-[#ddc0ba] rounded-lg text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#9f402d]/40 text-[#56423e]">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="gu">ગુજરાતી</option>
+          </select>
+          <button onclick="closeRecommendationsModal()" class="text-[#89726d] hover:text-[#9f402d] transition-colors p-1 rounded-full hover:bg-[#f1eee7]">
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Category Tabs -->
+      <div class="flex gap-2 overflow-x-auto py-3 border-b border-[#ddc0ba]/10 shrink-0 select-none hide-scrollbar">
+        <button onclick="filterRecsCategory('all')" id="tab-rec-all" class="rec-tab active px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">All</button>
+        <button onclick="filterRecsCategory('Plumbing')" id="tab-rec-Plumbing" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🔧 Plumbing</button>
+        <button onclick="filterRecsCategory('Electrical')" id="tab-rec-Electrical" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">⚡ Electrical</button>
+        <button onclick="filterRecsCategory('Cooking')" id="tab-rec-Cooking" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🍳 Cooking</button>
+        <button onclick="filterRecsCategory('Maid')" id="tab-rec-Maid" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🧹 Maid</button>
+        <button onclick="filterRecsCategory('Gardener')" id="tab-rec-Gardener" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🌱 Gardener</button>
+        <button onclick="filterRecsCategory('Painter')" id="tab-rec-Painter" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🎨 Painter</button>
+        <button onclick="filterRecsCategory('Carpenter')" id="tab-rec-Carpenter" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🪚 Carpenter</button>
+        <button onclick="filterRecsCategory('Driver')" id="tab-rec-Driver" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">🚗 Driver</button>
+        <button onclick="filterRecsCategory('Tutor')" id="tab-rec-Tutor" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">📚 Tutor</button>
+        <button onclick="filterRecsCategory('AC Repair')" id="tab-rec-AC-Repair" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">❄️ AC Repair</button>
+        <button onclick="filterRecsCategory('Beautician')" id="tab-rec-Beautician" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">💇 Salon</button>
+        <button onclick="filterRecsCategory('Movers')" id="tab-rec-Movers" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">📦 Movers</button>
+        <button onclick="filterRecsCategory('Mechanic')" id="tab-rec-Mechanic" class="rec-tab px-3.5 py-1.5 rounded-full text-xs font-bold transition-all">⚙️ Mechanic</button>
+      </div>
+
+      <!-- Modal Body (Scrollable Tasks List) -->
+      <div id="recs-list" class="flex-1 overflow-y-auto py-4 space-y-4 pr-1 hide-scrollbar">
+        <!-- Rendered tasks go here -->
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="pt-3 border-t border-[#ddc0ba]/20 text-center shrink-0">
+        <p class="text-[10px] font-bold text-[#89726d] uppercase tracking-wider">Save time & money by resolving minor household issues yourself!</p>
+      </div>
+      
+    </div>
+  </div>
 </body>
 
 </html>

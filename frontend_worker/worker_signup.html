@@ -203,13 +203,13 @@
             document.getElementById('success-popup').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('success-popup').style.display = 'none';
-                window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
+                window.location.href = window.location.origin + '/worker/dashboard/';
             }, 3000);
         }
 
         function closeSuccessAndRedirect() {
             document.getElementById('success-popup').style.display = 'none';
-            window.location.href = window.location.origin + '/frontend_worker/worker_dashboard.html';
+            window.location.href = window.location.origin + '/worker/dashboard/';
         }
 
         // ૧. પ્રીમિયમ ટોસ્ટ પોપ-અપ ટ્રિગર કરવાનું ફંક્શન (લાલ અક્ષરો સાથે)
@@ -359,7 +359,7 @@
             formData.append('is_verified', 'false');
 
             try {
-                const res = await fetch('http://localhost:8000/api/signup/', {
+                const res = await fetch('/api/signup/', {
                     method: 'POST',
                     body: formData
                 });

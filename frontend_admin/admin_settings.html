@@ -59,17 +59,17 @@
       </button>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
-      <a href="admin_dashboard.html" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
+      <a href="/admin-dashboard/" class="nav-link"><span class="material-symbols-outlined text-xl">dashboard</span>
         Dashboard</a>
-      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+      <a href="/admin-users/" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
         Users</a>
-      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+      <a href="/admin-verify/" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
         Verify Workers</a>
-      <a href="admin_booking.html" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
+      <a href="/admin-booking/" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
         System Bookings</a>
-      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud
+      <a href="/admin-fraud/" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span> Fraud
         Reports</a>
-      <a href="admin_settings.html" class="nav-link active"><span
+      <a href="/admin-settings/" class="nav-link active"><span
           class="material-symbols-outlined text-xl">settings</span> Settings</a>
     </nav>
     <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
@@ -192,7 +192,7 @@
       if (confirmed) {
         localStorage.removeItem('session_key'); //
         localStorage.clear(); //
-        window.location.href = '../frontend_user/login.html'; // Ensure path is correct
+        window.location.href = '/login/'; // Ensure path is correct
       }
     }
   </script>

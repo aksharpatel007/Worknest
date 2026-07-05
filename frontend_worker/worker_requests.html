@@ -88,7 +88,7 @@
         </button>
       </div>
 
-      <button onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+      <button onclick="localStorage.clear(); window.location.href='/login/'"
         class="w-full py-4 bg-surface-container hover:bg-outline-variant/30 text-outline font-bold rounded-2xl text-sm transition-colors">
         Sign Out Safely
       </button>
@@ -105,12 +105,12 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <a href="worker_messages.html"
+      <a href="/worker/messages/"
         class="p-2 bg-[#f1eee7]/60 hover:bg-[#ffdad3]/50 text-[#56423e] hover:text-[#9f402d] transition-all rounded-full relative">
         <span class="material-symbols-outlined text-2xl">notifications</span>
         <span class="absolute top-2 right-2 w-2 h-2 bg-[#9f402d] rounded-full ring-2 ring-[#fcf9f2]"></span>
       </a>
-      <a href="worker_profile.html"
+      <a href="/worker/profile/"
         class="w-10 h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
         <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
           class="w-full h-full object-cover rounded-full">
@@ -158,24 +158,24 @@
       }
     </style>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_dashboard.html" id="nav-home">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/dashboard/" id="nav-home">
       <span class="material-symbols-outlined text-[20px]">home_work</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Home</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_requests.html"
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/requests/"
       id="nav-requests">
       <span class="material-symbols-outlined text-[20px]">hail</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Requests</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_booking_history.html"
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/booking-history/"
       id="nav-history">
       <span class="material-symbols-outlined text-[20px]">calendar_today</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">History</span>
     </a>
 
-    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="worker_search.html" id="nav-search">
+    <a class="nav-item flex flex-col items-center justify-center px-3 py-2" href="/worker/search/" id="nav-search">
       <span class="material-symbols-outlined text-[20px]">search</span>
       <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5">Search</span>
     </a>
@@ -268,14 +268,14 @@
     else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
-    const API_BASE = 'http://localhost:8000/api';
+    const API_BASE = '/api';
 
     // Universal Avatar Handler matching the user/search modules profile updates
     function getAvatarUrl(person, themeColor = '713f12') {
       if (person.profile_pic) {
         return person.profile_pic.startsWith('http')
           ? person.profile_pic
-          : `http://localhost:8000${person.profile_pic}`;
+          : `${window.location.origin}${person.profile_pic}`;
       }
       const name = encodeURIComponent(person.fullname || person.username || 'User');
       return `https://ui-avatars.com/api/?name=${name}&background=${themeColor}&color=fff`;
@@ -283,7 +283,7 @@
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
-      if (!sessionKey) { window.location.href = '../frontend_user/login.html'; return; }
+      if (!sessionKey) { window.location.href = '/login/'; return; }
 
       try {
         const res = await fetch(`${API_BASE}/profile/`, {

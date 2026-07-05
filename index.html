@@ -125,10 +125,10 @@
         <a href="#categories" class="hover:text-[#9f402d] transition-colors">Services</a>
       </div>
       <div class="flex items-center gap-3">
-        <a href="frontend_user/login.html"
+        <a href="{% url 'login_page' %}"
           class="text-sm font-bold text-[#9f402d] px-4 py-2 rounded-full hover:bg-[#ffdad3] transition-colors">Sign
           In</a>
-        <a href="frontend_user/signup.html"
+        <a href="{% url 'signup_page' %}"
           class="text-sm font-bold text-white bg-[#9f402d] px-5 py-2.5 rounded-full hover:bg-[#e2725b] transition-colors shadow-md">Get
           Started</a>
       </div>
@@ -151,12 +151,12 @@
       is done.
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 fade-up">
-      <a href="frontend_user/signup.html"
+      <a href="{% url 'signup_page' %}"
         class="flex items-center justify-center gap-2 bg-[#9f402d] text-white font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e2725b] transition-all shadow-lg shadow-[#9f402d]/20 active:scale-95">
         Find a Worker
         <span class="material-symbols-outlined">arrow_forward</span>
       </a>
-      <a href="frontend_worker/worker_signup_step_1.html"
+      <a href="{% url 'worker_signup_page' %}"
         class="flex items-center justify-center gap-2 bg-[#f1eee7] text-[#9f402d] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#ffdad3] transition-all border border-[#ddc0ba] active:scale-95">
         <span class="material-symbols-outlined">work</span>
         Join as Worker
@@ -237,7 +237,7 @@
   <section id="workers" class="max-w-5xl mx-auto px-6 py-12">
     <div class="flex items-center justify-between mb-8">
       <h2 class="text-2xl font-black text-[#1c1c18] fade-up">Top workers near you</h2>
-      <a href="frontend_user/signup.html" class="text-sm font-bold text-[#9f402d] hover:underline">See all →</a>
+      <a href="{% url 'signup_page' %}" class="text-sm font-bold text-[#9f402d] hover:underline">See all →</a>
     </div>
     <div id="workers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Loaded by JS -->
@@ -264,7 +264,7 @@
               <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
                 ₹300/hr</span>
             </div>
-            <a href="frontend_user/signup.html"
+            <a href="{% url 'signup_page' %}"
               class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
               Now</a>
           </div>
@@ -293,7 +293,7 @@
               <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
                 ₹250/hr</span>
             </div>
-            <a href="frontend_user/signup.html"
+            <a href="{% url 'signup_page' %}"
               class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
               Now</a>
           </div>
@@ -322,7 +322,7 @@
               <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
                 ₹350/hr</span>
             </div>
-            <a href="frontend_user/signup.html"
+            <a href="{% url 'signup_page' %}"
               class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
               Now</a>
           </div>
@@ -351,7 +351,7 @@
               <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
                 ₹400/hr</span>
             </div>
-            <a href="frontend_user/signup.html"
+            <a href="{% url 'signup_page' %}"
               class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
               Now</a>
           </div>
@@ -417,7 +417,7 @@
       <h2 class="text-3xl font-black text-[#1c1c18] mb-3">Are you a skilled worker?</h2>
       <p class="text-[#56423e] max-w-md mx-auto mb-8 leading-relaxed">Create your profile, post your work photos, and
         get hired by people near you. Worknest gives every worker a digital identity.</p>
-      <a href="frontend_worker/worker_signup_step_1.html"
+      <a href="{% url 'worker_signup_page' %}"
         class="inline-flex items-center gap-2 bg-[#9f402d] text-white font-bold px-8 py-4 rounded-full hover:bg-[#e2725b] transition-all shadow-lg active:scale-95">
         Join as Worker <span class="material-symbols-outlined">arrow_forward</span>
       </a>
@@ -425,29 +425,17 @@
   </section>
 
   <!-- Footer -->
-  <footer class="border-t border-[#ddc0ba]/30 py-10 px-6">
-    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
-        <span class="font-black text-[#9f402d] text-xl">Worknest</span>
-      </div>
+  <footer class="border-t border-[#ddc0ba]/30 py-10 px-6 align-center text-center">
       <p class="text-[#89726d] text-sm">© 2025 Worknest. Every skill deserves a platform.</p>
-      <div class="flex gap-5 text-sm font-semibold text-[#56423e]">
-        <a href="frontend_user/login.html" class="hover:text-[#9f402d] transition-colors">Sign In</a>
-        <a href="frontend_user/signup.html" class="hover:text-[#9f402d] transition-colors">Sign Up</a>
-        <a href="frontend_worker/worker_signup_step_1.html" class="hover:text-[#9f402d] transition-colors">For
-          Workers</a>
-      </div>
-    </div>
   </footer>
 
   <script>
     function goToWorkers(skill) {
-      window.location.href = `frontend_user/signup.html`;
+      window.location.href = `/signup/`;
     }
     function doSearch() {
       const q = document.getElementById('hero-search').value.trim();
-      if (q) window.location.href = `frontend_user/signup.html`;
+      if (q) window.location.href = `/signup/`;
     }
     document.getElementById('hero-search').addEventListener('keydown', e => {
       if (e.key === 'Enter') doSearch();

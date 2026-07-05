@@ -81,22 +81,22 @@
       </button>
     </div>
     <nav class="flex-1 flex flex-col gap-1 px-3">
-      <a href="admin_dashboard.html" class="nav-link active"><span
+      <a href="/admin-dashboard/" class="nav-link active"><span
           class="material-symbols-outlined text-xl">dashboard</span>
         Dashboard</a>
-      <a href="admin_users.html" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+      <a href="/admin-users/" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
         Users</a>
-      <a href="admin_verify.html" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+      <a href="/admin-verify/" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
         Verify Workers</a>
-      <a href="admin_booking.html" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
+      <a href="/admin-booking/" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
         System Bookings</a>
-      <a href="admin_fraud.html" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span>
+      <a href="/admin-fraud/" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span>
         Fraud Reports</a>
-      <a href="admin_settings.html" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+      <a href="/admin-settings/" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
         Settings</a>
     </nav>
     <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
-      <a href="#" onclick="localStorage.clear(); window.location.href='../frontend_user/login.html'"
+      <a href="#" onclick="localStorage.clear(); window.location.href='/login/'"
         class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
     </div>
   </aside>
@@ -203,7 +203,7 @@
         class="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#ddc0ba]/20 w-full">
         <div class="px-8 py-5 border-b border-[#f1eee7] flex items-center justify-between">
           <h3 class="text-lg font-bold text-[#1c1c18]">Recent Members</h3>
-          <a href="admin_users.html" class="text-sm font-bold text-[#9f402d] hover:underline">View All →</a>
+          <a href="/admin-users/" class="text-sm font-bold text-[#9f402d] hover:underline">View All →</a>
         </div>
         <div class="w-full overflow-x-auto">
           <table class="w-full text-left border-collapse table-auto min-w-[700px]">
@@ -282,7 +282,7 @@
       }, 3500);
     }
 
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
     let allData = { users: [], workers: [], bookings: [] };
     let dataLoaded = false;
 
@@ -305,7 +305,7 @@
         if (data.status === 'error' && data.message && data.message.includes('Admin access required')) {
           showToast('Session expired or not logged in. Redirecting to login...', 'error');
           localStorage.removeItem('session_key');
-          window.location.href = '../frontend_user/login.html';
+          window.location.href = '/login/';
           return;
         }
 
@@ -354,7 +354,7 @@
           if (data.message && data.message.includes('Admin access required')) {
             showToast('You are not logged in as admin. Redirecting to login page...', 'error');
             localStorage.removeItem('session_key');
-            window.location.href = '../frontend_user/login.html';
+            window.location.href = '/login/';
             return;
           }
           showToast('API Error: ' + data.message, 'error');
@@ -409,7 +409,7 @@
               const statusClass = u.is_fraud ? 'bg-red-500' : 'bg-green-400';
 
               const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
-              const profileImg = u.profile_pic ? `http://localhost:8000${u.profile_pic}` : fallback;
+              const profileImg = u.profile_pic ? `${window.location.origin}${u.profile_pic}` : fallback;
 
               return `
                 <tr class="hover:bg-[#f6f3ec] transition-colors">
@@ -473,7 +473,7 @@
             if (!u) return '';
             const name = u.fullname || u.username || '—';
             const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
-            const profileImg = u.profile_pic ? `http://localhost:8000${u.profile_pic}` : fallback;
+            const profileImg = u.profile_pic ? `${window.location.origin}${u.profile_pic}` : fallback;
             return `
             <tr class="hover:bg-[#f6f3ec] transition-colors">
               <td class="px-8 py-4 font-semibold">
@@ -499,7 +499,7 @@
             if (!u) return '';
             const name = u.fullname || u.username || '—';
             const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
-            const profileImg = u.profile_pic ? `http://localhost:8000${u.profile_pic}` : fallback;
+            const profileImg = u.profile_pic ? `${window.location.origin}${u.profile_pic}` : fallback;
             return `
             <tr class="hover:bg-[#f6f3ec] transition-colors">
               <td class="px-8 py-4 font-semibold">
@@ -533,14 +533,14 @@
               const clientFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=ffdad3&color=9f402d&bold=true`;
               let clientImg = clientFallback;
               if (b.client_avatar) {
-                clientImg = b.client_avatar.startsWith('http') ? b.client_avatar : `http://localhost:8000${b.client_avatar}`;
+                clientImg = b.client_avatar.startsWith('http') ? b.client_avatar : `${window.location.origin}${b.client_avatar}`;
               }
 
               const workerName = b.worker_name || 'Expert';
               const workerFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(workerName)}&background=ffdad3&color=9f402d&bold=true`;
               let workerImg = workerFallback;
               if (b.worker_avatar) {
-                workerImg = b.worker_avatar.startsWith('http') ? b.worker_avatar : `http://localhost:8000${b.worker_avatar}`;
+                workerImg = b.worker_avatar.startsWith('http') ? b.worker_avatar : `${window.location.origin}${b.worker_avatar}`;
               }
 
               return `
@@ -581,7 +581,7 @@
             if (!w) return '';
             const name = w.fullname || w.username || '—';
             const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
-            const profileImg = w.profile_pic ? `http://localhost:8000${w.profile_pic}` : fallback;
+            const profileImg = w.profile_pic ? `${window.location.origin}${w.profile_pic}` : fallback;
             return `
             <tr class="bg-red-50/30 hover:bg-red-50/60 transition-colors">
               <td class="px-8 py-4 font-bold text-stone-900">
@@ -707,7 +707,7 @@
       }
 
       list.innerHTML = allMessages.map(m => `
-        <div class="p-3 bg-white border border-[#ddc0ba]/40 hover:border-[#9f402d]/40 transition-colors cursor-pointer rounded-xl mb-2 shadow-sm" onclick="window.location.href='admin_verify.html'">
+        <div class="p-3 bg-white border border-[#ddc0ba]/40 hover:border-[#9f402d]/40 transition-colors cursor-pointer rounded-xl mb-2 shadow-sm" onclick="window.location.href='/admin-verify/'">
           <div class="flex justify-between items-start mb-1.5">
             <h5 class="text-xs font-bold text-[#1c1c18]">${m.workerName}</h5>
             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${m.color} uppercase tracking-wider">${m.type}</span>

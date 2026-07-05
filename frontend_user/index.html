@@ -1,164 +1,193 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                "background": "#f6faf9",
-                "on-primary-container": "#e3fffe",
-                "error": "#ba1a1a",
-                "tertiary-fixed-dim": "#ffb692",
-                "error-container": "#ffdad6",
-                "on-primary-fixed-variant": "#004f4f",
-                "on-secondary-container": "#603100",
-                "on-primary": "#ffffff",
-                "surface-dim": "#d7dbda",
-                "surface-container": "#ebefee",
-                "on-error-container": "#93000a",
-                "inverse-on-surface": "#edf2f1",
-                "on-primary-fixed": "#002020",
-                "secondary-container": "#fd8b00",
-                "surface-container-high": "#e5e9e8",
-                "primary-container": "#008080",
-                "surface-container-highest": "#dfe3e2",
-                "tertiary": "#8b4823",
-                "on-surface-variant": "#3e4949",
-                "on-error": "#ffffff",
-                "primary": "#006565",
-                "secondary": "#904d00",
-                "secondary-fixed-dim": "#ffb77d",
-                "inverse-primary": "#76d6d5",
-                "on-tertiary-container": "#fff9f7",
-                "on-secondary-fixed-variant": "#6e3900",
-                "outline-variant": "#bdc9c8",
-                "on-tertiary-fixed-variant": "#733512",
-                "surface-bright": "#f6faf9",
-                "on-tertiary": "#ffffff",
-                "on-surface": "#181c1c",
-                "on-secondary-fixed": "#2f1500",
-                "on-tertiary-fixed": "#341100",
-                "secondary-fixed": "#ffdcc3",
-                "surface-variant": "#dfe3e2",
-                "on-background": "#181c1c",
-                "on-secondary": "#ffffff",
-                "tertiary-container": "#a96039",
-                "primary-fixed": "#93f2f2",
-                "surface-container-low": "#f0f4f3",
-                "surface": "#f6faf9",
-                "tertiary-fixed": "#ffdbcb",
-                "surface-tint": "#006a6a",
-                "surface-container-lowest": "#ffffff",
-                "outline": "#6e7979",
-                "inverse-surface": "#2c3131",
-                "primary-fixed-dim": "#76d6d5"
-              },
-              fontFamily: {
-                "headline": ["Manrope"],
-                "body": ["Manrope"],
-                "label": ["Manrope"]
-              },
-              borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-            },
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#f6faf9",
+            "on-primary-container": "#e3fffe",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#ffb692",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#004f4f",
+            "on-secondary-container": "#603100",
+            "on-primary": "#ffffff",
+            "surface-dim": "#d7dbda",
+            "surface-container": "#ebefee",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#edf2f1",
+            "on-primary-fixed": "#002020",
+            "secondary-container": "#fd8b00",
+            "surface-container-high": "#e5e9e8",
+            "primary-container": "#008080",
+            "surface-container-highest": "#dfe3e2",
+            "tertiary": "#8b4823",
+            "on-surface-variant": "#3e4949",
+            "on-error": "#ffffff",
+            "primary": "#006565",
+            "secondary": "#904d00",
+            "secondary-fixed-dim": "#ffb77d",
+            "inverse-primary": "#76d6d5",
+            "on-tertiary-container": "#fff9f7",
+            "on-secondary-fixed-variant": "#6e3900",
+            "outline-variant": "#bdc9c8",
+            "on-tertiary-fixed-variant": "#733512",
+            "surface-bright": "#f6faf9",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#181c1c",
+            "on-secondary-fixed": "#2f1500",
+            "on-tertiary-fixed": "#341100",
+            "secondary-fixed": "#ffdcc3",
+            "surface-variant": "#dfe3e2",
+            "on-background": "#181c1c",
+            "on-secondary": "#ffffff",
+            "tertiary-container": "#a96039",
+            "primary-fixed": "#93f2f2",
+            "surface-container-low": "#f0f4f3",
+            "surface": "#f6faf9",
+            "tertiary-fixed": "#ffdbcb",
+            "surface-tint": "#006a6a",
+            "surface-container-lowest": "#ffffff",
+            "outline": "#6e7979",
+            "inverse-surface": "#2c3131",
+            "primary-fixed-dim": "#76d6d5"
           },
-        }
-      </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-accent {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-        }
-        .nest-gradient {
-            background: linear-gradient(135deg, #fd8b00 0%, #904d00 100%);
-        }
-    </style>
-<style>
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Manrope"],
+            "label": ["Manrope"]
+          },
+          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .glass-accent {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+    }
+
+    .nest-gradient {
+      background: linear-gradient(135deg, #fd8b00 0%, #904d00 100%);
+    }
+  </style>
+  <style>
     body {
       min-height: max(884px, 100dvh);
     }
   </style>
-  </head>
+</head>
+
 <body class="bg-surface font-body text-on-surface antialiased overflow-hidden">
-<!-- Background Decor -->
-<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-<!-- Teal Glass Sphere Top Right -->
-<div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-primary/10 blur-[80px]"></div>
-<!-- Orange Glass Sphere Bottom Left -->
-<div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-secondary/15 blur-[100px]"></div>
-<!-- Subtle Pattern -->
-<div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#006565 1px, transparent 1px); background-size: 40px 40px;"></div>
-</div>
-<!-- Main Content Container -->
-<main class="relative z-10 flex flex-col items-center justify-between min-h-screen px-8 py-16">
-<!-- Top Section: Empty for balance -->
-<div class="w-full"></div>
-<!-- Center Section: Branding -->
-<div class="flex flex-col items-center gap-8">
-<!-- 3D Nest Logo Container -->
-<div class="relative group">
-<!-- Outer Glow -->
-<div class="absolute -inset-4 bg-secondary/20 rounded-full blur-2xl group-hover:bg-secondary/30 transition-all duration-700"></div>
-<!-- Logo Shell -->
-<div class="relative w-32 h-32 flex items-center justify-center bg-surface-container-lowest rounded-full shadow-[0_12px_40px_rgba(144,77,0,0.15)] overflow-hidden">
-<div class="nest-gradient w-20 h-20 rounded-full flex items-center justify-center shadow-inner">
-<span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">
-                            nest_eco_leaf
-                        </span>
-</div>
-</div>
-</div>
-<!-- Typography Anchor -->
-<div class="text-center">
-<h1 class="font-headline text-5xl font-black text-primary tracking-tighter mb-2">
-                    Worknest
-                </h1>
-<p class="text-on-surface-variant text-lg font-medium tracking-wide">
-                    Elevated home services.
-                </p>
-</div>
-</div>
-<!-- Bottom Section: Transactional Entry -->
-<div class="w-full max-w-sm space-y-6">
-<!-- Glass CTA Card -->
-<div class="glass-accent p-1 rounded-xl shadow-lg border border-white/40">
-<button class="w-full bg-primary text-on-primary py-4 px-8 rounded-full font-bold text-lg shadow-xl shadow-primary/20 hover:scale-[0.98] active:scale-95 transition-all duration-200 flex items-center justify-center gap-3" onclick="window.location.href='signup.html'">
-                    Get Started
-                    <span class="material-symbols-outlined">arrow_forward</span>
-</button>
-</div>
-<!-- Secondary Action -->
-<div class="flex flex-col items-center gap-4">
-<button class="text-primary font-bold text-base hover:text-primary-container transition-colors py-2 px-4" onclick="window.location.href='login.html'">
-                    Sign In to your account
-                </button>
-<!-- Trust Badge -->
-<div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant/10">
-<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
-<span class="text-[11px] font-bold tracking-widest uppercase text-on-surface-variant opacity-70">
-                        100% Certified Professionals
-                    </span>
-</div>
-</div>
-</div>
-</main>
-<!-- Visual Polish: Interactive Glass Overlay -->
-<div class="fixed top-12 right-12 w-24 h-24 glass-accent rounded-lg border border-white/20 -rotate-12 shadow-sm pointer-events-none opacity-40"></div>
-<div class="fixed bottom-32 left-8 w-16 h-16 glass-accent rounded-full border border-white/20 shadow-sm pointer-events-none opacity-30"></div>
-<!-- Background Images for mood (data-alt only) -->
-<div class="hidden">
-<img data-alt="vibrant abstract 3D render of a stylized orange woven nest shape with smooth organic curves and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi5K36cj16ESFDQQXVAnLvFpEVQlWl0XZAxM5BxdikxBRoWFyBomht6Xfyz4Vz8JYzhvvGVzLrD39Uz0Fk1CiJBo2gKm7bppeRXsqtlv-uZ-3aiA_PYi6gfm775gxMJBCQUPbt0ozcf5AsRWCPjIpfaeM3RpCjZ-P33zEk9MnBmbkYMOYJdV4mfdrlskP9iJhq3AHj03o6vYfQva0dXU4TT-eExVbni8MSx3vB4ylFjN4_GJ_xAN1W4KtvnbnIXOjoh4_nHAZml3hT"/>
-<img data-alt="minimalist modern interior with clean white walls and soft natural sunlight filtering through large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBqOgeDezoswGBTb9oAIIssaIaAa6Y4YOh0VuTaonootfKp0KfI1za6tCU-S_Xp0hP83FKs-HfQ4QQuSeJJkuMV5ustlfWK-20q25fPuiI4XTa77Kd9cA8kpXY3Bs5vb1H1aIUXjqDAKDSnKr-UTjfe7maKXreSBKYLxEixZotoKJ1AgWQwTkMiVi8rTf9PQ4VXbF16o8wWBbsPQ5ktElUD4UPwRbyn8WpoSo1f6WFSmDxo8pBteQMS6d8lA1Z81lSOsii67fW2B7l"/>
-</div>
-</body></html>
+  <!-- Background Decor -->
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <!-- Teal Glass Sphere Top Right -->
+    <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-primary/10 blur-[80px]"></div>
+    <!-- Orange Glass Sphere Bottom Left -->
+    <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-secondary/15 blur-[100px]"></div>
+    <!-- Subtle Pattern -->
+    <div class="absolute inset-0 opacity-[0.03]"
+      style="background-image: radial-gradient(#006565 1px, transparent 1px); background-size: 40px 40px;"></div>
+  </div>
+  <!-- Main Content Container -->
+  <main class="relative z-10 flex flex-col items-center justify-between min-h-screen px-8 py-16">
+    <!-- Top Section: Empty for balance -->
+    <div class="w-full"></div>
+    <!-- Center Section: Branding -->
+    <div class="flex flex-col items-center gap-8">
+      <!-- 3D Nest Logo Container -->
+      <div class="relative group">
+        <!-- Outer Glow -->
+        <div
+          class="absolute -inset-4 bg-secondary/20 rounded-full blur-2xl group-hover:bg-secondary/30 transition-all duration-700">
+        </div>
+        <!-- Logo Shell -->
+        <div
+          class="relative w-32 h-32 flex items-center justify-center bg-surface-container-lowest rounded-full shadow-[0_12px_40px_rgba(144,77,0,0.15)] overflow-hidden">
+          <div class="nest-gradient w-20 h-20 rounded-full flex items-center justify-center shadow-inner">
+            <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">
+              nest_eco_leaf
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- Typography Anchor -->
+      <div class="text-center">
+        <h1 class="font-headline text-5xl font-black text-primary tracking-tighter mb-2">
+          Worknest
+        </h1>
+        <p class="text-on-surface-variant text-lg font-medium tracking-wide">
+          Elevated home services.
+        </p>
+      </div>
+    </div>
+    <!-- Bottom Section: Transactional Entry -->
+    <div class="w-full max-w-sm space-y-6">
+      <!-- Glass CTA Card -->
+      <div class="glass-accent p-1 rounded-xl shadow-lg border border-white/40">
+        <button
+          class="w-full bg-primary text-on-primary py-4 px-8 rounded-full font-bold text-lg shadow-xl shadow-primary/20 hover:scale-[0.98] active:scale-95 transition-all duration-200 flex items-center justify-center gap-3"
+          onclick="window.location.href='{% url 'signup_page' %}'">
+          Get Started
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+      <!-- Secondary Action -->
+      <div class="flex flex-col items-center gap-4">
+        <button class="text-primary font-bold text-base hover:text-primary-container transition-colors py-2 px-4"
+          onclick="window.location.href='{% url 'login_page' %}'">
+          Sign In to your account
+        </button>
+        <!-- Trust Badge -->
+        <div
+          class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant/10">
+          <span class="material-symbols-outlined text-primary text-sm"
+            style="font-variation-settings: 'FILL' 1;">verified</span>
+          <span class="text-[11px] font-bold tracking-widest uppercase text-on-surface-variant opacity-70">
+            100% Certified Professionals
+          </span>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Visual Polish: Interactive Glass Overlay -->
+  <div
+    class="fixed top-12 right-12 w-24 h-24 glass-accent rounded-lg border border-white/20 -rotate-12 shadow-sm pointer-events-none opacity-40">
+  </div>
+  <div
+    class="fixed bottom-32 left-8 w-16 h-16 glass-accent rounded-full border border-white/20 shadow-sm pointer-events-none opacity-30">
+  </div>
+  <!-- Background Images for mood (data-alt only) -->
+  <div class="hidden">
+    <img
+      data-alt="vibrant abstract 3D render of a stylized orange woven nest shape with smooth organic curves and soft studio lighting"
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi5K36cj16ESFDQQXVAnLvFpEVQlWl0XZAxM5BxdikxBRoWFyBomht6Xfyz4Vz8JYzhvvGVzLrD39Uz0Fk1CiJBo2gKm7bppeRXsqtlv-uZ-3aiA_PYi6gfm775gxMJBCQUPbt0ozcf5AsRWCPjIpfaeM3RpCjZ-P33zEk9MnBmbkYMOYJdV4mfdrlskP9iJhq3AHj03o6vYfQva0dXU4TT-eExVbni8MSx3vB4ylFjN4_GJ_xAN1W4KtvnbnIXOjoh4_nHAZml3hT" />
+    <img
+      data-alt="minimalist modern interior with clean white walls and soft natural sunlight filtering through large windows"
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBqOgeDezoswGBTb9oAIIssaIaAa6Y4YOh0VuTaonootfKp0KfI1za6tCU-S_Xp0hP83FKs-HfQ4QQuSeJJkuMV5ustlfWK-20q25fPuiI4XTa77Kd9cA8kpXY3Bs5vb1H1aIUXjqDAKDSnKr-UTjfe7maKXreSBKYLxEixZotoKJ1AgWQwTkMiVi8rTf9PQ4VXbF16o8wWBbsPQ5ktElUD4UPwRbyn8WpoSo1f6WFSmDxo8pBteQMS6d8lA1Z81lSOsii67fW2B7l" />
+  </div>
+</body>
+
+</html>

@@ -105,14 +105,14 @@
     <div class="flex justify-between items-center px-6 py-4 w-full">
       <button
         class="p-2 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors rounded-full active:scale-95 duration-200"
-        onclick="window.location.href='dashboard.html'">
+        onclick="window.location.href='{% url 'dashboard_page' %}'">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <h1 class="text-2xl font-extrabold text-orange-700 dark:text-orange-500 tracking-tighter font-manrope">Worknest
       </h1>
       <div
         class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20 shadow-sm cursor-pointer"
-        onclick="window.location.href='profile.html'">
+        onclick="window.location.href='{% url 'profile_page' %}'">
         <img alt="User Profile" class="w-full h-full object-cover"
           data-alt="Close-up portrait of a friendly professional man with a neat beard, soft outdoor lighting, natural skin tones"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Yn0FsEgVYKF7TdkFi7rP8OgrH-FS3qg95gtrDft4Gi-XUVh7LLtkZE6PPXYRIrmbkn5j8AbiBdztULvC7fzzugx30_AhfrGdNctCfuvdvvJzSYxkuncaiXrcIRvBP_DHvs-LAoQsA2hfCOG6KEoPD9iIh18b9KsLskN7U2CwUeQQd6eoW4yu308TKHuZXm2rLHjcxAKFuKI2PAOmh8udJueKREEHotTmOHWz7KNxNCgWXnthYNBwcyWitdMZsbw-kkYLTVpF77Xh" />
@@ -125,7 +125,7 @@
     <!-- Active Tracking Banner overlay (Phase 8) -->
     <div id="tracking-banner" class="hidden fixed top-20 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40 bg-[#9f402d] text-white p-4 rounded-2xl shadow-xl flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <button onclick="window.location.href='booking_history.html'" class="p-1.5 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all active:scale-90" title="Back to Bookings">
+        <button onclick="window.location.href='{% url 'booking_history_page' %}'" class="p-1.5 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all active:scale-90" title="Back to Bookings">
           <span class="material-symbols-outlined text-sm font-bold">arrow_back</span>
         </button>
         <div>
@@ -144,12 +144,12 @@
     <div class="absolute top-24 right-6 z-30 flex flex-col gap-3">
       <button
         class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all"
-        onclick="window.location.href='dashboard.html'">
+        onclick="window.location.href='{% url 'dashboard_page' %}'">
         <span class="material-symbols-outlined">layers</span>
       </button>
       <button
         class="w-12 h-12 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-bright active:scale-90 transition-all"
-        onclick="window.location.href='map.html'">
+        onclick="window.location.href='{% url 'map_page' %}'">
         <span class="material-symbols-outlined">my_location</span>
       </button>
     </div>
@@ -222,7 +222,7 @@
     </div>
   </main>
   <script>
-    const API_BASE = 'http://localhost:8000/api';
+    const API_BASE = '/api';
     let activeWorkersCache = [];
     let markers = [];
     let userLat = 23.0225, userLon = 72.5714;
@@ -292,7 +292,12 @@
       if (isTrackingActive || bookingIdParam) return; // Don't load other workers if tracking an active booking or viewing a specific worker
       try {
         const url = userLat && userLon ? `${API_BASE}/workers/?latitude=${userLat}&longitude=${userLon}` : `${API_BASE}/workers/`;
-        const res = await fetch(url);
+        const sessionKey = localStorage.getItem('session_key');
+        const headers = {};
+        if (sessionKey) {
+          headers['X-Session-Key'] = sessionKey;
+        }
+        const res = await fetch(url, { headers });
         const data = await res.json();
 
         if (data.status === 'success') {
@@ -319,7 +324,7 @@
 
       document.getElementById('drawer-name').textContent = worker.fullname || 'Artisan Provider';
       document.getElementById('drawer-skill').textContent = worker.skill || 'General Specialist';
-      document.getElementById('drawer-avatar').src = worker.profile_pic ? `http://localhost:8000${worker.profile_pic}` : fallbackAvatar;
+      document.getElementById('drawer-avatar').src = worker.profile_pic ? `${window.location.origin}${worker.profile_pic}` : fallbackAvatar;
       document.getElementById('drawer-rate').textContent = `₹${worker.hourly_rate || 0}/hr`;
       document.getElementById('drawer-rating').textContent = `⭐ ${parseFloat(worker.rating || 0).toFixed(1)} (${worker.total_jobs || 0} reviews)`;
       document.getElementById('drawer-distance-value').textContent = worker.distance_text || 'Nearby';
@@ -352,8 +357,8 @@
       document.getElementById('drawer-stars').innerHTML = starsHtml;
 
       // Bind checkout redirect buttons
-      document.getElementById('drawer-book-btn').setAttribute('onclick', `window.location.href='booking_request.html?worker_id=${worker.id}'`);
-      document.getElementById('drawer-chat-btn').setAttribute('onclick', `window.location.href='user_messages.html?worker_id=${worker.id}'`);
+      document.getElementById('drawer-book-btn').setAttribute('onclick', `window.location.href='{% url 'booking_request_page' %}?worker_id=${worker.id}'`);
+      document.getElementById('drawer-chat-btn').setAttribute('onclick', `window.location.href='{% url 'user_messages_page' %}?worker_id=${worker.id}'`);
 
       document.getElementById('worker-drawer').style.display = 'block';
     }

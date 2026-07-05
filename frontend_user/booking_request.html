@@ -89,7 +89,7 @@
     </div>
   </main>
   <script>
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
     function getParam(n) { return new URLSearchParams(window.location.search).get(n); }
     async function loadWorker() {
       const id = getParam('worker_id');
@@ -139,7 +139,7 @@
 
         const loggedInClientId = profileData.data.id;
 
-        const res = await fetch('http://localhost:8000/api/bookings/', {
+        const res = await fetch('/api/bookings/', {
           method: 'POST', // 🎯 Explicit POST trigger for creating fresh requests
           headers: {
             'Content-Type': 'application/json',
@@ -156,7 +156,7 @@
         const data = await res.json();
         if (data.status === 'success') {
           showMsg('Request sent! The worker will respond soon.', 'success'); //
-          setTimeout(() => window.location.href = 'booking_history.html', 2000); //
+          setTimeout(() => window.location.href = '{% url 'booking_history_page' %}', 2000); //
         } else {
           showMsg(data.message || 'Could not send. Try again.', 'error'); //
           btn.disabled = false; btn.textContent = 'Send Request to Worker'; //

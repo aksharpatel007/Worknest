@@ -129,19 +129,19 @@
 
   <!-- Synchronized Bottom Global Menu Navigation Deck -->
   <nav class="fixed bottom-2 left-4 right-4 z-40 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
-    <a href="dashboard.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
+    <a href="{% url 'dashboard_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
       <span class="material-symbols-outlined text-lg sm:text-xl">home</span>
       <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide">Home</span>
     </a>
-    <a href="services.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
+    <a href="{% url 'services_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
       <span class="material-symbols-outlined text-lg sm:text-xl">grid_view</span>
       <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide">Services</span>
     </a>
-    <a href="booking_history.html" class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-4 sm:px-5 py-1.5 sm:py-2 active:scale-90 shadow-sm">
+    <a href="{% url 'booking_history_page' %}" class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-4 sm:px-5 py-1.5 sm:py-2 active:scale-90 shadow-sm">
       <span class="material-symbols-outlined text-lg sm:text-xl fill-icon">event_note</span>
       <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wide">Bookings</span>
     </a>
-    <a href="profile.html" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
+    <a href="{% url 'profile_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-4 sm:px-5 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90">
       <span class="material-symbols-outlined text-lg sm:text-xl">person</span>
       <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide">Profile</span>
     </a>
@@ -227,14 +227,14 @@
       });
     }
 
-    const API = 'http://localhost:8000/api';
+    const API = '/api';
     let allBookings = [];
     let selectedBookingId = null;
     let currentRatingSelection = 5;
 
     async function loadBookings() {
       const sessionKey = localStorage.getItem('session_key');
-      if (!sessionKey) { window.location.href = 'login.html'; return; }
+      if (!sessionKey) { window.location.href = '{% url 'login_page' %}'; return; }
 
       try {
         const profileRes = await fetch(`${API}/profile/`, { headers: { 'X-Session-Key': sessionKey } });
@@ -319,7 +319,7 @@
           let extraBtn = '';
           if (b.status === 'accepted') {
             extraBtn = `
-              <button onclick="window.location.href='map.html?booking_id=${b.id}'" class="w-full mt-2 py-3 bg-[#9f402d] text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95 flex items-center justify-center gap-1.5">
+              <button onclick="window.location.href='{% url 'map_page' %}?booking_id=${b.id}'" class="w-full mt-2 py-3 bg-[#9f402d] text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95 flex items-center justify-center gap-1.5">
                 <span class="material-symbols-outlined text-sm sm:text-base">map</span> View Worker Location
               </button>`;
           }

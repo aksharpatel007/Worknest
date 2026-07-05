@@ -41,6 +41,8 @@ def category_list(request):
 
 @csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def signup_view(request):
     """
     Consolidated signup that handles personal details, professional skills, 
@@ -53,7 +55,7 @@ def signup_view(request):
         
         # Create user with all professional fields integrated
         user = User.objects.create_user(
-            username=data['fullname'],
+            username=data['email'],
             email=data['email'],
             password=data['password'],
             fullname=data['fullname'],
@@ -78,6 +80,8 @@ from django.contrib.auth import login
 
 @csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def login_view(request):
     """Authenticates a user, saves their tracking token to the DB, and logs them in."""
     email = request.data.get('email')
@@ -102,7 +106,12 @@ def login_view(request):
         user.save()
         
         # Route roles smoothly
-        redirect_page = 'worker_dashboard.html' if user.role_id == 2 else 'dashboard.html'
+        if user.role_id == 1:
+            redirect_page = '/admin-dashboard/'
+        elif user.role_id == 2:
+            redirect_page = '/worker/dashboard/'
+        else:
+            redirect_page = '/dashboard/'
         
         return Response({
             'status': 'success',
@@ -111,6 +120,26 @@ def login_view(request):
         }, status=200)
         
     return Response({'status': 'error', 'message': 'Invalid login credentials.'}, status=401)
+
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    """Logs out the user and redirects to the landing page."""
+    # Invalidate user session key if possible
+    try:
+        user = get_authenticated_user_from_header(request)
+        if not user and request.user.is_authenticated:
+            user = request.user
+        if user:
+            user.session_key = None
+            user.save()
+    except Exception:
+        pass
+    logout(request)
+    return redirect('/')
+
 
 # 🎯 CHANGE PASSWORD API
 @api_view(['POST'])
@@ -182,7 +211,7 @@ def worker_list(request):
         role_id=2, 
         is_verified=True, 
         is_fraud=False, 
-        worker_status='online'
+        worker_status__in=['online', 'verified']
     )
     
     # Optional category filter
@@ -213,6 +242,7 @@ def worker_list(request):
         data_list.append({
             'id': worker.id,
             'fullname': worker.fullname,
+            'username': worker.username,
             'email': worker.email,
             'skill': worker.skill or 'Artisan',
             'hourly_rate': worker.hourly_rate,
@@ -238,6 +268,8 @@ def worker_list(request):
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def profile_view(request):
     user = get_authenticated_user_from_header(request) 
     if not user:
@@ -273,10 +305,8 @@ def profile_view(request):
                 'trust_score': user.trust_score
             }
         })
-
     elif request.method == 'POST':
-        is_json = request.content_type == 'application/json' 
-        data = request.data if is_json else request.POST 
+        data = request.data
         
         if 'fullname' in data: user.fullname = data['fullname'] 
         if 'phone' in data: user.phone = data['phone'] 
@@ -305,6 +335,8 @@ import math
 
 @csrf_exempt
 @api_view(['GET', 'POST', 'PATCH'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def user_bookings(request):
     user = get_authenticated_user_from_header(request)
     
@@ -386,7 +418,7 @@ def user_bookings(request):
             worker = User.objects.get(id=worker_id)
 
             # Enforce Online/Offline verification (Phase 1)
-            if worker.worker_status != 'online':
+            if worker.worker_status not in ['online', 'verified']:
                 return Response({'status': 'error', 'message': 'This worker is currently unavailable.'}, status=400)
 
             booking = Booking.objects.create(
@@ -487,6 +519,8 @@ def user_bookings(request):
 
 @csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def submit_rating(request):
     """Handles client reviews and updates the worker's average rating dynamically."""
     try:
@@ -583,7 +617,10 @@ def get_unverified_workers(request):
         
     return Response({'status': 'success', 'data': data_list}, status=200) 
 
+@csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def verify_worker(request, worker_id):
     try:
         worker = User.objects.get(id=worker_id)
@@ -644,6 +681,8 @@ def get_all_users(request):
 
 @csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def update_report_status(request):
     """Admin action to suspend/verify workers via fraud panel"""
     report_id = request.data.get('report_id')
@@ -714,6 +753,8 @@ def worker_detail_api(request, worker_id):
 
 @csrf_exempt
 @api_view(['POST']) # 🎯 Enforces matching the POST call from your HTML script
+@authentication_classes([])
+@permission_classes([AllowAny])
 def flag_fraud(request, worker_id):
     try:
         # Pull the specific worker index pattern cleanly
@@ -788,5 +829,97 @@ def forgot_password_api(request):
             
         except Exception as e:
             return Response({'status': 'error', 'message': f'Server Error: {str(e)}'}, status=500)
+
+
+from django.shortcuts import render
+
+# --- FRONTEND PAGES VIEW ROUTING ---
+
+def index_page(request):
+    return render(request, 'index.html')
+
+def login_page(request):
+    return render(request, 'frontend_user/login.html')
+
+def signup_page(request):
+    return render(request, 'frontend_user/signup.html')
+
+def forgot_password_page(request):
+    return render(request, 'frontend_user/forgot_password.html')
+
+def change_password_page(request):
+    return render(request, 'frontend_user/change_password.html')
+
+def dashboard_page(request):
+    return render(request, 'frontend_user/dashboard.html')
+
+def profile_page(request):
+    return render(request, 'frontend_user/profile.html')
+
+def services_page(request):
+    return render(request, 'frontend_user/services.html')
+
+def worker_list_page(request):
+    return render(request, 'frontend_user/worker_list.html')
+
+def worker_detail_page(request):
+    return render(request, 'frontend_user/worker_detail.html')
+
+def booking_request_page(request):
+    return render(request, 'frontend_user/booking_request.html')
+
+def booking_history_page(request):
+    return render(request, 'frontend_user/booking_history.html')
+
+def map_page(request):
+    return render(request, 'frontend_user/map.html')
+
+def user_messages_page(request):
+    return render(request, 'frontend_user/user_messages.html')
+
+def worker_signup_page(request):
+    return render(request, 'frontend_worker/worker_signup.html')
+
+def worker_dashboard_page(request):
+    return render(request, 'frontend_worker/worker_dashboard.html')
+
+def worker_profile_page(request):
+    return render(request, 'frontend_worker/worker_profile.html')
+
+def worker_booking_history_page(request):
+    return render(request, 'frontend_worker/worker_booking_history.html')
+
+def worker_requests_page(request):
+    return render(request, 'frontend_worker/worker_requests.html')
+
+def worker_messages_page(request):
+    return render(request, 'frontend_worker/worker_messages.html')
+
+def worker_search_page(request):
+    return render(request, 'frontend_worker/worker_search.html')
+
+def worker_detail_page_worker(request):
+    return render(request, 'frontend_worker/worker_detail.html')
+
+def worker_change_password_page(request):
+    return render(request, 'frontend_worker/change_password.html')
+
+def admin_dashboard_page(request):
+    return render(request, 'frontend_admin/admin_dashboard.html')
+
+def admin_users_page(request):
+    return render(request, 'frontend_admin/admin_users.html')
+
+def admin_verify_page(request):
+    return render(request, 'frontend_admin/admin_verify.html')
+
+def admin_booking_page(request):
+    return render(request, 'frontend_admin/admin_booking.html')
+
+def admin_fraud_page(request):
+    return render(request, 'frontend_admin/admin_fraud.html')
+
+def admin_settings_page(request):
+    return render(request, 'frontend_admin/admin_settings.html')
         
 
