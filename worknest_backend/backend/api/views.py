@@ -921,5 +921,8 @@ def admin_fraud_page(request):
 
 def admin_settings_page(request):
     return render(request, 'frontend_admin/admin_settings.html')
+
+def admin_analysis_page(request):
+    return render(request, 'frontend_admin/admin_analysis.html')
         
 

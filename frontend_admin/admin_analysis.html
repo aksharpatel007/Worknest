@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worknest Admin — System Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #faf7f2;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #56423e;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #9f402d;
+    }
+
+    .nav-link.active {
+      background: white;
+      color: #9f402d;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
+    }
+
+    .stat-card {
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(159, 64, 45, 0.08);
+    }
+
+    .chart-card {
+      background: white;
+      border: 1px solid rgba(221, 192, 186, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    }
+
+    @media print {
+      #admin-sidebar, header, .no-print {
+        display: none !important;
+      }
+      main {
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      .print-layout {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="h-screen flex overflow-hidden text-[#1c1c18]">
+
+  <aside id="admin-sidebar"
+    class="fixed md:sticky top-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col w-64 h-screen bg-[#f5f0e8] shadow-2xl md:shadow-lg z-40 py-8 shrink-0 overflow-y-auto">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl"
+          style="font-variation-settings: 'FILL' 1;">security</span>
+      </div>
+      <div>
+        <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+        <p class="text-xs text-[#89726d] font-medium">Safety Command</p>
+      </div>
+      <button onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full')"
+        class="md:hidden p-2 rounded-full text-[#89726d] hover:bg-[#ddc0ba]/40 transition-colors flex items-center justify-center absolute top-7 right-1">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+    </div>
+    <nav class="flex-1 flex flex-col gap-1 px-3">
+      <a href="/admin-dashboard/" class="nav-link"><span
+          class="material-symbols-outlined text-xl">dashboard</span>
+        Dashboard</a>
+      <a href="/admin-users/" class="nav-link"><span class="material-symbols-outlined text-xl">group</span> Verify
+        Users</a>
+      <a href="/admin-verify/" class="nav-link"><span class="material-symbols-outlined text-xl">verified_user</span>
+        Verify Workers</a>
+      <a href="/admin-booking/" class="nav-link"><span class="material-symbols-outlined text-xl">receipt_long</span>
+        System Bookings</a>
+      <a href="/admin-fraud/" class="nav-link"><span class="material-symbols-outlined text-xl">gavel</span>
+        Fraud Reports</a>
+      <a href="/admin-analysis/" class="nav-link active"><span class="material-symbols-outlined text-xl">analytics</span>
+        System Analysis</a>
+      <a href="/admin-settings/" class="nav-link"><span class="material-symbols-outlined text-xl">settings</span>
+        Settings</a>
+    </nav>
+    <div class="px-3 mt-4 border-t border-[#ddc0ba]/40 pt-4">
+      <a href="#" onclick="localStorage.clear(); window.location.href='/login/'"
+        class="nav-link text-red-600"><span class="material-symbols-outlined text-xl">logout</span> Sign Out</a>
+    </div>
+  </aside>
+
+  <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
+    <header
+      class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md flex items-center justify-between px-8 py-4 border-b border-[#ddc0ba]/20 no-print">
+      <div class="flex items-center gap-3">
+        <button onclick="document.getElementById('admin-sidebar').classList.toggle('-translate-x-full')"
+          class="md:hidden p-2 rounded-full hover:bg-[#ddc0ba]/30 transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d]">more_vert</span>
+        </button>
+        <h2 class="text-xl md:text-2xl font-black text-[#1c1c18]">System Analysis</h2>
+      </div>
+      <div class="flex items-center gap-3 relative">
+        
+        <!-- Print / Export Button -->
+        <button onclick="window.print()" 
+          class="flex items-center gap-1.5 bg-white border border-[#ddc0ba]/60 hover:bg-[#f5f0e8] text-[#56423e] hover:text-[#9f402d] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-all duration-200">
+          <span class="material-symbols-outlined text-sm">print</span> Print Report
+        </button>
+
+        <!-- Clickable Bell Icon -->
+        <div
+          class="relative w-9 h-9 rounded-full bg-[#f1eee7] flex items-center justify-center cursor-pointer hover:bg-[#ddc0ba] transition-colors"
+          onclick="toggleAdminBell()">
+          <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">notifications</span>
+          <span id="bell-indicator"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full hidden"></span>
+        </div>
+
+        <!-- Overlapping Dropdown Menu -->
+        <div id="admin-bell-dropdown"
+          class="hidden absolute right-12 top-12 w-80 bg-white border border-[#ddc0ba]/40 rounded-2xl shadow-xl z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-3 duration-200">
+          <div class="px-5 py-3.5 border-b border-[#f1eee7] bg-[#f6f3ec]/40 flex justify-between items-center">
+            <h4 class="font-black text-sm text-[#1c1c18] flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-xs text-[#9f402d]">notifications_active</span>
+              Worker Messages
+            </h4>
+            <span id="admin-bell-badge"
+              class="bg-[#ffdad3] text-[#9f402d] text-[10px] font-black px-2 py-0.5 rounded-full">0 New</span>
+          </div>
+          <div id="admin-bell-messages-list"
+            class="max-h-[220px] overflow-y-auto custom-scrollbar p-3 space-y-2 bg-white">
+            <p class="text-center py-6 text-xs text-[#89726d] font-medium italic">Loading messages...</p>
+          </div>
+        </div>
+
+        <!-- Admin Profile Icon -->
+        <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d] text-xl fill-icon">admin_panel_settings</span>
+        </div>
+
+      </div>
+    </header>
+
+    <div id="analytics-container" class="p-8 max-w-6xl w-full mx-auto space-y-8 flex flex-col">
+      <!-- Loading indicator -->
+      <div id="loading-state" class="flex flex-col items-center justify-center py-20 space-y-4">
+        <div class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-[#9f402d]"></div>
+        <p class="text-sm font-semibold text-[#89726d]">Processing database entities and computing graphs...</p>
+      </div>
+
+      <!-- Stats Content (hidden until loaded) -->
+      <div id="analytics-content" class="hidden space-y-8">
+        
+        <!-- Summary Cards Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div class="stat-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/30">
+            <span class="material-symbols-outlined text-blue-500 text-2xl mb-2 block fill-icon">group</span>
+            <p class="text-2xl font-black text-[#1c1c18]" id="stat-total-users">—</p>
+            <p class="text-xs font-semibold text-[#89726d]">Total Clients</p>
+          </div>
+          <div class="stat-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/30">
+            <span class="material-symbols-outlined text-[#9f402d] text-2xl mb-2 block fill-icon">engineering</span>
+            <p class="text-2xl font-black text-[#1c1c18]" id="stat-total-workers">—</p>
+            <p class="text-xs font-semibold text-[#89726d]">Total Workers</p>
+          </div>
+          <div class="stat-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/30">
+            <span class="material-symbols-outlined text-emerald-500 text-2xl mb-2 block fill-icon">shopping_bag</span>
+            <p class="text-2xl font-black text-[#1c1c18]" id="stat-total-bookings">—</p>
+            <p class="text-xs font-semibold text-[#89726d]">Total Bookings</p>
+          </div>
+          <div class="stat-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/30">
+            <span class="material-symbols-outlined text-amber-500 text-2xl mb-2 block fill-icon">payments</span>
+            <p class="text-2xl font-black text-[#1c1c18]" id="stat-total-revenue">—</p>
+            <p class="text-xs font-semibold text-[#89726d]">Gross Revenue</p>
+          </div>
+          <div class="stat-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/30">
+            <span class="material-symbols-outlined text-amber-600 text-2xl mb-2 block fill-icon">star</span>
+            <p class="text-2xl font-black text-[#1c1c18]" id="stat-avg-rating">—</p>
+            <p class="text-xs font-semibold text-[#89726d]">Avg. Rating</p>
+          </div>
+          <div class="stat-card bg-white rounded-2xl p-5 shadow-sm border border-[#ddc0ba]/30">
+            <span class="material-symbols-outlined text-red-500 text-2xl mb-2 block fill-icon">verified</span>
+            <p class="text-2xl font-black text-[#1c1c18]" id="stat-avg-trust">—</p>
+            <p class="text-xs font-semibold text-[#89726d]">Avg. Trust Score</p>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- User composition -->
+          <div class="chart-card flex flex-col justify-between">
+            <div>
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">User Base Distribution</h3>
+              <div class="h-64 relative flex items-center justify-center">
+                <canvas id="user-ratio-chart"></canvas>
+              </div>
+            </div>
+            <p class="text-[11px] text-[#89726d] mt-4 font-semibold italic text-center">Percentage comparison between Clients, Service Providers (Workers), and Administrators.</p>
+          </div>
+
+          <!-- Booking status breakdown -->
+          <div class="chart-card flex flex-col justify-between">
+            <div>
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">Booking Status Overview</h3>
+              <div class="h-64 relative flex items-center justify-center">
+                <canvas id="booking-status-chart"></canvas>
+              </div>
+            </div>
+            <p class="text-[11px] text-[#89726d] mt-4 font-semibold italic text-center">Breakdown of system bookings by their current status state (Pending, Accepted, Completed, Cancelled).</p>
+          </div>
+
+          <!-- Revenue trends combo -->
+          <div class="chart-card lg:col-span-2">
+            <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">Booking Revenue & Volume Timeline</h3>
+            <div class="h-80 relative">
+              <canvas id="timeline-chart"></canvas>
+            </div>
+            <p class="text-[11px] text-[#89726d] mt-4 font-semibold italic text-center">Daily system activity tracking number of bookings matched with total transaction value volume completed.</p>
+          </div>
+
+          <!-- Workers by skill -->
+          <div class="chart-card">
+            <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">Worker Skills Distribution</h3>
+            <div class="h-72 relative">
+              <canvas id="skills-chart"></canvas>
+            </div>
+            <p class="text-[11px] text-[#89726d] mt-4 font-semibold italic text-center">Breakdown of registered workers based on their primary expertise/craft.</p>
+          </div>
+
+          <!-- Worker Ratings Distribution -->
+          <div class="chart-card">
+            <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">Worker Ratings Breakdown</h3>
+            <div class="h-72 relative">
+              <canvas id="ratings-distribution-chart"></canvas>
+            </div>
+            <p class="text-[11px] text-[#89726d] mt-4 font-semibold italic text-center">Number of workers grouped by their profile ratings (0 to 5 Stars).</p>
+          </div>
+
+        </div>
+
+        <!-- Insights and Top Performers -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Key Metrics / Stats Table -->
+          <div class="bg-white rounded-2xl shadow-sm border border-[#ddc0ba]/30 p-6 lg:col-span-1 flex flex-col justify-between">
+            <div>
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">Key Database Insights</h3>
+              <div class="space-y-4">
+                <div class="flex justify-between items-center py-2 border-b border-[#f1eee7]">
+                  <span class="text-xs font-bold text-[#56423e]">Booking Completion Rate</span>
+                  <span id="insight-completion-rate" class="text-xs font-black text-emerald-600">—</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-[#f1eee7]">
+                  <span class="text-xs font-bold text-[#56423e]">Average Ticket Size</span>
+                  <span id="insight-avg-price" class="text-xs font-black text-[#9f402d]">—</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-[#f1eee7]">
+                  <span class="text-xs font-bold text-[#56423e]">Worker Verification Rate</span>
+                  <span id="insight-verify-rate" class="text-xs font-black text-blue-600">—</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-[#f1eee7]">
+                  <span class="text-xs font-bold text-[#56423e]">Suspended (Fraud) Accounts</span>
+                  <span id="insight-fraud-count" class="text-xs font-black text-red-600">—</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-[#f1eee7]">
+                  <span class="text-xs font-bold text-[#56423e]">Admin Accounts</span>
+                  <span id="insight-admin-count" class="text-xs font-black text-[#1c1c18]">—</span>
+                </div>
+                <div class="flex justify-between items-center py-2">
+                  <span class="text-xs font-bold text-[#56423e]">Most Demanded Craft</span>
+                  <span id="insight-top-skill" class="text-xs font-black text-amber-600 uppercase">—</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-[#f1eee7] bg-[#faf7f2] p-3.5 rounded-xl border border-[#ddc0ba]/20">
+              <h4 class="text-xs font-extrabold text-[#9f402d] mb-1 flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">analytics</span> Admin Note
+              </h4>
+              <p class="text-[10px] text-[#56423e] font-semibold leading-relaxed">
+                This analysis panel runs live checks on the Sqlite3 backend. Use the print button above to export this panel's contents for executive reviews.
+              </p>
+            </div>
+          </div>
+
+          <!-- Top Rated & Productive Workers Table -->
+          <div class="bg-white rounded-2xl shadow-sm border border-[#ddc0ba]/30 p-6 lg:col-span-2 overflow-hidden">
+            <h3 class="text-sm font-black uppercase tracking-wider text-[#89726d] mb-4">Top Performing Workers</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse table-auto">
+                <thead>
+                  <tr class="bg-[#f6f3ec] text-[10px] font-black uppercase tracking-wider text-[#89726d] border-b border-[#f1eee7]">
+                    <th class="px-4 py-3 rounded-l-lg">Worker</th>
+                    <th class="px-4 py-3">Skill</th>
+                    <th class="px-4 py-3 text-center">Jobs</th>
+                    <th class="px-4 py-3 text-center">Rating</th>
+                    <th class="px-4 py-3 text-center">Trust</th>
+                    <th class="px-4 py-3 text-right rounded-r-lg">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="top-workers-table" class="divide-y divide-[#f1eee7] text-xs text-[#1c1c18]">
+                  <tr>
+                    <td colspan="6" class="px-4 py-8 text-center text-[#89726d]">Computing database rankings...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      let toast = document.getElementById('custom-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'custom-toast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[100] transform transition-all duration-300 ease-out translate-y-[-100px] opacity-0 pointer-events-none max-w-sm w-full px-4';
+        toast.innerHTML = `
+          <div id="toast-content" class="bg-white border border-[#ddc0ba]/40 shadow-xl rounded-xl p-4 flex items-center gap-3">
+            <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+              <span id="toast-icon" class="material-symbols-outlined text-lg"></span>
+            </div>
+            <div>
+              <p id="toast-message" class="text-xs sm:text-sm font-bold text-on-surface leading-tight"></p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toast);
+      }
+
+      const content = document.getElementById('toast-content');
+      const iconContainer = document.getElementById('toast-icon-container');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-message');
+
+      clearTimeout(toastTimeout);
+
+      if (type === 'success') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-[#d6e7a1]/40 text-[#56642b] flex items-center justify-center shrink-0";
+        icon.textContent = "check_circle";
+        content.className = "bg-white border border-[#d6e7a1]/50 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else if (type === 'error') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0";
+        icon.textContent = "error";
+        content.className = "bg-white border border-red-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else {
+        iconContainer.className = "w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0";
+        icon.textContent = "info";
+        content.className = "bg-white border border-blue-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      }
+
+      text.textContent = message;
+      toast.offsetHeight;
+
+      toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
+    const API = '/api';
+    let rawUsers = [];
+    let rawBookings = [];
+    let charts = {};
+
+    function toggleAdminBell() {
+      const dropdown = document.getElementById('admin-bell-dropdown');
+      if (!dropdown) return;
+      dropdown.classList.toggle('hidden');
+      if (!dropdown.classList.contains('hidden')) {
+        populateAdminMessages();
+      }
+    }
+
+    function populateAdminMessages() {
+      const list = document.getElementById('admin-bell-messages-list');
+      const badge = document.getElementById('admin-bell-badge');
+      const indicator = document.getElementById('bell-indicator');
+
+      if (!rawUsers || !list) return;
+
+      let allMessages = [];
+      const workers = rawUsers.filter(u => u && u.role_id == 2);
+
+      workers.forEach(w => {
+        if (!w) return;
+        const source = w.admin_messages;
+        if (!source || source === "No messages sent to administration yet.") return;
+
+        const segments = source.split(/[\n|]+/);
+
+        segments.forEach(segment => {
+          let trimmed = segment.trim();
+          if (!trimmed) return;
+
+          const hasPrefix = trimmed.includes('VERIFICATION_NOTE:') || trimmed.includes('APPEAL_REQUEST:');
+          const hasTimestamp = /^\[[^\]]+\]/.test(trimmed);
+
+          if (hasPrefix || hasTimestamp) {
+            const isAppeal = trimmed.includes('APPEAL_REQUEST:');
+            const msgType = isAppeal ? 'Appeal' : 'Message';
+            const badgeColor = isAppeal ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700';
+
+            trimmed = trimmed.replace('VERIFICATION_NOTE:', '').replace('APPEAL_REQUEST:', '').trim();
+            if (!trimmed) return;
+
+            let dateStr = 'Recent Update';
+            let finalMessage = trimmed;
+
+            const timeMatch = trimmed.match(/^\[([^\]]+)\]\s*(.*)/);
+            if (timeMatch) {
+              dateStr = timeMatch[1];
+              finalMessage = timeMatch[2];
+            }
+
+            if (finalMessage && finalMessage !== 'undefined') {
+              let safeDateInstance;
+              if (timeMatch) {
+                safeDateInstance = new Date(timeMatch[1]);
+                if (isNaN(safeDateInstance.getTime())) {
+                  safeDateInstance = new Date(timeMatch[1].split(',')[0]);
+                }
+              }
+              if (!safeDateInstance || isNaN(safeDateInstance.getTime())) {
+                safeDateInstance = new Date(w.date_joined || Date.now());
+              }
+
+              allMessages.push({
+                workerName: w.fullname || w.username || 'Unknown Worker',
+                type: msgType,
+                color: badgeColor,
+                text: finalMessage,
+                date: dateStr,
+                sortTimestamp: safeDateInstance
+              });
+            }
+          }
+        });
+      });
+
+      allMessages.sort((a, b) => b.sortTimestamp - a.sortTimestamp);
+
+      if (badge) badge.textContent = `${allMessages.length} New`;
+      if (indicator) {
+        if (allMessages.length > 0) {
+          indicator.classList.remove('hidden');
+        } else {
+          indicator.classList.add('hidden');
+        }
+      }
+
+      if (allMessages.length === 0) {
+        list.innerHTML = '<p class="text-center py-6 text-xs text-[#89726d] font-medium italic">No new messages from workers.</p>';
+        return;
+      }
+
+      list.innerHTML = allMessages.map(m => `
+        <div class="p-3 bg-white border border-[#ddc0ba]/40 hover:border-[#9f402d]/40 transition-colors cursor-pointer rounded-xl mb-2 shadow-sm" onclick="window.location.href='/admin-verify/'">
+          <div class="flex justify-between items-start mb-1.5">
+            <h5 class="text-xs font-bold text-[#1c1c18]">${m.workerName}</h5>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${m.color} uppercase tracking-wider">${m.type}</span>
+          </div>
+          <p class="text-[11px] text-[#56423e] font-medium leading-relaxed italic mb-2 break-words">"${m.text}"</p>
+          <div class="flex justify-between items-center text-[10px] text-[#89726d] font-semibold">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">schedule</span> ${m.date}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadData() {
+      const sessionKey = localStorage.getItem('session_key');
+      const headers = { 'Content-Type': 'application/json' };
+      if (sessionKey) {
+        headers['X-Session-Key'] = sessionKey;
+      }
+
+      try {
+        const usersRes = await fetch(`${API}/admin/users/`, { credentials: 'include', headers });
+        if (!usersRes.ok) throw new Error(`HTTP ${usersRes.status} when fetching users`);
+        const usersResData = await usersRes.json();
+
+        if (usersResData.status === 'error' && usersResData.message && usersResData.message.includes('Admin access required')) {
+          showToast('Session expired or not logged in. Redirecting to login...', 'error');
+          localStorage.removeItem('session_key');
+          window.location.href = '/login/';
+          return;
+        }
+
+        rawUsers = Array.isArray(usersResData.data) ? usersResData.data : (Array.isArray(usersResData.users) ? usersResData.users : []);
+
+        const bookingsRes = await fetch(`${API}/admin/bookings/`, { credentials: 'include', headers });
+        if (!bookingsRes.ok) throw new Error(`HTTP ${bookingsRes.status} when fetching bookings`);
+        const bookingsResData = await bookingsRes.json();
+        
+        rawBookings = Array.isArray(bookingsResData.data) ? bookingsResData.data : [];
+
+        document.getElementById('loading-state').classList.add('hidden');
+        document.getElementById('analytics-content').classList.remove('hidden');
+
+        processMetrics();
+        populateAdminMessages();
+
+      } catch (err) {
+        console.error('Error fetching analytics data:', err);
+        document.getElementById('loading-state').innerHTML = `
+          <div class="p-8 text-center bg-red-50/50 rounded-2xl border border-red-200 w-full max-w-lg">
+            <div class="text-red-700 font-extrabold text-sm mb-1">⚠️ Connection / Request Interrupted</div>
+            <div class="text-xs text-stone-600 mb-2 font-mono bg-white p-2.5 rounded-lg shadow-sm border border-stone-200/60 break-all text-left">
+              ${err.message}
+            </div>
+            <p class="text-[11px] text-stone-500 font-medium">Verify your local backend Django server is up and operating at port <code class="bg-stone-200 px-1 py-0.5 rounded text-stone-800 font-bold">8000</code>.</p>
+          </div>
+        `;
+      }
+    }
+
+    function processMetrics() {
+      const clients = rawUsers.filter(u => u && u.role_id === 3);
+      const workers = rawUsers.filter(u => u && u.role_id === 2);
+      const admins = rawUsers.filter(u => u && u.role_id === 1);
+      const suspended = rawUsers.filter(u => u && u.is_fraud === true);
+
+      let totalRating = 0;
+      let ratedWorkersCount = 0;
+      let totalTrustScore = 0;
+      let verifiedCount = 0;
+
+      workers.forEach(w => {
+        const r = parseFloat(w.rating);
+        if (!isNaN(r) && r > 0) {
+          totalRating += r;
+          ratedWorkersCount++;
+        }
+        const t = parseInt(w.trust_score);
+        if (!isNaN(t)) {
+          totalTrustScore += t;
+        }
+        if (w.is_verified || w.worker_status === 'verified') {
+          verifiedCount++;
+        }
+      });
+
+      const avgRating = ratedWorkersCount > 0 ? (totalRating / ratedWorkersCount).toFixed(2) : '0.00';
+      const avgTrust = workers.length > 0 ? Math.round(totalTrustScore / workers.length) : 0;
+      const verifyRate = workers.length > 0 ? Math.round((verifiedCount / workers.length) * 100) : 0;
+
+      const totalBookingsCount = rawBookings.length;
+      const completedBookings = rawBookings.filter(b => b.status === 'completed');
+      const pendingBookings = rawBookings.filter(b => b.status === 'pending');
+      const acceptedBookings = rawBookings.filter(b => b.status === 'accepted' || b.status === 'in_progress');
+      const cancelledBookings = rawBookings.filter(b => b.status === 'cancelled');
+
+      let grossRevenue = 0;
+      completedBookings.forEach(b => {
+        grossRevenue += parseInt(b.final_price || 0);
+      });
+
+      const completionRate = totalBookingsCount > 0 ? Math.round((completedBookings.length / totalBookingsCount) * 100) : 0;
+      const avgBookingPrice = completedBookings.length > 0 ? Math.round(grossRevenue / completedBookings.length) : 0;
+
+      const skillCounts = {};
+      workers.forEach(w => {
+        const s = (w.skill || 'Artisan').trim();
+        if (s) {
+          skillCounts[s] = (skillCounts[s] || 0) + 1;
+        }
+      });
+
+      let topSkill = '—';
+      let maxCount = 0;
+      for (const [sk, count] of Object.entries(skillCounts)) {
+        if (count > maxCount) {
+          maxCount = count;
+          topSkill = sk;
+        }
+      }
+
+      document.getElementById('stat-total-users').textContent = clients.length;
+      document.getElementById('stat-total-workers').textContent = workers.length;
+      document.getElementById('stat-total-bookings').textContent = totalBookingsCount;
+      document.getElementById('stat-total-revenue').textContent = '₹' + grossRevenue.toLocaleString('en-IN');
+      document.getElementById('stat-avg-rating').textContent = avgRating + ' ★';
+      document.getElementById('stat-avg-trust').textContent = avgTrust + '%';
+
+      document.getElementById('insight-completion-rate').textContent = completionRate + '%';
+      document.getElementById('insight-avg-price').textContent = '₹' + avgBookingPrice.toLocaleString('en-IN');
+      document.getElementById('insight-verify-rate').textContent = verifyRate + '%';
+      document.getElementById('insight-fraud-count').textContent = suspended.length + ` (${Math.round((suspended.length / rawUsers.length) * 100)}%)`;
+      document.getElementById('insight-admin-count').textContent = admins.length;
+      document.getElementById('insight-top-skill').textContent = topSkill;
+
+      const sortedWorkers = [...workers].sort((a, b) => {
+        if (b.total_jobs !== a.total_jobs) return b.total_jobs - a.total_jobs;
+        return parseFloat(b.rating) - parseFloat(a.rating);
+      }).slice(0, 5);
+
+      const topTbody = document.getElementById('top-workers-table');
+      if (sortedWorkers.length === 0) {
+        topTbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-[#89726d]">No worker profiles registered yet.</td></tr>';
+      } else {
+        topTbody.innerHTML = sortedWorkers.map(w => {
+          const name = w.fullname || w.username || 'Artisan';
+          const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffdad3&color=9f402d&bold=true`;
+          const profileImg = w.profile_pic ? `${window.location.origin}${w.profile_pic}` : fallback;
+          const statusText = w.is_fraud ? 'Suspended' : (w.is_verified ? 'Verified' : 'Unverified');
+          const statusClass = w.is_fraud ? 'bg-red-100 text-red-700' : (w.is_verified ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700');
+          return `
+            <tr class="hover:bg-[#f6f3ec] transition-colors">
+              <td class="px-4 py-3 font-semibold">
+                <div class="flex items-center gap-2">
+                  <img src="${profileImg}" class="w-6 h-6 rounded-full object-cover border border-[#ddc0ba]/40 shrink-0">
+                  <span>${name}</span>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-[#56423e] font-semibold">${w.skill || 'General'}</td>
+              <td class="px-4 py-3 text-center text-[#89726d] font-bold">${w.total_jobs || 0}</td>
+              <td class="px-4 py-3 text-center text-amber-600 font-extrabold">★ ${(parseFloat(w.rating) || 0).toFixed(1)}</td>
+              <td class="px-4 py-3 text-center text-red-700 font-extrabold">${w.trust_score || 0}%</td>
+              <td class="px-4 py-3 text-right"><span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${statusClass}">${statusText}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      initUserRatioChart(clients.length, workers.length, admins.length);
+      initBookingStatusChart(pendingBookings.length, acceptedBookings.length, completedBookings.length, cancelledBookings.length);
+      initSkillsDistributionChart(skillCounts);
+      initRatingsDistributionChart(workers);
+      initTimelineChart(rawBookings);
+    }
+
+    function initUserRatioChart(clients, workers, admins) {
+      const ctx = document.getElementById('user-ratio-chart').getContext('2d');
+      if (charts.userRatio) charts.userRatio.destroy();
+
+      charts.userRatio = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Clients', 'Workers', 'Admins'],
+          datasets: [{
+            data: [clients, workers, admins],
+            backgroundColor: ['#90b0c0', '#9f402d', '#e8b060'],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { family: 'Manrope', size: 11, weight: 'bold' },
+                color: '#56423e',
+                boxWidth: 12
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function initBookingStatusChart(pending, accepted, completed, cancelled) {
+      const ctx = document.getElementById('booking-status-chart').getContext('2d');
+      if (charts.bookingStatus) charts.bookingStatus.destroy();
+
+      charts.bookingStatus = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Pending', 'Active/Accepted', 'Completed', 'Cancelled'],
+          datasets: [{
+            data: [pending, accepted, completed, cancelled],
+            backgroundColor: ['#e8b060', '#90b0c0', '#d6e7a1', '#d06050'],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { family: 'Manrope', size: 11, weight: 'bold' },
+                color: '#56423e',
+                boxWidth: 12
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function initSkillsDistributionChart(skillCounts) {
+      const ctx = document.getElementById('skills-chart').getContext('2d');
+      if (charts.skills) charts.skills.destroy();
+
+      const labels = Object.keys(skillCounts);
+      const data = Object.values(skillCounts);
+
+      if (labels.length === 0) {
+        labels.push('None Registered');
+        data.push(0);
+      }
+
+      charts.skills = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Workers',
+            data: data,
+            backgroundColor: '#9f402d',
+            borderRadius: 6,
+            barThickness: 16
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(221, 192, 186, 0.15)' },
+              ticks: { font: { family: 'Manrope', size: 10 }, color: '#89726d', stepSize: 1 }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { family: 'Manrope', size: 10, weight: 'bold' }, color: '#56423e' }
+            }
+          }
+        }
+      });
+    }
+
+    function initRatingsDistributionChart(workers) {
+      const ctx = document.getElementById('ratings-distribution-chart').getContext('2d');
+      if (charts.ratings) charts.ratings.destroy();
+
+      const ratingBuckets = { '5★': 0, '4-4.9★': 0, '3-3.9★': 0, '1-2.9★': 0, 'No Ratings': 0 };
+      
+      workers.forEach(w => {
+        const rating = parseFloat(w.rating);
+        if (isNaN(rating) || rating === 0) {
+          ratingBuckets['No Ratings']++;
+        } else if (rating === 5) {
+          ratingBuckets['5★']++;
+        } else if (rating >= 4) {
+          ratingBuckets['4-4.9★']++;
+        } else if (rating >= 3) {
+          ratingBuckets['3-3.9★']++;
+        } else {
+          ratingBuckets['1-2.9★']++;
+        }
+      });
+
+      charts.ratings = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(ratingBuckets),
+          datasets: [{
+            data: Object.values(ratingBuckets),
+            backgroundColor: ['#e8b060', '#90b0c0', '#ffdad3', '#d06050', '#89726d'],
+            borderRadius: 6,
+            barThickness: 24
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Manrope', size: 10, weight: 'bold' }, color: '#56423e' }
+            },
+            y: {
+              grid: { color: 'rgba(221, 192, 186, 0.15)' },
+              ticks: { font: { family: 'Manrope', size: 10 }, color: '#89726d', stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    function initTimelineChart(bookings) {
+      const ctx = document.getElementById('timeline-chart').getContext('2d');
+      if (charts.timeline) charts.timeline.destroy();
+
+      const dateMap = {};
+      const today = new Date();
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const key = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        dateMap[key] = { count: 0, revenue: 0 };
+      }
+
+      bookings.forEach(b => {
+        if (!b.created_at) return;
+        const d = new Date(b.created_at);
+        const key = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        if (dateMap[key]) {
+          dateMap[key].count++;
+          if (b.status === 'completed') {
+            dateMap[key].revenue += parseInt(b.final_price || 0);
+          }
+        }
+      });
+
+      const dates = Object.keys(dateMap);
+      const counts = dates.map(d => dateMap[d].count);
+      const revenues = dates.map(d => dateMap[d].revenue);
+
+      charts.timeline = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              type: 'line',
+              label: 'Daily Bookings',
+              data: counts,
+              borderColor: '#9f402d',
+              borderWidth: 3,
+              fill: false,
+              yAxisID: 'y-axis-bookings',
+              tension: 0.35,
+              pointBackgroundColor: '#9f402d',
+              pointRadius: 3
+            },
+            {
+              type: 'bar',
+              label: 'Gross Volume (₹)',
+              data: revenues,
+              backgroundColor: 'rgba(144, 176, 192, 0.65)',
+              yAxisID: 'y-axis-revenue',
+              borderRadius: 4,
+              barThickness: 16
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                font: { family: 'Manrope', size: 10, weight: 'bold' },
+                color: '#56423e'
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Manrope', size: 9 }, color: '#89726d' }
+            },
+            'y-axis-bookings': {
+              type: 'linear',
+              position: 'left',
+              grid: { color: 'rgba(221, 192, 186, 0.12)' },
+              ticks: { font: { family: 'Manrope', size: 10 }, color: '#9f402d', stepSize: 1 },
+              title: { display: true, text: 'Number of Bookings', font: { family: 'Manrope', size: 10, weight: 'bold' }, color: '#9f402d' }
+            },
+            'y-axis-revenue': {
+              type: 'linear',
+              position: 'right',
+              grid: { display: false },
+              ticks: { font: { family: 'Manrope', size: 10 }, color: '#56423e' },
+              title: { display: true, text: 'Revenue (₹)', font: { family: 'Manrope', size: 10, weight: 'bold' }, color: '#56423e' }
+            }
+          }
+        }
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+
+</html>

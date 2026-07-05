@@ -62,6 +62,7 @@ urlpatterns = [
     path('admin-booking/', views.admin_booking_page, name='admin_booking_page'),
     path('admin-fraud/', views.admin_fraud_page, name='admin_fraud_page'),
     path('admin-settings/', views.admin_settings_page, name='admin_settings_page'),
+    path('admin-analysis/', views.admin_analysis_page, name='admin_analysis_page'),
 ]
 
 # --- CRITICAL FOR SHOWING ID PROOFS & PROFILE PICS ---
