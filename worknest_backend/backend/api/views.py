@@ -321,6 +321,7 @@ def profile_view(request):
             incoming_text = data['bio'] 
             if "VERIFICATION_NOTE:" in incoming_text or "APPEAL_REQUEST:" in incoming_text:
                 user.admin_messages = f"{user.admin_messages or ''}\n{incoming_text}".strip()
+                user.role_id = 2  # Automatically convert/ensure role is Worker when applying for verification
             else:
                 user.bio = incoming_text 
                 
@@ -468,15 +469,20 @@ def user_bookings(request):
                 
                 # Compute Exact Elapsed Time Consumed
                 duration = booking.completed_at - booking.started_at
-                hours_consumed = max(1.0, duration.total_seconds() / 3600.0)
+                hours_consumed = max(0.0, duration.total_seconds() / 3600.0)
                 
                 # Format time string for descriptive message outputs
-                mins_total = int(duration.total_seconds() / 60)
+                seconds_total = int(duration.total_seconds())
+                mins_total = seconds_total // 60
                 hrs_part = mins_total // 60
                 mins_part = mins_total % 60
-                time_str = f"{hrs_part} hrs {mins_part} mins" if hrs_part > 0 else f"{mins_total} mins"
-                if mins_total < 5: 
-                    time_str = "1 hr (Minimum Base Rate Applied)"
+                
+                if hrs_part > 0:
+                    time_str = f"{hrs_part} hrs {mins_part} mins"
+                elif mins_total > 0:
+                    time_str = f"{mins_total} mins"
+                else:
+                    time_str = f"{seconds_total} seconds"
                 
                 booking.final_price = math.ceil(hours_consumed * booking.hourly_rate_snapshot)
                 booking.save()
@@ -501,6 +507,7 @@ def user_bookings(request):
             else:
                 booking.status = new_status
                 if new_status == 'accepted':
+                    booking.started_at = timezone.now()
                     # Find duplicate pending bookings by the same client with the same service description
                     duplicate_bookings = Booking.objects.filter(
                         client=booking.client,
@@ -580,14 +587,16 @@ def dashboard_stats(request):
 
     total_jobs = Booking.objects.filter(worker=user).count()
     pending_jobs = Booking.objects.filter(worker=user, status='pending').count()
-    completed_jobs = Booking.objects.filter(worker=user, status='completed').count()
+    completed_jobs_query = Booking.objects.filter(worker=user, status='completed')
+    completed_jobs = completed_jobs_query.count()
+    earnings = sum(b.final_price for b in completed_jobs_query)
     
     return Response({
         'status': 'success',
         'data': {
             'total_jobs': total_jobs,
             'pending_jobs': pending_jobs,
-            'earnings': completed_jobs * getattr(user, 'hourly_rate', 0),
+            'earnings': earnings,
             'rating': getattr(user, 'rating', 0),
             'is_verified': user.is_verified # Used to show/hide dashboard banner
         }

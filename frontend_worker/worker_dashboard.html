@@ -515,6 +515,12 @@
 
         if (data.status === 'success' && data.data) {
           const worker = data.data;
+
+          if (worker.role_id !== 2) {
+            window.location.href = '/dashboard/';
+            return;
+          }
+
           const navElement = document.querySelector('nav');
 
           if (worker.is_verified === false || worker.is_fraud === true) {
@@ -558,8 +564,16 @@
           }
 
           await loadHistoricalBookingsLogs(worker.id);
+        } else {
+          localStorage.removeItem('session_key');
+          window.location.href = '/login/';
+          return;
         }
-      } catch (e) { console.error("Identity status processing error:", e); }
+      } catch (e) { 
+        console.error("Identity status processing error:", e);
+        localStorage.removeItem('session_key');
+        window.location.href = '/login/';
+      }
     }
 
     async function loadHistoricalBookingsLogs(workerId) {
@@ -720,6 +734,7 @@
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          credentials: 'include',
           body: JSON.stringify({ worker_status: isWorkerOnline ? 'online' : 'offline' })
         });
         const data = await res.json();
@@ -763,6 +778,7 @@
             await fetch(`${API_BASE}/profile/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+              credentials: 'include',
               body: JSON.stringify({ latitude: lat, longitude: lon })
             });
             // Update active job log to refresh client location coordinate tracking
@@ -805,6 +821,7 @@
         const res = await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          credentials: 'include',
           body: JSON.stringify({ bio: newBio })
         });
 
@@ -828,6 +845,7 @@
         await fetch(`${API_BASE}/profile/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
+          credentials: 'include',
           body: JSON.stringify({ bio: `APPEAL_REQUEST: ${txt}` })
         });
         showToast("Appeal transmitted successfully.", "success");

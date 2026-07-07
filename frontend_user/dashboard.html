@@ -480,6 +480,11 @@
         const data = await res.json();
 
         if (data.status === 'success' && data.data) {
+          if (data.data.role_id === 2) {
+            window.location.href = '/worker/dashboard/';
+            return;
+          }
+
           // 1. Format the greeting to use only their First Name
           const firstName = data.data.fullname.split(' ');
           const el = document.querySelector('h2 span.text-primary');

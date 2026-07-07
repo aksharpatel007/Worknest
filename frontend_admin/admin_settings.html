@@ -40,6 +40,75 @@
       font-weight: 700;
       box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
     }
+
+    /* Custom Toggles */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-toggle {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #e5e1d8;
+      transition: .3s;
+      border-radius: 34px;
+    }
+
+    .slider-toggle:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    input:checked + .slider-toggle {
+      background-color: #81b29a;
+    }
+
+    input:checked + .slider-toggle:before {
+      transform: translateX(22px);
+    }
+
+    /* Tab styles */
+    .tab-btn {
+      color: #56423e;
+      background: transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+      color: #9f402d;
+    }
+    .active-tab-btn {
+      background: white !important;
+      color: #9f402d !important;
+      box-shadow: 0 4px 12px rgba(159, 64, 45, 0.08);
+    }
+
+    /* Custom scrollbar for horizontal swipe tabs on mobile */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
 
@@ -50,9 +119,12 @@
       <div
         class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
         <span class="material-symbols-outlined text-white text-xl"
-          style="font-variation-settings: 'FILL' 1;">settings</span>
+          style="font-variation-settings: 'FILL' 1;">security</span>
       </div>
-      <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+      <div>
+        <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
+        <p class="text-xs text-[#89726d] font-medium">Safety Command</p>
+      </div>
       <button onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full')"
         class="md:hidden p-2 rounded-full text-[#89726d] hover:bg-[#ddc0ba]/40 transition-colors flex items-center justify-center absolute top-7 right-1">
         <span class="material-symbols-outlined">arrow_back</span>
@@ -81,7 +153,7 @@
   </aside>
 
   <main class="flex-1 h-full overflow-y-auto flex flex-col min-w-0">
-    <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md px-8 py-6 border-b border-[#ddc0ba]/20">
+    <header class="sticky top-0 z-40 bg-[#faf7f2]/90 backdrop-blur-md px-8 py-4 border-b border-[#ddc0ba]/20 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <button onclick="document.getElementById('admin-sidebar').classList.toggle('-translate-x-full')"
           class="md:hidden p-2 rounded-full hover:bg-[#ddc0ba]/30 transition-colors flex items-center justify-center">
@@ -89,61 +161,258 @@
         </button>
         <h2 class="text-xl md:text-2xl font-black text-[#1c1c18]">Settings</h2>
       </div>
+      <div class="flex items-center gap-3">
+        <!-- Admin Profile Icon -->
+        <div class="w-9 h-9 rounded-full bg-[#ffdad3] flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d] text-xl" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+        </div>
+      </div>
     </header>
 
-    <div class="p-8 max-w-4xl mx-auto space-y-8">
-      <section class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-[#ddc0ba]/20">
-        <h3 class="text-lg font-black mb-6 flex items-center gap-2"><span
-            class="material-symbols-outlined text-[#9f402d]">admin_panel_settings</span> Admin Profile</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">Admin Username</label>
-            <input type="text" value="Priyal_Admin"
-              class="w-full mt-1 px-5 py-3 bg-[#fcf9f2] border border-[#ddc0ba]/30 rounded-2xl outline-none" readonly>
-          </div>
-          <div>
-            <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">Email Address</label>
-            <input type="email" value="admin@worknest.in"
-              class="w-full mt-1 px-5 py-3 bg-[#fcf9f2] border border-[#ddc0ba]/30 rounded-2xl outline-none" readonly>
-          </div>
-        </div>
-      </section>
-
-      <section class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-[#ddc0ba]/20">
-        <h3 class="text-lg font-black mb-6 flex items-center gap-2"><span
-            class="material-symbols-outlined text-orange-500">lock</span> Security</h3>
-        <div class="space-y-4">
-          <button
-            class="w-full text-left px-6 py-4 rounded-2xl border border-[#f1eee7] hover:bg-[#faf7f2] transition-colors flex justify-between items-center group">
-            <div>
-              <p class="font-bold text-sm">Change Administrative Password</p>
-              <p class="text-xs text-[#89726d]">Last updated 2 months ago</p>
-            </div>
-            <span class="material-symbols-outlined text-[#89726d] group-hover:text-[#9f402d]">chevron_right</span>
+    <div class="p-4 sm:p-8 max-w-5xl w-full mx-auto flex flex-col md:flex-row gap-8">
+      <!-- Tabs Column (Left) -->
+      <div class="w-full md:w-64 shrink-0">
+        <div class="flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1.5 bg-[#f5f0e8]/60 p-2 rounded-[2rem] border border-[#ddc0ba]/30 no-scrollbar sticky top-24">
+          <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn active-tab-btn flex items-center gap-3 px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap w-full text-left">
+            <span class="material-symbols-outlined text-lg">admin_panel_settings</span> Admin Profile
           </button>
-          <button
-            class="w-full text-left px-6 py-4 rounded-2xl border border-[#f1eee7] hover:bg-[#faf7f2] transition-colors flex justify-between items-center group">
-            <div>
-              <p class="font-bold text-sm">Two-Factor Authentication</p>
-              <p class="text-xs text-green-600 font-bold">Enabled</p>
-            </div>
-            <span class="material-symbols-outlined text-[#89726d] group-hover:text-[#9f402d]">chevron_right</span>
+          <button onclick="switchTab('system')" id="tab-system" class="tab-btn flex items-center gap-3 px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap w-full text-left">
+            <span class="material-symbols-outlined text-lg">tune</span> System Rules
+          </button>
+          <button onclick="switchTab('security')" id="tab-security" class="tab-btn flex items-center gap-3 px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap w-full text-left">
+            <span class="material-symbols-outlined text-lg">security</span> Security & Access
+          </button>
+          <button onclick="switchTab('maintenance')" id="tab-maintenance" class="tab-btn flex items-center gap-3 px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap w-full text-left">
+            <span class="material-symbols-outlined text-lg">build</span> Maintenance & Tools
           </button>
         </div>
-      </section>
+      </div>
 
-      <section class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-[#ddc0ba]/20">
-        <h3 class="text-lg font-black mb-6 flex items-center gap-2"><span
-            class="material-symbols-outlined text-blue-500">database</span> Maintenance</h3>
-        <div class="flex items-center justify-between p-4 bg-red-50 rounded-2xl border border-red-100">
+      <!-- Settings Panels (Right) -->
+      <div class="flex-1 min-w-0">
+        
+        <!-- Tab 1: Profile -->
+        <div id="pane-profile" class="tab-pane bg-white rounded-[2.5rem] border border-[#ddc0ba]/20 shadow-sm p-6 sm:p-8 space-y-8">
           <div>
-            <p class="font-bold text-red-700 text-sm">Clear System Cache</p>
-            <p class="text-xs text-red-600">Forces refresh of all user and worker lists</p>
+            <h3 class="text-base sm:text-lg font-black text-[#1c1c18] tracking-tight flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#9f402d]">admin_panel_settings</span> Administrative Profile
+            </h3>
+            <p class="text-xs text-[#89726d] font-semibold mt-1">Configure your public credentials and edit login parameters.</p>
           </div>
-          <button onclick="location.reload()"
-            class="px-6 py-2 bg-red-600 text-white rounded-xl text-xs font-bold">Execute</button>
+          
+          <div class="flex flex-col sm:flex-row gap-6 items-center border-b border-[#f1eee7] pb-6">
+            <div class="relative group cursor-pointer" onclick="showToast('Profile image uploads are disabled in this demo.', 'info')">
+              <div class="w-20 h-20 rounded-full bg-[#ffdad3] flex items-center justify-center border-2 border-[#9f402d] overflow-hidden">
+                <span class="material-symbols-outlined text-[#9f402d] text-4xl">admin_panel_settings</span>
+              </div>
+              <div class="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <span class="material-symbols-outlined text-white text-xs font-bold">photo_camera</span>
+              </div>
+            </div>
+            <div class="text-center sm:text-left">
+              <h4 class="font-extrabold text-sm text-[#1c1c18]">System Administrator</h4>
+              <p class="text-xs text-[#89726d] font-medium mt-0.5">Role: Platform Owner (Admin ID #1)</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">Admin Username</label>
+              <input type="text" id="profile-username" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d]" placeholder="Priyal_Admin">
+            </div>
+            <div>
+              <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">Email Address</label>
+              <input type="email" id="profile-email" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d]" placeholder="admin@worknest.in">
+            </div>
+          </div>
+
+          <div class="border-t border-[#f1eee7] pt-6 space-y-4">
+            <h4 class="font-extrabold text-xs sm:text-sm text-[#1c1c18]">Change Passcode</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">Current Password</label>
+                <input type="password" id="profile-old-pwd" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d]">
+              </div>
+              <div>
+                <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">New Password</label>
+                <input type="password" id="profile-new-pwd" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d]">
+              </div>
+              <div>
+                <label class="text-[10px] font-black uppercase text-[#89726d] ml-1">Confirm New Password</label>
+                <input type="password" id="profile-confirm-pwd" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d]">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4 border-t border-[#f1eee7]">
+            <button onclick="saveProfile()" class="px-6 py-2.5 bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs sm:text-sm font-extrabold rounded-full shadow-sm hover:shadow-md transition-all active:scale-95">
+              Save Changes
+            </button>
+          </div>
         </div>
-      </section>
+
+        <!-- Tab 2: System Rules -->
+        <div id="pane-system" class="tab-pane hidden bg-white rounded-[2.5rem] border border-[#ddc0ba]/20 shadow-sm p-6 sm:p-8 space-y-8">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-[#1c1c18] tracking-tight flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#9f402d]">tune</span> Platform Operational Rules
+            </h3>
+            <p class="text-xs text-[#89726d] font-semibold mt-1">Adjust commission parameters and general matching rules.</p>
+          </div>
+
+          <div class="space-y-6">
+            <!-- Commission Slider -->
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <label class="text-xs font-extrabold text-[#56423e]">Platform Commission Fee</label>
+                <span id="commission-val-label" class="bg-[#ffdad3] text-[#9f402d] text-xs font-black px-2.5 py-0.5 rounded-full">15%</span>
+              </div>
+              <input type="range" id="system-commission" min="5" max="50" step="1" value="15" oninput="document.getElementById('commission-val-label').textContent = this.value + '%'"
+                class="w-full h-1.5 bg-[#f1eee7] rounded-lg appearance-none cursor-pointer accent-[#9f402d]">
+              <p class="text-[10px] text-[#89726d] font-semibold">Percentage deducted from completed worker job earnings.</p>
+            </div>
+
+            <!-- Trust Score Slider -->
+            <div class="space-y-2 border-t border-[#f1eee7] pt-6">
+              <div class="flex justify-between items-center">
+                <label class="text-xs font-extrabold text-[#56423e]">Auto-Verification Trust Threshold</label>
+                <span id="trust-val-label" class="bg-blue-50 text-blue-700 text-xs font-black px-2.5 py-0.5 rounded-full">75%</span>
+              </div>
+              <input type="range" id="system-trust" min="50" max="100" step="5" value="75" oninput="document.getElementById('trust-val-label').textContent = this.value + '%'"
+                class="w-full h-1.5 bg-[#f1eee7] rounded-lg appearance-none cursor-pointer accent-blue-600">
+              <p class="text-[10px] text-[#89726d] font-semibold">Minimum system trust rating required for new worker profiles to auto-verify.</p>
+            </div>
+
+            <!-- Toggles Section -->
+            <div class="border-t border-[#f1eee7] pt-6 space-y-4">
+              <!-- Auto matching toggle -->
+              <div class="flex justify-between items-center py-2.5">
+                <div>
+                  <p class="font-bold text-xs sm:text-sm text-[#1c1c18]">Automatic Booking Matching</p>
+                  <p class="text-[10px] text-[#89726d] font-semibold mt-0.5">Let algorithm automatically match booking requests with closest workers.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="system-auto-match" checked>
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+
+              <!-- Maintenance mode toggle -->
+              <div class="flex justify-between items-center py-2.5 border-t border-[#f1eee7]/50">
+                <div>
+                  <p class="font-bold text-xs sm:text-sm text-red-700">Platform Maintenance Mode</p>
+                  <p class="text-[10px] text-red-600 font-semibold mt-0.5">Simulate placing Worknest in maintenance. Restricts bookings for clients.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="system-maint-mode">
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4 border-t border-[#f1eee7]">
+            <button onclick="saveSystemRules()" class="px-6 py-2.5 bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs sm:text-sm font-extrabold rounded-full shadow-sm hover:shadow-md transition-all active:scale-95">
+              Save Rules
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 3: Security & Access -->
+        <div id="pane-security" class="tab-pane hidden bg-white rounded-[2.5rem] border border-[#ddc0ba]/20 shadow-sm p-6 sm:p-8 space-y-8">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-[#1c1c18] tracking-tight flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#9f402d]">security</span> Security & Session Configuration
+            </h3>
+            <p class="text-xs text-[#89726d] font-semibold mt-1">Configure credentials protection, 2FA, and whitelist filters.</p>
+          </div>
+
+          <div class="space-y-6">
+            <!-- 2FA Toggle -->
+            <div class="flex justify-between items-center py-2.5">
+              <div>
+                <p class="font-bold text-xs sm:text-sm text-[#1c1c18]">Two-Factor Authentication (2FA)</p>
+                <p class="text-[10px] text-green-600 font-bold mt-0.5">Enabled (Highly Recommended)</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="security-2fa" checked>
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+
+            <!-- Session Timeout -->
+            <div class="space-y-2 border-t border-[#f1eee7] pt-6">
+              <label class="text-xs font-extrabold text-[#56423e]">Administrative Session Expiration</label>
+              <select id="security-timeout" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d] cursor-pointer">
+                <option value="15m">15 Minutes</option>
+                <option value="1h" selected>1 Hour</option>
+                <option value="12h">12 Hours</option>
+                <option value="never">Keep me logged in permanently</option>
+              </select>
+              <p class="text-[10px] text-[#89726d] font-semibold">Forces automatic logout after continuous administrative inactivity.</p>
+            </div>
+
+            <!-- IP Whitelist -->
+            <div class="space-y-2 border-t border-[#f1eee7] pt-6">
+              <label class="text-xs font-extrabold text-[#56423e]">Administrative IP Whitelist</label>
+              <input type="text" id="security-ips" class="w-full mt-1.5 px-4 py-3 bg-[#faf7f2] border border-[#ddc0ba]/50 focus:border-[#9f402d] rounded-2xl outline-none text-sm text-[#1c1c18] font-semibold transition-all focus:ring-1 focus:ring-[#9f402d]" placeholder="127.0.0.1, 192.168.1.1">
+              <p class="text-[10px] text-[#89726d] font-semibold">Separate multiple addresses with commas. Leave blank to disable whitelisting restrictions.</p>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4 border-t border-[#f1eee7]">
+            <button onclick="saveSecuritySettings()" class="px-6 py-2.5 bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs sm:text-sm font-extrabold rounded-full shadow-sm hover:shadow-md transition-all active:scale-95">
+              Save Security
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Maintenance & Tools -->
+        <div id="pane-maintenance" class="tab-pane hidden bg-white rounded-[2.5rem] border border-[#ddc0ba]/20 shadow-sm p-6 sm:p-8 space-y-8">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-[#1c1c18] tracking-tight flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#9f402d]">build</span> Maintenance & System Tools
+            </h3>
+            <p class="text-xs text-[#89726d] font-semibold mt-1">Perform database actions, clear logs, or trigger backup processes.</p>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Flush cache card -->
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center p-5 bg-[#faf7f2] rounded-3xl border border-[#ddc0ba]/20 gap-4">
+              <div>
+                <p class="font-extrabold text-sm text-[#1c1c18]">Flush System Cache</p>
+                <p class="text-[11px] text-[#56423e] font-semibold mt-0.5">Clears stored operational memory. Forces refreshing of all lists.</p>
+              </div>
+              <button onclick="flushCache(this)" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-xs font-black shadow-sm transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 justify-center">
+                <span class="material-symbols-outlined text-sm font-black">refresh</span> Clear Cache
+              </button>
+            </div>
+
+            <!-- Export logs card -->
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center p-5 bg-[#faf7f2] rounded-3xl border border-[#ddc0ba]/20 gap-4">
+              <div>
+                <p class="font-extrabold text-sm text-[#1c1c18]">Export System Audit Logs</p>
+                <p class="text-[11px] text-[#56423e] font-semibold mt-0.5">Downloads a local copy of administrative action timestamps.</p>
+              </div>
+              <button onclick="exportAuditLogs(this)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-black shadow-sm transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 justify-center">
+                <span class="material-symbols-outlined text-sm font-black">download</span> Export Logs
+              </button>
+            </div>
+
+            <!-- Factory Reset Card -->
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center p-5 bg-red-50 rounded-3xl border border-red-100 gap-4 mt-4">
+              <div>
+                <p class="font-extrabold text-sm text-red-700">Factory System Reset</p>
+                <p class="text-[11px] text-red-600 font-semibold mt-0.5">Destructive action! Clears all settings and restores default database seeds.</p>
+              </div>
+              <button onclick="factoryReset(this)" class="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-full text-xs font-black shadow-sm transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 justify-center">
+                <span class="material-symbols-outlined text-sm font-black">delete_forever</span> Factory Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </main>
 
@@ -163,6 +432,59 @@
   </div>
 
   <script>
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      let toast = document.getElementById('custom-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'custom-toast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[100] transform transition-all duration-300 ease-out translate-y-[-100px] opacity-0 pointer-events-none max-w-sm w-full px-4';
+        toast.innerHTML = `
+          <div id="toast-content" class="bg-white border border-[#ddc0ba]/40 shadow-xl rounded-xl p-4 flex items-center gap-3">
+            <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+              <span id="toast-icon" class="material-symbols-outlined text-lg"></span>
+            </div>
+            <div>
+              <p id="toast-message" class="text-xs sm:text-sm font-bold text-on-surface leading-tight"></p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toast);
+      }
+
+      const content = document.getElementById('toast-content');
+      const iconContainer = document.getElementById('toast-icon-container');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-message');
+
+      clearTimeout(toastTimeout);
+
+      if (type === 'success') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-[#d6e7a1]/40 text-[#56642b] flex items-center justify-center shrink-0";
+        icon.textContent = "check_circle";
+        content.className = "bg-white border border-[#d6e7a1]/50 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else if (type === 'error') {
+        iconContainer.className = "w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0";
+        icon.textContent = "error";
+        content.className = "bg-white border border-red-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      } else {
+        iconContainer.className = "w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0";
+        icon.textContent = "info";
+        content.className = "bg-white border border-blue-100 shadow-xl rounded-xl p-4 flex items-center gap-3";
+      }
+
+      text.textContent = message;
+      toast.offsetHeight;
+
+      toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
     function showConfirm(message) {
       return new Promise((resolve) => {
         const modal = document.getElementById('confirm-modal');
@@ -192,11 +514,174 @@
     async function adminLogout() {
       const confirmed = await showConfirm("Are you sure you want to exit the Worknest Admin Panel?");
       if (confirmed) {
-        localStorage.removeItem('session_key'); //
-        localStorage.clear(); //
-        window.location.href = '/login/'; // Ensure path is correct
+        localStorage.removeItem('session_key');
+        localStorage.clear();
+        window.location.href = '/login/';
       }
     }
+
+    // Tabs switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab-btn'));
+
+      const activePane = document.getElementById('pane-' + tabName);
+      const activeTab = document.getElementById('tab-' + tabName);
+
+      if (activePane) activePane.classList.remove('hidden');
+      if (activeTab) activeTab.classList.add('active-tab-btn');
+    }
+
+    // Load Settings from LocalStorage
+    function loadSettings() {
+      // 1. Profile settings
+      document.getElementById('profile-username').value = localStorage.getItem('admin_username') || 'Priyal_Admin';
+      document.getElementById('profile-email').value = localStorage.getItem('admin_email') || 'admin@worknest.in';
+
+      // 2. System Rules
+      const commission = localStorage.getItem('system_commission') || '15';
+      document.getElementById('system-commission').value = commission;
+      document.getElementById('commission-val-label').textContent = commission + '%';
+
+      const trust = localStorage.getItem('system_trust') || '75';
+      document.getElementById('system-trust').value = trust;
+      document.getElementById('trust-val-label').textContent = trust + '%';
+
+      document.getElementById('system-auto-match').checked = localStorage.getItem('system_auto_match') !== 'false';
+      document.getElementById('system-maint-mode').checked = localStorage.getItem('system_maint_mode') === 'true';
+
+      // 3. Security
+      document.getElementById('security-2fa').checked = localStorage.getItem('security_2fa') !== 'false';
+      document.getElementById('security-timeout').value = localStorage.getItem('security_timeout') || '1h';
+      document.getElementById('security-ips').value = localStorage.getItem('security_ips') || '127.0.0.1, 192.168.1.1';
+    }
+
+    // Save Profile Settings
+    function saveProfile() {
+      const username = document.getElementById('profile-username').value.trim();
+      const email = document.getElementById('profile-email').value.trim();
+      const oldPwd = document.getElementById('profile-old-pwd').value;
+      const newPwd = document.getElementById('profile-new-pwd').value;
+      const confirmPwd = document.getElementById('profile-confirm-pwd').value;
+
+      if (!username || !email) {
+        showToast('Username and email cannot be empty.', 'error');
+        return;
+      }
+
+      // Passcode validation check
+      if (newPwd || oldPwd) {
+        if (!oldPwd) {
+          showToast('Please enter your current password to change passcodes.', 'error');
+          return;
+        }
+        if (newPwd !== confirmPwd) {
+          showToast('New password confirmation does not match.', 'error');
+          return;
+        }
+        if (newPwd.length < 6) {
+          showToast('New password must be at least 6 characters.', 'error');
+          return;
+        }
+        showToast('Administrative password updated successfully!', 'success');
+        document.getElementById('profile-old-pwd').value = '';
+        document.getElementById('profile-new-pwd').value = '';
+        document.getElementById('profile-confirm-pwd').value = '';
+      }
+
+      localStorage.setItem('admin_username', username);
+      localStorage.setItem('admin_email', email);
+      showToast('Admin profile settings updated successfully!', 'success');
+    }
+
+    // Save System Rules
+    function saveSystemRules() {
+      const commission = document.getElementById('system-commission').value;
+      const trust = document.getElementById('system-trust').value;
+      const autoMatch = document.getElementById('system-auto-match').checked;
+      const maintMode = document.getElementById('system-maint-mode').checked;
+
+      localStorage.setItem('system_commission', commission);
+      localStorage.setItem('system_trust', trust);
+      localStorage.setItem('system_auto_match', autoMatch);
+      localStorage.setItem('system_maint_mode', maintMode);
+
+      showToast('Platform operational rules updated successfully!', 'success');
+    }
+
+    // Save Security settings
+    function saveSecuritySettings() {
+      const twoFa = document.getElementById('security-2fa').checked;
+      const timeout = document.getElementById('security-timeout').value;
+      const ips = document.getElementById('security-ips').value.trim();
+
+      localStorage.setItem('security_2fa', twoFa);
+      localStorage.setItem('security_timeout', timeout);
+      localStorage.setItem('security_ips', ips);
+
+      showToast('Security and access parameters saved!', 'success');
+    }
+
+    // Clear system cache mock animation
+    function flushCache(btn) {
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span> Flushing...';
+      
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+        showToast('System memory cache flushed successfully! 142 items cleared.', 'success');
+      }, 1200);
+    }
+
+    // Export logs mock download
+    function exportAuditLogs(btn) {
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span> Exporting...';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+
+        // Generate download
+        const mockLog = `Worknest Administrative Audit Logs\nGenerated: ${new Date().toISOString()}\n=========================================\n[07-06 18:24] Admin logged in from IP 127.0.0.1\n[07-06 18:31] Worker verified ID approval for Worker #4\n[07-06 19:12] Updated auto-verify trust score to 75%\n[07-06 19:35] Clear system cache executed.`;
+        const blob = new Blob([mockLog], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `worknest_audit_log_${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Audit logs exported and downloaded!', 'success');
+      }, 1500);
+    }
+
+    // Factory system reset
+    async function factoryReset(btn) {
+      const confirmed = await showConfirm("Factory reset will clear all custom configurations and return system rules to original database seeds. Proceed?");
+      if (confirmed) {
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span> Resetting...';
+
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          localStorage.clear();
+          showToast('Factory reset complete! System settings restored.', 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }, 2000);
+      }
+    }
+
+    loadSettings();
   </script>
 </body>
 

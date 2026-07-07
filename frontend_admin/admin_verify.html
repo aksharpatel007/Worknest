@@ -234,9 +234,11 @@
 
     const API = '/api';
     let rawWorkerData = []; // Master list
+    let currentFilter = 'all';
 
 
     function filterQueue(status) {
+      currentFilter = status;
       let filtered = [];
 
       if (status === 'verified') {
@@ -282,7 +284,8 @@
       tbody.innerHTML = workers.map(w => {
         const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(w.fullname)}&background=ffdad3&color=9f402d&bold=true`;
 
-        const hasUnreadMessage = w.admin_messages && w.admin_messages.trim() !== "";
+        const viewedMsg = localStorage.getItem('viewed_messages_' + w.id);
+        const hasUnreadMessage = w.admin_messages && w.admin_messages.trim() !== "" && w.admin_messages !== viewedMsg;
         const greenDotBadge = hasUnreadMessage
           ? `<span class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse" title="Message Received"></span>`
           : '';
@@ -290,7 +293,7 @@
         const formattedDate = w.submitted_at ? w.submitted_at : new Date(w.date_joined).toLocaleDateString('en-IN');
 
         return `
-      <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer" onclick="openWorkerDetail(${JSON.stringify(w).replace(/"/g, '&quot;')})">
+      <tr class="hover:bg-[#fcf9f2] transition-colors cursor-pointer" onclick="openWorkerDetail(${w.id})">
         <td class="px-8 py-5 flex items-center gap-3">
           <div class="relative w-10 h-10 rounded-full border border-[#ddc0ba]/40">
             <img src="${w.profile_pic ? window.location.origin + w.profile_pic : fallback}" class="w-full h-full object-cover rounded-full">
@@ -375,7 +378,14 @@
       }
     }
 
-    async function openWorkerDetail(w) {
+    async function openWorkerDetail(wOrId) {
+      const w = (typeof wOrId === 'object' && wOrId !== null) ? wOrId : rawWorkerData.find(x => x.id == wOrId);
+      if (!w) return;
+
+      if (w.admin_messages) {
+        localStorage.setItem('viewed_messages_' + w.id, w.admin_messages);
+        setTimeout(() => filterQueue(currentFilter), 100);
+      }
       const modal = document.getElementById('user-modal');
       const content = document.getElementById('modal-content');
       modal.classList.remove('hidden');
@@ -635,9 +645,13 @@
       renderTable(filtered);
     }
 
-    function adminLogout() {
-      localStorage.removeItem('session_key');
-      window.location.href = '/login/';
+    async function adminLogout() {
+      const confirmed = await showConfirm("Are you sure you want to exit the Worknest Admin Panel?");
+      if (confirmed) {
+        localStorage.removeItem('session_key');
+        localStorage.clear();
+        window.location.href = '/login/';
+      }
     }
 
     function showToast(title, message, type = 'success') {

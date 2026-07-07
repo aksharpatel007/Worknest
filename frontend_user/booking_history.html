@@ -249,14 +249,38 @@
           // Store user bookings raw data array safely
           const rawDataList = bookingsData.data.filter(b => b.client == clientId || b.client_id == clientId);
           
+          // Group pending by service_desc (reason)
+          const pendingBookings = rawDataList.filter(b => b.status === 'pending');
+          const nonPendingBookings = rawDataList.filter(b => b.status !== 'pending');
+
+          const pendingGroups = {};
+          pendingBookings.forEach(b => {
+            if (!pendingGroups[b.service_desc]) {
+              pendingGroups[b.service_desc] = [];
+            }
+            pendingGroups[b.service_desc].push(b);
+          });
+
+          const groupedPending = Object.keys(pendingGroups).map(desc => {
+            const group = pendingGroups[desc];
+            group.sort((x, y) => new Date(y.created_at || 0) - new Date(x.created_at || 0));
+            const primary = group[0];
+            return {
+              ...primary,
+              booking_ids: group.map(x => x.id)
+            };
+          });
+
+          const finalDataList = [...nonPendingBookings, ...groupedPending];
+
           // 🎯 CRITICAL SORTING FIX: Compiles sorting rules using explicit timestamp strings so that the newest additions appear first
-          rawDataList.sort((a, b) => {
+          finalDataList.sort((a, b) => {
             const timeStampA = new Date(a.created_at || a.completed_at || a.started_at || 0);
             const timeStampB = new Date(b.created_at || b.completed_at || b.started_at || 0);
             return timeStampB - timeStampA;
           });
 
-          allBookings = rawDataList;
+          allBookings = finalDataList;
           renderBookings(allBookings);
         }
       } catch (e) {
@@ -308,14 +332,40 @@
         if (b.status === 'completed') badgeConfig = { color: 'bg-green-100 text-green-700', text: 'Job Completed', icon: 'check_circle' };
         if (b.status === 'cancelled' || b.status === 'rejected') badgeConfig = { color: 'bg-red-100 text-red-700', text: 'Cancelled', icon: 'cancel' };
 
-        let actionHtml = '';
+        // 🎯 FIXED: Dynamic extraction of native timestamp properties
+        const assignmentTime = new Date(b.created_at || b.completed_at || b.started_at || new Date());
+        const dateStr = assignmentTime.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = assignmentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
         if (b.status === 'pending') {
-          actionHtml = `
-            <button onclick="cancelBooking(${b.id})" class="w-full mt-4 py-3 bg-red-50 text-red-600 border border-red-100 font-bold rounded-xl text-xs sm:text-sm hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2">
+          return `
+          <div class="bg-surface-lowest rounded-3xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(28,28,24,0.03)] border border-outline/20 hover:shadow-md transition-shadow duration-300">
+            <div class="flex justify-between items-start mb-4 border-b border-surface-variant pb-4 gap-4">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
+                  <span class="material-symbols-outlined text-xs sm:text-sm text-orange-700">schedule</span>
+                  <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">Pending Response</span>
+                </div>
+                <h3 class="font-black text-base sm:text-lg text-on-background truncate leading-tight">Job Request Sent</h3>
+                <p class="text-[11px] sm:text-xs font-bold text-primary mt-0.5">Finding nearby professionals</p>
+                
+                <p class="text-[10px] sm:text-xs font-semibold text-[#89726d] flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-xs sm:text-sm">calendar_month</span> ${dateStr} • ${timeStr}
+                </p>
+              </div>
+            </div>
+            
+            <p class="text-xs sm:text-sm text-[#56423e] bg-surface-variant/50 p-3 sm:p-4 rounded-2xl italic border border-outline/10 font-medium">"${b.service_desc}"</p>
+            
+            <button onclick="cancelBookingGroup(${JSON.stringify(b.booking_ids || [b.id])})" class="w-full mt-4 py-3 bg-red-50 text-red-600 border border-red-100 font-bold rounded-xl text-xs sm:text-sm hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2">
               <span class="material-symbols-outlined text-base sm:text-lg">close</span> Cancel Request
-            </button>`;
+            </button>
+          </div>
+          `;
         }
-        else if (b.status === 'accepted' || b.status === 'in_progress') {
+
+        let actionHtml = '';
+        if (b.status === 'accepted' || b.status === 'in_progress') {
           let extraBtn = '';
           if (b.status === 'accepted') {
             extraBtn = `
@@ -343,11 +393,6 @@
           }
         }
 
-        // 🎯 FIXED: Dynamic extraction of native timestamp properties
-        const assignmentTime = new Date(b.created_at || b.completed_at || b.started_at || new Date());
-        const dateStr = assignmentTime.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-        const timeStr = assignmentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-
         return `
           <div class="bg-surface-lowest rounded-3xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(28,28,24,0.03)] border border-outline/20 hover:shadow-md transition-shadow duration-300">
             <div class="flex justify-between items-start mb-4 border-b border-surface-variant pb-4 gap-4">
@@ -356,11 +401,9 @@
                   <span class="material-symbols-outlined text-xs sm:text-sm ${badgeConfig.color.split(' ')[1]}">${badgeConfig.icon}</span>
                   <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${badgeConfig.color} px-2.5 py-0.5 rounded-full">${badgeConfig.text}</span>
                 </div>
-                <!-- Card titles scale flexibly dynamically based on laptop vs mobile sizing layout metrics -->
                 <h3 class="font-black text-base sm:text-lg text-on-background truncate leading-tight">${b.worker_name || 'Worker Assignment'}</h3>
                 <p class="text-[11px] sm:text-xs font-bold text-primary mt-0.5">${b.worker_skill || 'Professional'}</p>
                 
-                <!-- 🎯 ATTACHED PERMANENT DATE & TIME ROW -->
                 <p class="text-[10px] sm:text-xs font-semibold text-[#89726d] flex items-center gap-1 mt-1.5">
                   <span class="material-symbols-outlined text-xs sm:text-sm">calendar_month</span> ${dateStr} • ${timeStr}
                 </p>
@@ -412,6 +455,30 @@
 
         if (res.ok || (await res.json()).status === 'success') {
           showToast("Booking cancelled successfully.", "success");
+          loadBookings();
+        } else {
+          showToast('Failed to cancel. Please try again.', 'error');
+        }
+      } catch (e) { showToast('Network error while cancelling.', 'error'); }
+    }
+
+    async function cancelBookingGroup(ids) {
+      const confirmed = await showConfirm("Are you sure you want to cancel this pending request?");
+      if (!confirmed) return;
+      try {
+        let successCount = 0;
+        for (const id of ids) {
+          const res = await fetch(`${API}/bookings/`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Session-Key': localStorage.getItem('session_key') },
+            body: JSON.stringify({ booking_id: id, status: 'cancelled' })
+          });
+          if (res.ok) {
+            successCount++;
+          }
+        }
+        if (successCount > 0) {
+          showToast("Booking request cancelled successfully.", "success");
           loadBookings();
         } else {
           showToast('Failed to cancel. Please try again.', 'error');
