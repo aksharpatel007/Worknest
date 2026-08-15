@@ -252,6 +252,32 @@
                 submitBtn.textContent = "Sign In Securely";
             }
         });
+
+        async function checkAutoRedirect() {
+            const sessionKey = localStorage.getItem('session_key');
+            if (sessionKey) {
+                try {
+                    const res = await fetch('/api/profile/', {
+                        headers: { 'X-Session-Key': sessionKey },
+                        credentials: 'include'
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success' && data.data) {
+                        const user = data.data;
+                        if (user.role_id === 1) {
+                            window.location.href = '/admin-dashboard/';
+                        } else if (user.role_id === 2) {
+                            window.location.href = '/worker/dashboard/';
+                        } else if (user.role_id === 3) {
+                            window.location.href = '/dashboard/';
+                        }
+                    }
+                } catch (e) {
+                    console.error("Auto-redirect check failed:", e);
+                }
+            }
+        }
+        document.addEventListener("DOMContentLoaded", checkAutoRedirect);
     </script>
 </body>
 </html>

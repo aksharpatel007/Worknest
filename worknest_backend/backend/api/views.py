@@ -449,6 +449,18 @@ def user_bookings(request):
             new_status = request.data.get('status')
             booking = Booking.objects.get(id=booking_id)
             
+            if new_status == 'accepted':
+                # Block acceptance if the worker already has an active booking
+                active_bookings_exists = Booking.objects.filter(
+                    worker=booking.worker,
+                    status__in=['accepted', 'in_progress']
+                ).exclude(id=booking.id).exists()
+                if active_bookings_exists:
+                    return Response({
+                        'status': 'error',
+                        'message': 'You cannot accept this request because you already have an active booking.'
+                    }, status=400)
+            
             if new_status == 'in_progress':
                 booking.started_at = timezone.now()
                 booking.status = 'in_progress'
@@ -469,7 +481,7 @@ def user_bookings(request):
                 
                 # Compute Exact Elapsed Time Consumed
                 duration = booking.completed_at - booking.started_at
-                hours_consumed = max(0.0, duration.total_seconds() / 3600.0)
+                hours_consumed = max(1.0, duration.total_seconds() / 3600.0)
                 
                 # Format time string for descriptive message outputs
                 seconds_total = int(duration.total_seconds())
@@ -483,6 +495,9 @@ def user_bookings(request):
                     time_str = f"{mins_total} mins"
                 else:
                     time_str = f"{seconds_total} seconds"
+                
+                if duration.total_seconds() < 3600.0:
+                    time_str = f"{time_str} (1 hr Minimum Applied)"
                 
                 booking.final_price = math.ceil(hours_consumed * booking.hourly_rate_snapshot)
                 booking.save()
@@ -848,6 +863,13 @@ def index_page(request):
     return render(request, 'index.html')
 
 def login_page(request):
+    if request.user and request.user.is_authenticated:
+        if request.user.role_id == 1:
+            return redirect('admin_dashboard_page')
+        elif request.user.role_id == 2:
+            return redirect('worker_dashboard_page')
+        else:
+            return redirect('dashboard_page')
     return render(request, 'frontend_user/login.html')
 
 def signup_page(request):

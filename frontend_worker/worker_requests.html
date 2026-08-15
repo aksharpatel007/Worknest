@@ -417,7 +417,7 @@
           showToast(`Job has been successfully marked as ${statusString}!`, "success");
           loadIncomingRequests();
         } else {
-          showToast("Refusal error: " + data.message, "error");
+          showToast(data.message || `Failed to update request status to ${statusString}.`, "error");
         }
       } catch (e) {
         console.error("Error patching booking index code arrays:", e);

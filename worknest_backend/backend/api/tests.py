@@ -55,9 +55,9 @@ class BookingRateCalculationTestCase(TestCase):
         booking.status = 'completed'
         
         duration = booking.completed_at - booking.started_at
-        hours_consumed = max(0.0, duration.total_seconds() / 3600.0)
+        hours_consumed = max(1.0, duration.total_seconds() / 3600.0)
         
-        # Pro-rated exact calculation
+        # Pro-rated calculation with 1-hour minimum
         booking.final_price = math.ceil(hours_consumed * booking.hourly_rate_snapshot)
         booking.save()
         
@@ -78,13 +78,13 @@ class BookingRateCalculationTestCase(TestCase):
         booking2.status = 'completed'
         
         duration2 = booking2.completed_at - booking2.started_at
-        hours_consumed2 = max(0.0, duration2.total_seconds() / 3600.0)
+        hours_consumed2 = max(1.0, duration2.total_seconds() / 3600.0)
         booking2.final_price = math.ceil(hours_consumed2 * booking2.hourly_rate_snapshot)
         booking2.save()
         
-        expected_price2 = math.ceil((15.0 / 60.0) * 400) # 100
+        expected_price2 = 400 # 1 hour minimum
         self.assertEqual(booking2.final_price, expected_price2)
-        self.assertEqual(booking2.final_price, 100)
+        self.assertEqual(booking2.final_price, 400)
 
     def test_booking_patch_api_accepted_and_completed(self):
         # Create a pending booking
@@ -132,13 +132,13 @@ class BookingRateCalculationTestCase(TestCase):
         self.assertEqual(response_completed.status_code, 200)
         self.assertEqual(response_completed.json()['status'], 'success')
         
-        # Verify final price is exactly 100 (30 mins of 200/hr)
+        # Verify final price is exactly 200 (30 mins is capped at 1 hr minimum of 200/hr)
         booking.refresh_from_db()
         self.assertEqual(booking.status, 'completed')
         self.assertIsNotNone(booking.completed_at)
         
-        # Difference should be roughly 30 minutes, final price should be ceil(0.5 * 200) = 100
-        self.assertAlmostEqual(booking.final_price, 100, delta=2)
+        # Difference should be roughly 30 minutes, final price should be capped at 200
+        self.assertAlmostEqual(booking.final_price, 200, delta=2)
         
         # Verify dashboard stats for the worker calculates the correct earnings
         url_stats = reverse('dashboard-stats')
@@ -147,7 +147,7 @@ class BookingRateCalculationTestCase(TestCase):
             **headers
         )
         self.assertEqual(response_stats.status_code, 200)
-        self.assertAlmostEqual(response_stats.json()['data']['earnings'], 100, delta=2)
+        self.assertAlmostEqual(response_stats.json()['data']['earnings'], 200, delta=2)
 
     def test_send_verification_message(self):
         # Create unverified user who signed up as client (role_id=3)
@@ -177,3 +177,38 @@ class BookingRateCalculationTestCase(TestCase):
         self.assertEqual(unverified_user.admin_messages, 'VERIFICATION_NOTE: [6 Jul 2026, 11:53 am] Please approve me')
         self.assertIsNone(unverified_user.bio) # bio should not be modified
         self.assertEqual(unverified_user.role_id, 2) # should automatically be converted to role_id=2 (Worker)
+
+    def test_worker_cannot_accept_multiple_active_bookings(self):
+        # Create a booking that is already accepted by the worker
+        active_booking = Booking.objects.create(
+            client=self.client_user,
+            worker=self.worker,
+            service_desc='Active Task',
+            status='accepted',
+            hourly_rate_snapshot=200
+        )
+        
+        # Create a second booking that is pending
+        pending_booking = Booking.objects.create(
+            client=self.client_user,
+            worker=self.worker,
+            service_desc='Another Pending Task',
+            status='pending',
+            hourly_rate_snapshot=200
+        )
+        
+        # Try to accept the second booking using worker's session key
+        url = reverse('user-bookings')
+        headers = {'HTTP_X_SESSION_KEY': 'worker-token'}
+        
+        response = self.client.patch(
+            url,
+            data={'booking_id': pending_booking.id, 'status': 'accepted'},
+            content_type='application/json',
+            **headers
+        )
+        
+        # The request should fail with status 400
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['status'], 'error')
+        self.assertIn('You cannot accept this request because you already have an active booking', response.json()['message'])

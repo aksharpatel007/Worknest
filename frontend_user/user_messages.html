@@ -45,15 +45,17 @@
 <body class="text-on-background pb-32">
 
   <!-- Responsive Header Frame -->
-  <header class="sticky top-0 z-50 bg-[#fcf9f2]/90 backdrop-blur-xl border-b border-outline/30 px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between shadow-sm">
-    <div class="flex items-center gap-2 sm:gap-3">
-      <button onclick="window.location.href='{% url 'dashboard_page' %}'" class="p-2 rounded-full hover:bg-surface-variant transition-colors active:scale-90 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary font-bold text-xl sm:text-2xl">arrow_back</span>
-      </button>
-      <!-- Text size scales adaptively on mobile vs laptop viewports -->
-      <h1 class="font-black text-primary text-xl sm:text-2xl md:text-3xl tracking-tight">Notifications</h1>
+  <header class="sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(28,28,24,0.04)] border-b border-[#ddc0ba]/20 px-6 py-4">
+    <div class="max-w-2xl mx-auto flex items-center justify-between w-full">
+      <div class="flex items-center gap-2">
+        <button onclick="window.location.href='{% url 'dashboard_page' %}'" class="p-2 rounded-full hover:bg-[#f1eee7] transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#9f402d] text-xl">arrow_back</span>
+        </button>
+        <!-- Text size scales adaptively on mobile vs laptop viewports -->
+        <h1 class="font-bold text-[#9f402d] text-2xl tracking-tight">Notifications</h1>
+      </div>
+      <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">chat_bubble</span>
     </div>
-    <span class="material-symbols-outlined text-primary text-2xl sm:text-3xl fill-icon">chat_bubble</span>
   </header>
 
   <!-- Responsive Content Grid Structure -->
@@ -75,17 +77,24 @@
 
   <!-- Bottom Navigation Menu Bar -->
    <nav class="fixed bottom-2 left-4 right-4 z-40 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'dashboard_page' %}">
-      <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">home</span><span>Home</span>
+    <a href="{% url 'dashboard_page' %}"
+      class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">home</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'services_page' %}">
-      <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">grid_view</span><span>Services</span>
+    <a href="{% url 'services_page' %}"
+      class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">grid_view</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'booking_history_page' %}">
-      <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">event_note</span><span>Bookings</span>
+    <a href="{% url 'booking_history_page' %}"
+      class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">event_note</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-[#56642b] opacity-50 px-4 sm:px-6 py-1.5 sm:py-2 hover:opacity-100 transition-all active:scale-90" href="{% url 'profile_page' %}">
-      <span class="material-symbols-outlined text-lg sm:text-xl mb-0.5">person</span><span>Profile</span>
+    <a href="{% url 'profile_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
+      <span class="material-symbols-outlined text-xl">person</span>
+      <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
     </a>
   </nav>
 

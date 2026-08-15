@@ -98,17 +98,18 @@
 
     <!-- Header -->
     <header
-        class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
-        <div class="flex items-center gap-2 sm:gap-2.5">
-            <button onclick="history.back()" class="p-2 text-[#56423e] hover:bg-[#f1eee7] rounded-full active:scale-95 transition-all flex items-center justify-center">
-                <span class="material-symbols-outlined text-xl">arrow_back</span>
-            </button>
-            <div
-                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
-                <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
+        class="sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(28,28,24,0.04)] border-b border-[#ddc0ba]/20 px-6 py-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center w-full">
+            <div class="flex items-center gap-2">
+                <button onclick="history.back()" class="p-2 text-[#56423e] hover:bg-[#f1eee7] rounded-full active:scale-95 transition-all flex items-center justify-center">
+                    <span class="material-symbols-outlined text-xl">arrow_back</span>
+                </button>
+                <div
+                    class="w-8 h-8 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
+                    <span class="material-symbols-outlined text-white text-base fill-icon">potted_plant</span>
+                </div>
+                <span class="text-2xl font-bold text-[#9f402d] tracking-tight">Worknest</span>
             </div>
-            <span class="text-xl sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
-        </div>
 
         <div class="flex items-center gap-4">
             <a href="{% url 'user_messages_page' %}"
@@ -120,6 +121,7 @@
                 <img id="header-avatar" alt="User Profile" class="w-full h-full object-cover"
                     src="https://ui-avatars.com/api/?name=User&amp;background=ffdad3&amp;color=9f402d" />
             </div>
+        </div>
         </div>
     </header>
 
@@ -268,23 +270,23 @@
     </main>
 
     <!-- Bottom Nav -->
-    <nav class="fixed bottom-2 left-4 right-4 z-50 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-[#ddc0ba]/30 rounded-2xl max-w-sm mx-auto">
+    <nav class="fixed bottom-2 left-4 right-4 z-50 flex justify-around items-center px-2 sm:px-4 py-2 bg-[#fcf9f2]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(28,28,24,0.06)] text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border border-outline-variant/30 rounded-2xl max-w-sm mx-auto">
         <a href="{% url 'dashboard_page' %}"
-            class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+            class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
             <span class="material-symbols-outlined text-xl">home</span>
             <span class="text-[11px] font-semibold uppercase tracking-wide">Home</span>
         </a>
         <a href="{% url 'services_page' %}"
-            class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2 active:scale-90 shadow-sm">
+            class="flex flex-col items-center gap-1 bg-[#d6e7a1] text-[#56642b] rounded-full px-5 py-2">
             <span class="material-symbols-outlined text-xl">grid_view</span>
             <span class="text-[11px] font-semibold uppercase tracking-wide">Services</span>
         </a>
         <a href="{% url 'booking_history_page' %}"
-            class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+            class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
             <span class="material-symbols-outlined text-xl">event_note</span>
             <span class="text-[11px] font-semibold uppercase tracking-wide">Bookings</span>
         </a>
-        <a href="{% url 'profile_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all active:scale-90">
+        <a href="{% url 'profile_page' %}" class="flex flex-col items-center gap-1 text-[#56642b] opacity-50 px-5 py-2 hover:opacity-100 transition-all">
             <span class="material-symbols-outlined text-xl">person</span>
             <span class="text-[11px] font-semibold uppercase tracking-wide">Profile</span>
         </a>
