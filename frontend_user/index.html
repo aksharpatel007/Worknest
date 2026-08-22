@@ -98,6 +98,28 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+  <style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body class="bg-surface font-body text-on-surface antialiased overflow-hidden">
@@ -128,7 +150,7 @@
           class="relative w-32 h-32 flex items-center justify-center bg-surface-container-lowest rounded-full shadow-[0_12px_40px_rgba(144,77,0,0.15)] overflow-hidden">
           <div class="nest-gradient w-20 h-20 rounded-full flex items-center justify-center shadow-inner">
             <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">
-              nest_eco_leaf
+              potted_plant
             </span>
           </div>
         </div>
@@ -188,6 +210,28 @@
       data-alt="minimalist modern interior with clean white walls and soft natural sunlight filtering through large windows"
       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBqOgeDezoswGBTb9oAIIssaIaAa6Y4YOh0VuTaonootfKp0KfI1za6tCU-S_Xp0hP83FKs-HfQ4QQuSeJJkuMV5ustlfWK-20q25fPuiI4XTa77Kd9cA8kpXY3Bs5vb1H1aIUXjqDAKDSnKr-UTjfe7maKXreSBKYLxEixZotoKJ1AgWQwTkMiVi8rTf9PQ4VXbF16o8wWBbsPQ5ktElUD4UPwRbyn8WpoSo1f6WFSmDxo8pBteQMS6d8lA1Z81lSOsii67fW2B7l" />
   </div>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

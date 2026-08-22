@@ -160,6 +160,17 @@
       border-color: #9f402d;
     }
   </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body
@@ -168,10 +179,9 @@
   <!-- TopAppBar -->
   <header
     class="sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl dark:bg-[#1c1c18]/80 shadow-[0_4px_20px_rgba(28,28,24,0.04)] font-manrope antialiased leading-[1.6] border-b border-[#ddc0ba]/20 px-6 py-4">
-    <div class="max-w-4xl mx-auto flex items-center justify-between w-full">
+    <div class="max-w-7xl mx-auto flex items-center justify-between w-full">
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-3xl"
-          data-icon="potted_plant">potted_plant</span>
+        <span class="material-symbols-outlined text-[#9f402d] dark:text-[#ffb4a5] text-2xl fill-icon">potted_plant</span>
         <h1 class="text-2xl font-bold tracking-tight text-[#9f402d] dark:text-[#ffb4a5]">Worknest</h1>
       </div>
       <div class="flex items-center gap-4">
@@ -192,9 +202,9 @@
       </div>
     </div>
   </header>
-  <main class="max-w-4xl mx-auto px-6 pt-8 pb-32">
+  <main class="max-w-7xl mx-auto px-6 pt-8 pb-32">
     <section class="mb-16">
-      <h2 class="text-3xl md:text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight mb-6 md:mb-8">
+      <h2 class="text-2xl sm:text-3xl md:text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight mb-6 md:mb-8">
         Welcome back,<br /><span class="text-primary italic">how can we help today?</span>
       </h2>
       <div class="relative group">
@@ -424,7 +434,7 @@
               style="font-variation-settings: 'FILL' 1;">verified_user</span>
           </div>
           <div>
-            <h3 class="text-2xl font-black mb-2 leading-tight">Your Peace of Mind is Our Priority</h3>
+            <h3 class="text-xl sm:text-2xl font-black mb-2 leading-tight">Your Peace of Mind is Our Priority</h3>
             <p class="opacity-90 max-w-lg">Every professional at Worknest undergoes a rigorous multi-step background
               check and skill assessment. Trust is built on every interaction.</p>
           </div>
@@ -1413,6 +1423,28 @@
       
     </div>
   </div>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

@@ -106,6 +106,17 @@
       transform: translateY(-4px) rotate(2deg);
     }
   </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body>
@@ -124,7 +135,11 @@
         <a href="#workers" class="hover:text-[#9f402d] transition-colors">Workers</a>
         <a href="#categories" class="hover:text-[#9f402d] transition-colors">Services</a>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
+        <button onclick="openGuideModal()"
+          class="text-sm font-bold text-[#56642b] bg-[#d6e7a1]/50 border border-[#56642b]/25 px-4 py-2 rounded-full hover:bg-[#d6e7a1] transition-colors flex items-center gap-1.5 shadow-sm">
+          <span class="material-symbols-outlined text-base">help</span> Guide
+        </button>
         <a href="{% url 'login_page' %}"
           class="text-sm font-bold text-[#9f402d] px-4 py-2 rounded-full hover:bg-[#ffdad3] transition-colors">Sign
           In</a>
@@ -163,198 +178,251 @@
       </a>
     </div>
 
-    <!-- Search Bar -->
-    <div class="relative max-w-xl mx-auto fade-up">
-      <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-[#89726d]">search</span>
-      <input type="text" placeholder="Search for plumber, maid, cook..."
-        class="w-full bg-white border border-[#ddc0ba] rounded-full py-4 pl-14 pr-32 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9f402d]/20"
-        id="hero-search" />
-      <button onclick="doSearch()"
-        class="absolute right-2 top-2 bottom-2 bg-[#9f402d] text-white px-6 rounded-full font-bold text-sm hover:bg-[#e2725b] transition-colors">Search</button>
-    </div>
   </section>
 
-  <!-- Categories -->
-  <section id="categories" class="max-w-5xl mx-auto px-6 py-12">
-    <h2 class="text-2xl font-black text-[#1c1c18] mb-8 fade-up">What do you need help with?</h2>
-    <div class="flex gap-5 overflow-x-auto hide-scroll pb-4">
-      <button onclick="goToWorkers('Plumber')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div class="w-20 h-20 rounded-[2.5rem] bg-[#ffdcbd] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#7d562d] text-3xl fill-icon">plumbing</span>
+  <!-- Categories / Services Bento Grid -->
+  <section id="categories" class="max-w-5xl mx-auto px-6 py-16">
+    <div class="text-center md:text-left mb-12 fade-up">
+      <h2 class="text-3xl font-black text-[#1c1c18]">Our Household Services</h2>
+      <p class="text-[#56423e] text-sm mt-2">Choose from our verified local specialists to get any job done at home.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-up">
+      <!-- Plumber -->
+      <div onclick="goToWorkers('Plumber')" class="group cursor-pointer bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 hover:border-[#9f402d]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#ffdcbd] flex items-center justify-center text-[#7d562d] mb-5">
+            <span class="material-symbols-outlined text-2xl fill-icon">plumbing</span>
+          </div>
+          <h3 class="font-extrabold text-[#1c1c18] text-lg group-hover:text-[#9f402d] transition-colors">Plumbing Specialists</h3>
+          <p class="text-xs text-[#56423e] mt-2 leading-relaxed font-medium">Leaking taps, pipe installation, water pump fixing, drain blockages, and kitchen or bathroom fitting.</p>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Plumber</span>
-      </button>
-      <button onclick="goToWorkers('Electrician')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div
-          class="w-20 h-20 rounded-full bg-[#ffdad3] flex items-center justify-center shadow-sm border-2 border-dashed border-[#ddc0ba]">
-          <span class="material-symbols-outlined text-[#9f402d] text-3xl fill-icon">electric_bolt</span>
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#9f402d] mt-6 group-hover:translate-x-1 transition-transform">
+          Find a Plumber <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Electrician</span>
-      </button>
-      <button onclick="goToWorkers('House Maid')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div
-          class="w-20 h-20 rounded-[2rem] rounded-tr-[3.5rem] bg-[#d6e7a1] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">cleaning_services</span>
+      </div>
+
+      <!-- Electrician -->
+      <div onclick="goToWorkers('Electrician')" class="group cursor-pointer bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 hover:border-[#9f402d]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-[#9f402d] mb-5">
+            <span class="material-symbols-outlined text-2xl fill-icon">electric_bolt</span>
+          </div>
+          <h3 class="font-extrabold text-[#1c1c18] text-lg group-hover:text-[#9f402d] transition-colors">Certified Electricians</h3>
+          <p class="text-xs text-[#56423e] mt-2 leading-relaxed font-medium">House wiring, switchboard repairs, ceiling fan installations, short circuit fixes, and home appliance setup.</p>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Maid</span>
-      </button>
-      <button onclick="goToWorkers('Home Cook')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div
-          class="w-20 h-20 rounded-[3.5rem] rounded-bl-[1.5rem] bg-[#d6e7a1] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">restaurant</span>
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#9f402d] mt-6 group-hover:translate-x-1 transition-transform">
+          Find an Electrician <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Cook</span>
-      </button>
-      <button onclick="goToWorkers('Carpenter')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div class="w-20 h-20 rounded-[3rem] rounded-tl-[1rem] bg-[#ffdcbd] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#7d562d] text-3xl fill-icon">carpenter</span>
+      </div>
+
+      <!-- House Maid -->
+      <div onclick="goToWorkers('House Maid')" class="group cursor-pointer bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 hover:border-[#9f402d]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#d6e7a1] flex items-center justify-center text-[#56642b] mb-5">
+            <span class="material-symbols-outlined text-2xl fill-icon">cleaning_services</span>
+          </div>
+          <h3 class="font-extrabold text-[#1c1c18] text-lg group-hover:text-[#9f402d] transition-colors">Professional Maids</h3>
+          <p class="text-xs text-[#56423e] mt-2 leading-relaxed font-medium">Daily deep cleaning, dusting, floor mopping, washing utensils, laundry, and complete household support.</p>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Carpenter</span>
-      </button>
-      <button onclick="goToWorkers('Baby Sitter')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div class="w-20 h-20 rounded-[2rem] bg-[#ffdad3] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#9f402d] text-3xl fill-icon">child_care</span>
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#9f402d] mt-6 group-hover:translate-x-1 transition-transform">
+          Find a House Maid <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Baby Sitter</span>
-      </button>
-      <button onclick="goToWorkers('Painter')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div class="w-20 h-20 rounded-full bg-[#d6e7a1] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">format_paint</span>
+      </div>
+
+      <!-- Home Cook -->
+      <div onclick="goToWorkers('Home Cook')" class="group cursor-pointer bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 hover:border-[#9f402d]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#d6e7a1] flex items-center justify-center text-[#56642b] mb-5">
+            <span class="material-symbols-outlined text-2xl fill-icon">restaurant</span>
+          </div>
+          <h3 class="font-extrabold text-[#1c1c18] text-lg group-hover:text-[#9f402d] transition-colors">Home Cooks</h3>
+          <p class="text-xs text-[#56423e] mt-2 leading-relaxed font-medium">Delicious home-cooked Indian meals, specialized diet cooking, party menus, and daily meal preparation.</p>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Painter</span>
-      </button>
-      <button onclick="goToWorkers('Gardener')" class="category-btn flex-shrink-0 flex flex-col items-center gap-3">
-        <div class="w-20 h-20 rounded-[2.5rem] bg-[#d6e7a1] flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-[#56642b] text-3xl fill-icon">yard</span>
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#9f402d] mt-6 group-hover:translate-x-1 transition-transform">
+          Find a Home Cook <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </div>
-        <span class="text-xs font-bold text-[#56642b] uppercase tracking-wide">Gardener</span>
-      </button>
+      </div>
+
+      <!-- Carpenter -->
+      <div onclick="goToWorkers('Carpenter')" class="group cursor-pointer bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 hover:border-[#9f402d]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#ffdcbd] flex items-center justify-center text-[#7d562d] mb-5">
+            <span class="material-symbols-outlined text-2xl fill-icon">carpenter</span>
+          </div>
+          <h3 class="font-extrabold text-[#1c1c18] text-lg group-hover:text-[#9f402d] transition-colors">Custom Carpentry</h3>
+          <p class="text-xs text-[#56423e] mt-2 leading-relaxed font-medium">Furniture repair, wooden latch fixing, cabinet repairs, door latch replacements, and general woodwork.</p>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#9f402d] mt-6 group-hover:translate-x-1 transition-transform">
+          Find a Carpenter <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </div>
+      </div>
+
+      <!-- Baby Sitter -->
+      <div onclick="goToWorkers('Baby Sitter')" class="group cursor-pointer bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 hover:border-[#9f402d]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-[#9f402d] mb-5">
+            <span class="material-symbols-outlined text-2xl fill-icon">child_care</span>
+          </div>
+          <h3 class="font-extrabold text-[#1c1c18] text-lg group-hover:text-[#9f402d] transition-colors">Caring Baby Sitters</h3>
+          <p class="text-xs text-[#56423e] mt-2 leading-relaxed font-medium">Hourly or daily child care, babysitting, homework assistance, outdoor supervision, and infant care.</p>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#9f402d] mt-6 group-hover:translate-x-1 transition-transform">
+          Find a Baby Sitter <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </div>
+      </div>
     </div>
   </section>
-
 
   <!-- Workers Section -->
-  <section id="workers" class="max-w-5xl mx-auto px-6 py-12">
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="text-2xl font-black text-[#1c1c18] fade-up">Top workers near you</h2>
-      <a href="{% url 'signup_page' %}" class="text-sm font-bold text-[#9f402d] hover:underline">See all →</a>
+  <section id="workers" class="max-w-5xl mx-auto px-6 py-16">
+    <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 fade-up">
+      <div>
+        <h2 class="text-3xl font-black text-[#1c1c18]">Top Verified Specialists Near You</h2>
+        <p class="text-[#56423e] text-sm mt-2">Vetted local professionals who are available right now.</p>
+      </div>
+      <a href="{% url 'signup_page' %}" class="text-sm font-bold text-[#9f402d] hover:text-[#e2725b] flex items-center gap-1 mt-3 md:mt-0">
+        Browse all professionals <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      </a>
     </div>
-    <div id="workers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Loaded by JS -->
-      <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-4">
-              <div
-                class="w-16 h-16 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-2xl font-black text-[#9f402d]">
-                R</div>
-              <div>
-                <h3 class="font-bold text-[#1c1c18] text-lg">Ravi Kumar</h3>
-                <p class="text-[#9f402d] font-semibold text-sm">Plumber</p>
+    
+    <div id="workers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-up">
+      <!-- Ravi Kumar Card -->
+      <div class="bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+        <!-- Live Available Indicator Tag -->
+        <div class="absolute top-0 right-0 bg-[#d6e7a1]/70 text-[#56642b] text-[10px] font-black uppercase tracking-wider px-4 py-1.5 rounded-bl-2xl flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#56642b] animate-ping"></span> Available
+        </div>
+        
+        <div>
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-14 h-14 rounded-2xl bg-[#ffdcbd] text-[#7d562d] flex items-center justify-center font-black text-xl">R</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-[#1c1c18] text-lg">Ravi Kumar</h3>
+                <span class="material-symbols-outlined text-[#56642b] text-base fill-icon" title="Verified Background Check">verified</span>
               </div>
+              <p class="text-xs font-bold text-[#9f402d] uppercase tracking-wider mt-0.5">Plumbing Specialist</p>
             </div>
-            <span class="bg-[#d6e7a1] text-[#56642b] text-xs font-bold px-3 py-1 rounded-full">Verified</span>
           </div>
-          <p class="text-[#56423e] text-sm leading-relaxed mb-4">Expert plumber with 8 years of experience. I fix leaks,
-            install pipes, and handle all water-related work quickly.</p>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3 text-sm text-[#56423e]">
-              <span class="flex items-center gap-1"><span
-                  class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.8 (142 jobs)</span>
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
-                ₹300/hr</span>
-            </div>
-            <a href="{% url 'signup_page' %}"
-              class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
-              Now</a>
+          <p class="text-xs text-[#56423e] leading-relaxed font-medium mb-4">"Expert plumber with 8+ years of experience in residential leakage repairs, pipeline installation, blockages, and kitchen renovations."</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Leak Fixes</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Drainage</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Pipe Laying</span>
           </div>
         </div>
-      </div>
-      <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-4">
-              <div
-                class="w-16 h-16 rounded-2xl bg-[#d6e7a1] flex items-center justify-center text-2xl font-black text-[#56642b]">
-                S</div>
-              <div>
-                <h3 class="font-bold text-[#1c1c18] text-lg">Sunita Devi</h3>
-                <p class="text-[#9f402d] font-semibold text-sm">House Maid</p>
-              </div>
-            </div>
-            <span class="bg-[#ffdad3] text-[#9f402d] text-xs font-bold px-3 py-1 rounded-full">Pro</span>
+        
+        <div class="flex items-center justify-between pt-4 border-t border-[#f1eee7]">
+          <div class="flex items-center gap-4 text-xs text-[#56423e] font-bold">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-amber-500 text-base fill-icon">star</span> 4.8 <span class="text-[#89726d] font-normal">(142 reviews)</span></span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#89726d] text-base">payments</span> ₹300/hr</span>
           </div>
-          <p class="text-[#56423e] text-sm leading-relaxed mb-4">Reliable and hardworking. I do full home cleaning,
-            utensil washing, and daily household work with care.</p>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3 text-sm text-[#56423e]">
-              <span class="flex items-center gap-1"><span
-                  class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.9 (210 jobs)</span>
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
-                ₹250/hr</span>
-            </div>
-            <a href="{% url 'signup_page' %}"
-              class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
-              Now</a>
-          </div>
+          <a href="{% url 'signup_page' %}" class="bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all active:scale-95 shadow-sm">Book Specialist</a>
         </div>
       </div>
-      <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-4">
-              <div
-                class="w-16 h-16 rounded-2xl bg-[#ffdcbd] flex items-center justify-center text-2xl font-black text-[#7d562d]">
-                M</div>
-              <div>
-                <h3 class="font-bold text-[#1c1c18] text-lg">Meena Sharma</h3>
-                <p class="text-[#9f402d] font-semibold text-sm">Home Cook</p>
+
+      <!-- Sunita Devi Card -->
+      <div class="bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+        <!-- Live Available Indicator Tag -->
+        <div class="absolute top-0 right-0 bg-[#d6e7a1]/70 text-[#56642b] text-[10px] font-black uppercase tracking-wider px-4 py-1.5 rounded-bl-2xl flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#56642b] animate-ping"></span> Available
+        </div>
+        
+        <div>
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-14 h-14 rounded-2xl bg-[#d6e7a1] text-[#56642b] flex items-center justify-center font-black text-xl">S</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-[#1c1c18] text-lg">Sunita Devi</h3>
+                <span class="material-symbols-outlined text-[#56642b] text-base fill-icon" title="Verified Background Check">verified</span>
               </div>
+              <p class="text-xs font-bold text-[#9f402d] uppercase tracking-wider mt-0.5">Professional House Maid</p>
             </div>
-            <span class="bg-[#ffdad3] text-[#9f402d] text-xs font-bold px-3 py-1 rounded-full">Pro</span>
           </div>
-          <p class="text-[#56423e] text-sm leading-relaxed mb-4">I cook delicious home-style Indian food. Speciality in
-            dal, sabzi, roti, and special occasion meals.</p>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3 text-sm text-[#56423e]">
-              <span class="flex items-center gap-1"><span
-                  class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.9 (175 jobs)</span>
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
-                ₹350/hr</span>
-            </div>
-            <a href="{% url 'signup_page' %}"
-              class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
-              Now</a>
+          <p class="text-xs text-[#56423e] leading-relaxed font-medium mb-4">"Trustworthy, reliable and trained housekeeper offering high-quality deep cleaning, mopping, laundry, and daily household chore support."</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Deep Clean</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Laundry</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Dusting</span>
           </div>
         </div>
+        
+        <div class="flex items-center justify-between pt-4 border-t border-[#f1eee7]">
+          <div class="flex items-center gap-4 text-xs text-[#56423e] font-bold">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-amber-500 text-base fill-icon">star</span> 4.9 <span class="text-[#89726d] font-normal">(210 reviews)</span></span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#89726d] text-base">payments</span> ₹250/hr</span>
+          </div>
+          <a href="{% url 'signup_page' %}" class="bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all active:scale-95 shadow-sm">Book Specialist</a>
+        </div>
       </div>
-      <div class="worker-card bg-white rounded-2xl overflow-hidden shadow-sm border border-[#ddc0ba]/20">
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-4">
-              <div
-                class="w-16 h-16 rounded-2xl bg-[#ffdad3] flex items-center justify-center text-2xl font-black text-[#9f402d]">
-                A</div>
-              <div>
-                <h3 class="font-bold text-[#1c1c18] text-lg">Arjun Singh</h3>
-                <p class="text-[#9f402d] font-semibold text-sm">Electrician</p>
+
+      <!-- Meena Sharma Card -->
+      <div class="bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+        <!-- Live Available Indicator Tag -->
+        <div class="absolute top-0 right-0 bg-[#d6e7a1]/70 text-[#56642b] text-[10px] font-black uppercase tracking-wider px-4 py-1.5 rounded-bl-2xl flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#56642b] animate-ping"></span> Available
+        </div>
+        
+        <div>
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-14 h-14 rounded-2xl bg-[#ffdad3] text-[#9f402d] flex items-center justify-center font-black text-xl">M</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-[#1c1c18] text-lg">Meena Sharma</h3>
+                <span class="material-symbols-outlined text-[#56642b] text-base fill-icon" title="Verified Background Check">verified</span>
               </div>
+              <p class="text-xs font-bold text-[#9f402d] uppercase tracking-wider mt-0.5">Home Cook & Chef</p>
             </div>
-            <span class="bg-[#d6e7a1] text-[#56642b] text-xs font-bold px-3 py-1 rounded-full">Verified</span>
           </div>
-          <p class="text-[#56423e] text-sm leading-relaxed mb-4">Certified electrician. I handle wiring, fan
-            installation, switchboard repair, and all electrical work safely.</p>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3 text-sm text-[#56423e]">
-              <span class="flex items-center gap-1"><span
-                  class="material-symbols-outlined text-[#9f402d] text-base fill-icon">star</span> 4.7 (98 jobs)</span>
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">payments</span>
-                ₹400/hr</span>
+          <p class="text-xs text-[#56423e] leading-relaxed font-medium mb-4">"Specialist in authentic Indian cuisine. Preparing clean, healthy, and delicious home-style meals with absolute hygiene and customizable menus."</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">North Indian</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Healthy Diet</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Party Menus</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between pt-4 border-t border-[#f1eee7]">
+          <div class="flex items-center gap-4 text-xs text-[#56423e] font-bold">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-amber-500 text-base fill-icon">star</span> 4.9 <span class="text-[#89726d] font-normal">(175 reviews)</span></span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#89726d] text-base">payments</span> ₹350/hr</span>
+          </div>
+          <a href="{% url 'signup_page' %}" class="bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all active:scale-95 shadow-sm">Book Specialist</a>
+        </div>
+      </div>
+
+      <!-- Arjun Singh Card -->
+      <div class="bg-white rounded-3xl p-6 border border-[#ddc0ba]/35 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+        <!-- Live Available Indicator Tag -->
+        <div class="absolute top-0 right-0 bg-[#d6e7a1]/70 text-[#56642b] text-[10px] font-black uppercase tracking-wider px-4 py-1.5 rounded-bl-2xl flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#56642b] animate-ping"></span> Available
+        </div>
+        
+        <div>
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-14 h-14 rounded-2xl bg-[#ffdad3] text-[#9f402d] flex items-center justify-center font-black text-xl">A</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-[#1c1c18] text-lg">Arjun Singh</h3>
+                <span class="material-symbols-outlined text-[#56642b] text-base fill-icon" title="Verified Background Check">verified</span>
+              </div>
+              <p class="text-xs font-bold text-[#9f402d] uppercase tracking-wider mt-0.5">Licensed Electrician</p>
             </div>
-            <a href="{% url 'signup_page' %}"
-              class="bg-[#9f402d] text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-[#e2725b] transition-colors">Book
-              Now</a>
           </div>
+          <p class="text-xs text-[#56423e] leading-relaxed font-medium mb-4">"Government-licensed electrician specializing in secure wiring troubleshooting, switchboards, lighting setups, and home appliance maintenance."</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Wiring</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Appliances</span>
+            <span class="text-[9px] font-bold bg-[#fcf9f2] text-[#89726d] border border-[#ddc0ba]/40 px-2.5 py-0.5 rounded-full">Repairs</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between pt-4 border-t border-[#f1eee7]">
+          <div class="flex items-center gap-4 text-xs text-[#56423e] font-bold">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-amber-500 text-base fill-icon">star</span> 4.7 <span class="text-[#89726d] font-normal">(98 reviews)</span></span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[#89726d] text-base">payments</span> ₹400/hr</span>
+          </div>
+          <a href="{% url 'signup_page' %}" class="bg-[#9f402d] hover:bg-[#e2725b] text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all active:scale-95 shadow-sm">Book Specialist</a>
         </div>
       </div>
     </div>
@@ -429,23 +497,137 @@
       <p class="text-[#89726d] text-sm">© 2025 Worknest. Every skill deserves a platform.</p>
   </footer>
 
+  <!-- Guide Modal -->
+  <div id="guide-modal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl transition-all border border-[#ddc0ba]/35 relative flex flex-col max-h-[85vh]">
+      <!-- Close button -->
+      <button onclick="closeGuideModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-[#f1eee7] text-[#89726d] hover:text-[#1c1c18] transition-all">
+        <span class="material-symbols-outlined text-xl">close</span>
+      </button>
+
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">help</span>
+        <h3 class="text-xl font-black text-[#1c1c18] tracking-tight">How to Use Worknest</h3>
+      </div>
+
+      <!-- Language selector tabs -->
+      <div class="flex border-b border-[#f1eee7] mb-5 gap-2">
+        <button onclick="selectGuideLang('en')" id="btn-guide-en" class="px-4 py-2 text-xs font-bold border-b-2 border-[#9f402d] text-[#9f402d] transition-all">English</button>
+        <button onclick="selectGuideLang('hi')" id="btn-guide-hi" class="px-4 py-2 text-xs font-bold border-b-2 border-transparent text-[#56423e] hover:text-[#9f402d] transition-all">हिन्दी (Hindi)</button>
+        <button onclick="selectGuideLang('gu')" id="btn-guide-gu" class="px-4 py-2 text-xs font-bold border-b-2 border-transparent text-[#56423e] hover:text-[#9f402d] transition-all">ગુજરાતી (Gujarati)</button>
+      </div>
+
+      <!-- Guide contents (scrollable) -->
+      <div class="overflow-y-auto pr-1 flex-1 text-sm text-[#56423e] space-y-4 leading-relaxed font-medium">
+        <!-- English Content -->
+        <div id="content-guide-en" class="space-y-4">
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#9f402d] text-white text-[10px] font-black flex items-center justify-center">1</span> Create an Account</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">Sign up as a **User** if you are looking to hire help, or join as a **Worker** if you want to offer your services (plumbing, cleaning, cooking, electrical work, etc.).</p>
+          </div>
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#e2725b] text-white text-[10px] font-black flex items-center justify-center">2</span> Find & Track Workers</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">Browse categories or look at the **Live Map** to see workers near your current location. Click on a worker to preview their rating, hourly rate, and shortest driving route.</p>
+          </div>
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#56642b] text-white text-[10px] font-black flex items-center justify-center">3</span> Book & Navigate</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">Send a booking request with your job description. Once accepted, watch the worker arrive on your map in real time. Pay the worker directly after the job is completed!</p>
+          </div>
+        </div>
+
+        <!-- Hindi Content -->
+        <div id="content-guide-hi" class="hidden space-y-4">
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#9f402d] text-white text-[10px] font-black flex items-center justify-center">1</span> खाता बनाएं</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">यदि आप काम पर रखने के लिए किसी की तलाश कर रहे हैं तो **यूज़र (User)** के रूप में पंजीकरण करें, या यदि आप अपनी सेवाएं (प्लम्बर, सफाई, कुक, बिजली का काम आदि) देना चाहते हैं तो **वर्कर (Worker)** के रूप में शामिल हों।</p>
+          </div>
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#e2725b] text-white text-[10px] font-black flex items-center justify-center">2</span> वर्कर खोजें और ट्रैक करें</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">विभिन्न श्रेणियों को देखें या अपने स्थान के आस-पास उपलब्ध वर्कर देखने के लिए **लाइव मैप (Live Map)** का उपयोग करें। वर्कर की रेटिंग, प्रति घंटा दर और सबसे छोटा मार्ग देखने के लिए उस पर क्लिक करें।</p>
+          </div>
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#56642b] text-white text-[10px] font-black flex items-center justify-center">3</span> बुकिंग और लाइव ट्रैकिंग</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">अपने काम के विवरण के साथ बुकिंग का अनुरोध भेजें। अनुरोध स्वीकार होने के बाद, आप नक्शे पर वर्कर को आते हुए लाइव देख सकते हैं। काम पूरा होने पर सीधे भुगतान करें!</p>
+          </div>
+        </div>
+
+        <!-- Gujarati Content -->
+        <div id="content-guide-gu" class="hidden space-y-4">
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#9f402d] text-white text-[10px] font-black flex items-center justify-center">1</span> ખાતું બનાવો</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">જો તમે કામ માટે મદદ શોધી રહ્યા હોવ તો **યુઝર (User)** તરીકે નોંધણી કરો, અથવા જો તમે તમારી સેવાઓ (પ્લમ્બર, સફાઈ, રસોઈ, ઇલેક્ટ્રિકલ કામ વગેરે) આપવા માંગતા હોવ તો **વર્કર (Worker)** તરીકે જોડાઓ.</p>
+          </div>
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#e2725b] text-white text-[10px] font-black flex items-center justify-center">2</span> વર્કર શોધો અને ટ્રેક કરો</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">કેટેગરીઝમાં શોધો અથવા તમારી આસપાસના વર્કર જોવા માટે **લાઇવ મેપ (Live Map)** જુઓ. રેટિંગ, કલાકદીઠ રેટ અને સૌથી નજીકનો રસ્તો જોવા માટે વર્કર પર ક્લિક કરો.</p>
+          </div>
+          <div class="p-3.5 bg-[#fcf9f2] rounded-2xl border border-[#ddc0ba]/20">
+            <h4 class="font-extrabold text-[#1c1c18] flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-[#56642b] text-white text-[10px] font-black flex items-center justify-center">3</span> બુકિંગ અને નેવિગેશન</h4>
+            <p class="text-xs text-[#56423e] mt-1.5">તમારા કામની વિગતો સાથે બુકિંગ વિનંતી મોકલો. સ્વીકાર્યા પછી, વર્કરને તમારા નકશા પર લાઇવ આવતા જુઓ. કામ પૂર્ણ થયા પછી સીધી ચુકવણી કરો!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#f1eee7] flex justify-end">
+        <button onclick="closeGuideModal()" class="px-5 py-2 bg-[#9f402d] text-white font-bold rounded-full text-xs shadow-sm hover:bg-[#e2725b] transition-all">Got it, thanks!</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     function goToWorkers(skill) {
       window.location.href = `/signup/`;
     }
-    function doSearch() {
-      const q = document.getElementById('hero-search').value.trim();
-      if (q) window.location.href = `/signup/`;
-    }
-    document.getElementById('hero-search').addEventListener('keydown', e => {
-      if (e.key === 'Enter') doSearch();
-    });
+
 
     // Scroll reveal
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Guide Modal Handlers
+    function openGuideModal() {
+      document.getElementById('guide-modal').classList.remove('hidden');
+    }
+    function closeGuideModal() {
+      document.getElementById('guide-modal').classList.add('hidden');
+    }
+    function selectGuideLang(lang) {
+      ['en', 'hi', 'gu'].forEach(l => {
+        const btn = document.getElementById(`btn-guide-${l}`);
+        const content = document.getElementById(`content-guide-${l}`);
+        if (l === lang) {
+          btn.className = "px-4 py-2 text-xs font-bold border-b-2 border-[#9f402d] text-[#9f402d] transition-all";
+          content.classList.remove('hidden');
+        } else {
+          btn.className = "px-4 py-2 text-xs font-bold border-b-2 border-transparent text-[#56423e] hover:text-[#9f402d] transition-all";
+          content.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 

@@ -40,13 +40,24 @@
       box-shadow: 0 10px 30px rgba(159, 64, 45, 0.05);
     }
   </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body class="text-on-background pb-32">
 
   <!-- Responsive Header Frame -->
   <header class="sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(28,28,24,0.04)] border-b border-[#ddc0ba]/20 px-6 py-4">
-    <div class="max-w-2xl mx-auto flex items-center justify-between w-full">
+    <div class="max-w-7xl mx-auto flex items-center justify-between w-full">
       <div class="flex items-center gap-2">
         <button onclick="window.location.href='{% url 'dashboard_page' %}'" class="p-2 rounded-full hover:bg-[#f1eee7] transition-colors flex items-center justify-center">
           <span class="material-symbols-outlined text-[#9f402d] text-xl">arrow_back</span>
@@ -59,7 +70,7 @@
   </header>
 
   <!-- Responsive Content Grid Structure -->
-  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
     <div class="flex items-center justify-between mb-6">
       <h2 id="messages-count-heading" class="text-xs sm:text-sm font-black uppercase tracking-widest text-[#89726d]">Updates Feed</h2>
       <button onclick="markAllAsRead()" class="text-[11px] sm:text-xs font-bold text-primary hover:underline flex items-center gap-1">
@@ -252,6 +263,28 @@
     }
 
     document.addEventListener("DOMContentLoaded", fetchUserNotifications);
+  </script>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 

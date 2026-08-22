@@ -140,6 +140,17 @@
       }
     }
   </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body class="text-[#1c1c18] pb-32 sm:pb-36 min-h-screen">
@@ -149,9 +160,7 @@
   <header
     class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
     <div class="flex items-center gap-2 sm:gap-2.5">
-      <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
-        <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
-      </div>
+      <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
       <span class="text-xl sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
     </div>
 
@@ -163,7 +172,7 @@
       </a>
       <a href="/worker/profile/"
         class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#9f402d]/30 overflow-hidden hover:border-[#9f402d] transition-all p-0.5 bg-white shadow-sm">
-        <img src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
+        <img id="header-avatar-preview" src="https://ui-avatars.com/api/?name=Marcus%20Chen&amp;background=ffdad3&amp;color=9f402d&amp;bold=true"
           class="w-full h-full object-cover rounded-full">
       </a>
     </div>
@@ -186,7 +195,7 @@
   </div>
 
   <!-- Main Grid Layout -->
-  <main class="max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+  <main class="max-w-2xl lg:max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
     <div class="mb-6 sm:mb-10 flex justify-between items-end">
       <div>
         <div
@@ -270,7 +279,7 @@
     const path = window.location.pathname;
     if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
     else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
-    else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
+    else if ((path.includes('booking-history') || path.includes('booking_history'))) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
     function showConfirm(message) {
@@ -304,6 +313,23 @@
     async function loadBookings() {
       const sessionKey = localStorage.getItem('session_key');
       try {
+        // Fetch profile to load worker avatar dynamically
+        try {
+          const profileRes = await fetch(`${API}/profile/`, { headers: { 'X-Session-Key': sessionKey } });
+          const profileData = await profileRes.json();
+          if (profileData.status === 'success' && profileData.data) {
+            const worker = profileData.data;
+            const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.fullname)}&background=ffdad3&color=9f402d&bold=true`;
+            const avatarPic = worker.profile_pic ? (worker.profile_pic.startsWith('http') ? worker.profile_pic : `${window.location.origin}${worker.profile_pic}`) : fallbackUrl;
+            const headerAvatar = document.getElementById('header-avatar-preview');
+            if (headerAvatar) {
+              headerAvatar.src = avatarPic;
+            }
+          }
+        } catch (e) {
+          console.error("Error loading worker profile image:", e);
+        }
+
         const res = await fetch(`${API}/bookings/`, { headers: { 'X-Session-Key': sessionKey } });
         const data = await res.json();
         if (data.status === 'success') {
@@ -431,6 +457,28 @@
     }
 
     loadBookings();
+  </script>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 

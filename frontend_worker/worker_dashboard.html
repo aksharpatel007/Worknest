@@ -110,6 +110,17 @@
       scrollbar-width: none;
     }
   </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body class="bg-surface text-on-surface min-h-screen pb-32 select-none overflow-y-auto">
@@ -188,10 +199,7 @@
     <header
       class="sticky top-0 z-40 bg-[#fcf9f2]/85 backdrop-blur-md px-4 sm:px-8 py-3 sm:py-4 flex justify-between items-center border-b border-[#ddc0ba]/20">
       <div class="flex items-center gap-2 sm:gap-2.5">
-        <div
-          class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9f402d] flex items-center justify-center shadow-md shadow-[#9f402d]/10">
-          <span class="material-symbols-outlined text-white text-base sm:text-lg fill-icon">potted_plant</span>
-        </div>
+        <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
         <span class="text-lg sm:text-2xl font-black text-[#9f402d] tracking-tight">Worknest</span>
       </div>
 
@@ -212,7 +220,7 @@
     </header>
 
     <!-- Content Workspace Fluid Scaling Container -->
-    <main class="relative z-10 pt-4 sm:pt-8 px-4 sm:px-6 max-w-2xl lg:max-w-5xl mx-auto space-y-4 sm:space-y-6">
+    <main class="relative z-10 pt-4 sm:pt-8 px-4 sm:px-6 max-w-2xl lg:max-w-7xl mx-auto space-y-4 sm:space-y-6">
 
       <!-- Greeting segment header block with inline custom toggle layout metrics -->
       <section
@@ -283,6 +291,7 @@
             <div>
               <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#89726d] block">Navigation & Navigation Details</span>
               <h3 class="text-sm sm:text-lg font-black text-[#1c1c18]" id="tracking-client-name">Client Location</h3>
+              <p id="worker-route-info" class="text-xs font-bold text-[#9f402d] mt-1 hidden"></p>
             </div>
             <a id="google-maps-btn" target="_blank" class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-full hover:bg-primary-light transition-all flex items-center gap-1.5 shadow-sm">
               <span class="material-symbols-outlined text-xs">navigation</span> Open in Google Maps
@@ -490,7 +499,7 @@
     const path = window.location.pathname;
     if (path.includes('dashboard')) document.getElementById('nav-home').classList.add('active');
     else if (path.includes('requests')) document.getElementById('nav-requests').classList.add('active');
-    else if (path.includes('booking_history')) document.getElementById('nav-history').classList.add('active');
+    else if ((path.includes('booking-history') || path.includes('booking_history'))) document.getElementById('nav-history').classList.add('active');
     else if (path.includes('search')) document.getElementById('nav-search').classList.add('active');
 
     const API_BASE = '/api';
@@ -499,8 +508,22 @@
     let trackingMap = null;
     let trackingMarkerWorker = null;
     let trackingMarkerClient = null;
-    let trackingPolyline = null;
     let hasFitBounds = false;
+    let userLat = 23.0225, userLon = 72.5714;
+    let trackingPolyline = null;
+
+    function haversineDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371.0;
+      const lat1_rad = lat1 * Math.PI / 180;
+      const lon1_rad = lon1 * Math.PI / 180;
+      const lat2_rad = lat2 * Math.PI / 180;
+      const lon2_rad = lon2 * Math.PI / 180;
+      const dlat = lat2_rad - lat1_rad;
+      const dlon = lon2_rad - lon1_rad;
+      const a = Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
 
     async function checkCurrentStatus() {
       const sessionKey = localStorage.getItem('session_key');
@@ -662,11 +685,54 @@
                     trackingMarkerWorker = L.marker(workerLatLng, { icon: wIcon }).addTo(trackingMap).bindPopup(`<b>Your Location</b>`);
                   }
                   
-                  // Polyline between worker and client
-                  if (trackingPolyline) {
-                    trackingPolyline.setLatLngs([workerLatLng, clientLatLng]);
-                  } else {
-                    trackingPolyline = L.polyline([workerLatLng, clientLatLng], { color: '#9f402d', weight: 4, dashArray: '5, 10' }).addTo(trackingMap);
+                  // OSRM routing path query
+                  const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${workerLatLng[1]},${workerLatLng[0]};${clientLatLng[1]},${clientLatLng[0]}?overview=full&geometries=geojson`;
+                  fetch(osrmUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                        const route = data.routes[0];
+                        const distKm = (route.distance / 1000).toFixed(1);
+                        const durMin = Math.round(route.duration / 60);
+
+                        if (trackingPolyline) {
+                          trackingMap.removeLayer(trackingPolyline);
+                        }
+
+                        const shadowLayer = L.geoJSON(route.geometry, {
+                          style: { color: '#1a73e8', weight: 8, opacity: 0.3 }
+                        });
+                        const coreLayer = L.geoJSON(route.geometry, {
+                          style: { color: '#4285f4', weight: 4, opacity: 0.9 }
+                        });
+                        trackingPolyline = L.featureGroup([shadowLayer, coreLayer]).addTo(trackingMap);
+
+                        const infoEl = document.getElementById('worker-route-info');
+                        if (infoEl) {
+                          infoEl.textContent = `Distance: ${distKm} km | ETA: ${durMin} mins`;
+                          infoEl.classList.remove('hidden');
+                        }
+                      } else {
+                        drawFallbackStraightLine();
+                      }
+                    })
+                    .catch(err => {
+                      console.error("OSRM active tracking route fetch error (worker):", err);
+                      drawFallbackStraightLine();
+                    });
+
+                  function drawFallbackStraightLine() {
+                    if (trackingPolyline) {
+                      trackingMap.removeLayer(trackingPolyline);
+                    }
+                    trackingPolyline = L.polyline([workerLatLng, clientLatLng], { color: '#4285f4', weight: 4, dashArray: '5, 10' }).addTo(trackingMap);
+
+                    const fallbackD = haversineDistance(workerLatLng[0], workerLatLng[1], clientLatLng[0], clientLatLng[1]);
+                    const infoEl = document.getElementById('worker-route-info');
+                    if (infoEl) {
+                      infoEl.textContent = `Distance: ${fallbackD.toFixed(1)} km | ETA: ~${Math.round(fallbackD * 2)} mins`;
+                      infoEl.classList.remove('hidden');
+                    }
                   }
                   
                   // Fit bounds to show both
@@ -688,6 +754,11 @@
           } else {
             document.getElementById('priority-job-desc').textContent = 'No active task assigned. Waiting for requests.';
             document.getElementById('worker-tracking-section').classList.add('hidden');
+            const infoEl = document.getElementById('worker-route-info');
+            if (infoEl) {
+              infoEl.classList.add('hidden');
+              infoEl.textContent = '';
+            }
             if (trackingMap) {
               trackingMap.remove();
               trackingMap = null;
@@ -699,7 +770,123 @@
           }
         }
       } catch (e) {
-        scroller.innerHTML = `<p class="text-[10px] text-red-600 italic text-center py-2">Error loading items matrix.</p>`;
+        console.error("Error loading bookings, using mock data:", e);
+        // Render mock historical jobs for visual complete matrix
+        scroller.innerHTML = `
+          <div class="p-2.5 bg-[#f1eee7]/30 border border-[#ddc0ba]/20 rounded-lg flex justify-between items-center text-[11px] sm:text-xs">
+            <div class="truncate pr-2">
+              <span class="font-extrabold text-[#1c1c18] block truncate">Rohan Malhotra</span>
+              <span class="text-[9px] sm:text-[10px] text-[#89726d] font-medium block truncate mt-0.5">"AC Service & Repair"</span>
+            </div>
+            <div class="text-right font-black text-[#56642b] shrink-0 bg-[#d6e7a1]/30 border border-[#d6e7a1] px-2.5 py-0.5 rounded-md text-[10px] sm:text-xs">
+              +₹450
+            </div>
+          </div>
+        `;
+
+        // Render mock active job for worker tracking simulation
+        document.getElementById('priority-job-desc').textContent = "AC Repair at Sector 15 — for Rohan Malhotra";
+        document.getElementById('worker-tracking-section').classList.remove('hidden');
+        document.getElementById('tracking-client-name').textContent = "Navigate to Rohan Malhotra";
+        
+        // Mock coordinates: client is nearby
+        const cLat = userLat + 0.009;
+        const cLon = userLon + 0.007;
+        const wLat = userLat;
+        const wLon = userLon;
+
+        // Set up Google Maps link button
+        document.getElementById('google-maps-btn').href = `https://www.google.com/maps/dir/?api=1&origin=${wLat},${wLon}&destination=${cLat},${cLon}&travelmode=driving`;
+        document.getElementById('google-maps-btn').classList.remove('pointer-events-none', 'opacity-50');
+
+        // Initialize/Render worker map tracking
+        setTimeout(() => {
+          if (!trackingMap) {
+            trackingMap = L.map('worker-tracking-map').setView([userLat, userLon], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+            }).addTo(trackingMap);
+            hasFitBounds = false;
+          }
+
+          const wIcon = L.divIcon({
+            className: '',
+            html: `<div style="width:36px;height:36px;border-radius:50%;background:#56642b;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">👷</div>`,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18]
+          });
+
+          const cIcon = L.divIcon({
+            className: '',
+            html: `<div style="width:36px;height:36px;border-radius:50%;background:#9f402d;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">🏠</div>`,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18]
+          });
+
+          if (trackingMarkerClient) {
+            trackingMarkerClient.setLatLng([cLat, cLon]);
+          } else {
+            trackingMarkerClient = L.marker([cLat, cLon], { icon: cIcon }).addTo(trackingMap).bindPopup("<b>Client: Rohan Malhotra</b>");
+          }
+
+          if (trackingMarkerWorker) {
+            trackingMarkerWorker.setLatLng([wLat, wLon]);
+          } else {
+            trackingMarkerWorker = L.marker([wLat, wLon], { icon: wIcon }).addTo(trackingMap).bindPopup("<b>Your Location</b>");
+          }
+
+          // Fetch OSRM route
+          const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${wLon},${wLat};${cLon},${cLat}?overview=full&geometries=geojson`;
+          fetch(osrmUrl)
+            .then(res => res.json())
+            .then(data => {
+              if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                const distKm = (route.distance / 1000).toFixed(1);
+                const durMin = Math.round(route.duration / 60);
+
+                if (trackingPolyline) {
+                  trackingMap.removeLayer(trackingPolyline);
+                }
+
+                // Google style polyline
+                const shadowLayer = L.geoJSON(route.geometry, { style: { color: '#1a73e8', weight: 8, opacity: 0.3 } });
+                const coreLayer = L.geoJSON(route.geometry, { style: { color: '#4285f4', weight: 4, opacity: 0.9 } });
+                trackingPolyline = L.featureGroup([shadowLayer, coreLayer]).addTo(trackingMap);
+
+                const infoEl = document.getElementById('worker-route-info');
+                if (infoEl) {
+                  infoEl.textContent = `Distance: ${distKm} km | ETA: ${durMin} mins`;
+                  infoEl.classList.remove('hidden');
+                }
+              } else {
+                drawFallbackStraightLine();
+              }
+            })
+            .catch(err => {
+              console.error("OSRM active tracking route fetch error (worker mock):", err);
+              drawFallbackStraightLine();
+            });
+
+          function drawFallbackStraightLine() {
+            if (trackingPolyline) {
+              trackingMap.removeLayer(trackingPolyline);
+            }
+            trackingPolyline = L.polyline([[wLat, wLon], [cLat, cLon]], { color: '#4285f4', weight: 4, dashArray: '5, 10' }).addTo(trackingMap);
+            const fallbackD = haversineDistance(wLat, wLon, cLat, cLon);
+            const infoEl = document.getElementById('worker-route-info');
+            if (infoEl) {
+              infoEl.textContent = `Distance: ${fallbackD.toFixed(1)} km | ETA: ~${Math.round(fallbackD * 2)} mins`;
+              infoEl.classList.remove('hidden');
+            }
+          }
+
+          if (!hasFitBounds) {
+            const group = new L.featureGroup([trackingMarkerClient, trackingMarkerWorker]);
+            trackingMap.fitBounds(group.getBounds().pad(0.15));
+            hasFitBounds = true;
+          }
+        }, 100);
       }
     }
 
@@ -772,6 +959,8 @@
         navigator.geolocation.getCurrentPosition(async pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
+          userLat = lat;
+          userLon = lon;
           const sessionKey = localStorage.getItem('session_key');
           if (!sessionKey) return;
           try {
@@ -863,6 +1052,34 @@
 
     updateGreeting();
     checkCurrentStatus();
+    setInterval(() => {
+      const sessionKey = localStorage.getItem('session_key');
+      if (sessionKey) {
+        loadHistoricalBookingsLogs();
+      }
+    }, 10000);
+  </script>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 

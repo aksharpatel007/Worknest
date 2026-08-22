@@ -52,6 +52,17 @@
       pointer-events: none;
     }
   </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body class="text-on-background pb-32 relative">
@@ -59,9 +70,9 @@
 
   <!-- Responsive Brand Header Deck -->
   <header class="sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(28,28,24,0.04)] border-b border-[#ddc0ba]/20 px-6 py-4">
-    <div class="max-w-3xl mx-auto flex items-center justify-between w-full">
+    <div class="max-w-7xl mx-auto flex items-center justify-between w-full">
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-[#9f402d] text-3xl fill-icon">potted_plant</span>
+        <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
         <!-- Header text adapts size dynamically according to laptop vs mobile frames -->
         <h1 class="text-2xl font-bold tracking-tight text-[#9f402d]">Worknest</h1>
       </div>
@@ -70,7 +81,7 @@
   </header>
 
   <!-- Fluid Container Layout -->
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
     <!-- Status Filter Tab Row -->
     <div class="flex gap-2.5 sm:gap-3 overflow-x-auto hide-scrollbar pb-2">
       <button onclick="filterBookings('all')" id="tab-all"
@@ -84,7 +95,7 @@
     </div>
 
     <!-- Active Records Content Grid -->
-    <div id="bookings-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div id="bookings-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
       <p class="text-center text-[#89726d] font-medium text-xs sm:text-sm italic mt-10 animate-pulse md:col-span-2">Loading your history...</p>
     </div>
   </main>
@@ -331,39 +342,43 @@
       }
 
       container.innerHTML = bookings.map(b => {
-        let badgeConfig = { color: 'bg-orange-100 text-orange-700', text: 'Pending Response', icon: 'schedule' };
-        if (b.status === 'accepted') badgeConfig = { color: 'bg-purple-100 text-purple-700', text: 'Accepted', icon: 'thumb_up' };
-        if (b.status === 'in_progress') badgeConfig = { color: 'bg-blue-100 text-blue-700', text: 'Active & In Progress', icon: 'handshake' };
-        if (b.status === 'completed') badgeConfig = { color: 'bg-green-100 text-green-700', text: 'Job Completed', icon: 'check_circle' };
-        if (b.status === 'cancelled' || b.status === 'rejected') badgeConfig = { color: 'bg-red-100 text-red-700', text: 'Cancelled', icon: 'cancel' };
+        let badgeConfig = { color: 'bg-orange-50 text-orange-700 border-orange-100', text: 'Pending Response', icon: 'schedule' };
+        if (b.status === 'accepted') badgeConfig = { color: 'bg-purple-50 text-purple-700 border-purple-100', text: 'Accepted', icon: 'thumb_up' };
+        if (b.status === 'in_progress') badgeConfig = { color: 'bg-blue-50 text-blue-700 border-blue-100', text: 'Active & In Progress', icon: 'handshake' };
+        if (b.status === 'completed') badgeConfig = { color: 'bg-green-50 text-green-700 border-green-100', text: 'Job Completed', icon: 'check_circle' };
+        if (b.status === 'cancelled' || b.status === 'rejected') badgeConfig = { color: 'bg-red-50 text-red-700 border-red-100', text: 'Cancelled', icon: 'cancel' };
 
-        // 🎯 FIXED: Dynamic extraction of native timestamp properties
         const assignmentTime = new Date(b.created_at || b.completed_at || b.started_at || new Date());
         const dateStr = assignmentTime.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         const timeStr = assignmentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
 
         if (b.status === 'pending') {
+          const isDirectRequest = b.worker_name && (!b.booking_ids || b.booking_ids.length <= 1);
+          const titleText = isDirectRequest ? `Request to ${b.worker_name}` : "Finding Specialists";
+          const subtitleHtml = isDirectRequest 
+            ? `<p class="text-xs text-[#9f402d] font-bold mt-0.5">${b.worker_skill || 'Professional'}</p>`
+            : `<p class="text-xs text-[#89726d] font-semibold mt-0.5">Finding nearby professionals</p>`;
+
           return `
-          <div class="bg-surface-lowest rounded-3xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(28,28,24,0.03)] border border-outline/20 hover:shadow-md transition-shadow duration-300">
-            <div class="flex justify-between items-start mb-4 border-b border-surface-variant pb-4 gap-4">
-              <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
-                  <span class="material-symbols-outlined text-xs sm:text-sm text-orange-700">schedule</span>
-                  <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">Pending Response</span>
+          <div class="bg-white rounded-2xl p-5 border border-[#ddc0ba]/35 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between self-start">
+            <div class="flex justify-between items-start gap-4 pb-3 border-b border-[#f1eee7]">
+              <div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full ${badgeConfig.color} border text-[10px] font-bold uppercase tracking-wider">
+                  <span class="material-symbols-outlined text-xs">${badgeConfig.icon}</span> ${badgeConfig.text}
                 </div>
-                <h3 class="font-black text-base sm:text-lg text-on-background truncate leading-tight">Job Request Sent</h3>
-                <p class="text-[11px] sm:text-xs font-bold text-primary mt-0.5">Finding nearby professionals</p>
-                
-                <p class="text-[10px] sm:text-xs font-semibold text-[#89726d] flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-xs sm:text-sm">calendar_month</span> ${dateStr} • ${timeStr}
+                <h3 class="font-extrabold text-base text-[#1c1c18] mt-2">${titleText}</h3>
+                ${subtitleHtml}
+                <p class="text-xs text-[#89726d] flex items-center gap-1 mt-1">
+                  <span class="material-symbols-outlined text-xs">calendar_month</span> ${dateStr} • ${timeStr}
                 </p>
               </div>
             </div>
-            
-            <p class="text-xs sm:text-sm text-[#56423e] bg-surface-variant/50 p-3 sm:p-4 rounded-2xl italic border border-outline/10 font-medium">"${b.service_desc}"</p>
-            
-            <button onclick="cancelBookingGroup(${JSON.stringify(b.booking_ids || [b.id])})" class="w-full mt-4 py-3 bg-red-50 text-red-600 border border-red-100 font-bold rounded-xl text-xs sm:text-sm hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-base sm:text-lg">close</span> Cancel Request
+            <div class="my-4">
+              <span class="text-[10px] font-bold text-[#89726d] uppercase tracking-wider block mb-1">Requested Service</span>
+              <p class="text-xs text-[#56423e] bg-[#fcf9f2] p-3 rounded-xl border border-[#ddc0ba]/20 leading-relaxed font-medium">"${b.service_desc}"</p>
+            </div>
+            <button onclick="cancelBookingGroup(${JSON.stringify(b.booking_ids || [b.id])})" class="w-full py-2.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 font-bold rounded-xl text-xs transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-red-100">
+              <span class="material-symbols-outlined text-sm">close</span> Cancel Request
             </button>
           </div>
           `;
@@ -374,52 +389,54 @@
           let extraBtn = '';
           if (b.status === 'accepted') {
             extraBtn = `
-              <button onclick="window.location.href='{% url 'map_page' %}?booking_id=${b.id}'" class="w-full mt-2 py-3 bg-[#9f402d] text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-[#e2725b] transition-all active:scale-95 flex items-center justify-center gap-1.5">
-                <span class="material-symbols-outlined text-sm sm:text-base">map</span> View Worker Location
+              <button onclick="window.location.href='{% url 'map_page' %}?booking_id=${b.id}'" class="w-full py-2.5 bg-[#9f402d] hover:bg-[#e2725b] text-white font-bold rounded-xl text-xs shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">map</span> Track Live Location
               </button>`;
           }
           actionHtml = `
-            <button onclick="closeBooking(${b.id})" class="w-full mt-4 py-3 sm:py-3.5 bg-green-600 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md hover:bg-green-700 transition-all active:scale-95">
-              Mark as Completed & Calculate Pay
-            </button>
-            ${extraBtn}`;
+            <div class="flex flex-col gap-2">
+              <button onclick="closeBooking(${b.id})" class="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl text-xs shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-sm">check</span> Mark as Completed
+              </button>
+              ${extraBtn}
+            </div>`;
         }
         else if (b.status === 'completed') {
           if (!b.rating_given) {
             actionHtml = `
-               <button onclick="openRateModal(${b.id})" class="w-full mt-4 py-3 bg-white border-2 border-primary text-primary font-extrabold rounded-xl text-xs sm:text-sm hover:bg-primary/10 transition-all active:scale-95">
-                 Rate Worker
+               <button onclick="openRateModal(${b.id})" class="w-full py-2.5 bg-white border border-[#9f402d] text-[#9f402d] hover:bg-[#ffdad3]/20 font-bold rounded-xl text-xs transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                 <span class="material-symbols-outlined text-sm">star</span> Rate Worker
                </button>`;
           } else {
             actionHtml = `
-               <p class="text-xs sm:text-sm font-extrabold text-yellow-600 mt-4 flex items-center gap-1">
-                 <span class="material-symbols-outlined fill-icon text-base sm:text-lg text-yellow-500">star</span> Rated ${b.rating_given}/5 Stars
+               <p class="text-xs font-bold text-amber-600 flex items-center gap-1 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-xl w-fit">
+                 <span class="material-symbols-outlined fill-icon text-sm text-amber-500">star</span> Rated ${b.rating_given}/5 Stars
                </p>`;
           }
         }
 
         return `
-          <div class="bg-surface-lowest rounded-3xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(28,28,24,0.03)] border border-outline/20 hover:shadow-md transition-shadow duration-300">
-            <div class="flex justify-between items-start mb-4 border-b border-surface-variant pb-4 gap-4">
+          <div class="bg-white rounded-2xl p-5 border border-[#ddc0ba]/30 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between self-start">
+            <div class="flex justify-between items-start gap-4 pb-3 border-b border-[#f1eee7]">
               <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
-                  <span class="material-symbols-outlined text-xs sm:text-sm ${badgeConfig.color.split(' ')[1]}">${badgeConfig.icon}</span>
-                  <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${badgeConfig.color} px-2.5 py-0.5 rounded-full">${badgeConfig.text}</span>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full ${badgeConfig.color} border text-[10px] font-bold uppercase tracking-wider">
+                  <span class="material-symbols-outlined text-xs">${badgeConfig.icon}</span> ${badgeConfig.text}
                 </div>
-                <h3 class="font-black text-base sm:text-lg text-on-background truncate leading-tight">${b.worker_name || 'Worker Assignment'}</h3>
-                <p class="text-[11px] sm:text-xs font-bold text-primary mt-0.5">${b.worker_skill || 'Professional'}</p>
-                
-                <p class="text-[10px] sm:text-xs font-semibold text-[#89726d] flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-xs sm:text-sm">calendar_month</span> ${dateStr} • ${timeStr}
+                <h3 class="font-extrabold text-base text-[#1c1c18] mt-2 truncate leading-tight">${b.worker_name || 'Worker'}</h3>
+                <p class="text-xs text-[#9f402d] font-bold mt-0.5">${b.worker_skill || 'Specialist'}</p>
+                <p class="text-xs text-[#89726d] flex items-center gap-1 mt-1">
+                  <span class="material-symbols-outlined text-xs">calendar_month</span> ${dateStr} • ${timeStr}
                 </p>
               </div>
               <div class="text-right shrink-0">
-                <p class="text-base sm:text-lg md:text-xl font-black text-on-background tracking-tight">${b.final_price ? '₹' + b.final_price : ''}</p>
+                <span class="text-[9px] font-bold text-[#89726d] uppercase tracking-wider block">Price</span>
+                <p class="text-base sm:text-lg font-black text-[#56642b] tracking-tight">${b.final_price ? '₹' + b.final_price : 'Hourly'}</p>
               </div>
             </div>
-            
-            <p class="text-xs sm:text-sm text-[#56423e] bg-surface-variant/50 p-3 sm:p-4 rounded-2xl italic border border-outline/10 font-medium">"${b.service_desc}"</p>
-            
+            <div class="my-4">
+              <span class="text-[10px] font-bold text-[#89726d] uppercase tracking-wider block mb-1">Job Description</span>
+              <p class="text-xs text-[#56423e] bg-[#fcf9f2] p-3 rounded-xl border border-[#ddc0ba]/20 leading-relaxed font-medium">"${b.service_desc}"</p>
+            </div>
             ${actionHtml}
           </div>
         `;
@@ -560,6 +577,28 @@
     }
 
     document.addEventListener("DOMContentLoaded", loadBookings);
+  </script>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 

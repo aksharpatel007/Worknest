@@ -41,6 +41,28 @@
       box-shadow: 0 2px 8px rgba(159, 64, 45, 0.1);
     }
   </style>
+  <style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
+  <style id="global-hide-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html, body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+  </style>
 </head>
 
 <body class="h-screen flex overflow-hidden text-[#1c1c18]">
@@ -48,11 +70,7 @@
   <aside id="admin-sidebar"
     class="fixed md:sticky top-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col w-64 h-screen bg-[#f5f0e8] shadow-2xl md:shadow-lg z-40 py-8 shrink-0 overflow-y-auto">
     <div class="px-6 mb-8 flex items-center gap-3">
-      <div
-        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#9f402d] to-[#e2725b] flex items-center justify-center">
-        <span class="material-symbols-outlined text-white text-xl"
-          style="font-variation-settings: 'FILL' 1;">potted_plant</span>
-      </div>
+      <span class="material-symbols-outlined text-[#9f402d] text-2xl fill-icon">potted_plant</span>
       <div>
         <h1 class="font-black text-[#9f402d] text-lg leading-tight">Worknest</h1>
         <p class="text-xs text-[#89726d] font-medium">Admin Panel</p>
@@ -354,6 +372,28 @@
     }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     loadVerifiedUsers();
+  </script>
+  <!-- Global URL Preview Hider -->
+  <script id="global-hide-url-preview">
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          link.setAttribute('data-href', href);
+          link.removeAttribute('href');
+          link.style.cursor = 'pointer';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.getAttribute('data-href');
+            if (e.ctrlKey || e.metaKey || link.getAttribute('target') === '_blank') {
+              window.open(target, '_blank');
+            } else {
+              window.location.href = target;
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 
