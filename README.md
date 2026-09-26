@@ -74,7 +74,7 @@ Create a PostgreSQL database for the project. By default, the project expects:
 Navigate to the backend directory and install the required Python packages:
 ```bash
 cd worknest_backend/backend
-pip install django djangorestframework django-cors-headers psycopg2
+pip install django djangorestframework django-cors-headers psycopg2-binary Pillow
 ```
 *(Note: Use `psycopg2-binary` if you encounter build errors on Windows/macOS).*
 
